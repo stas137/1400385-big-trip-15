@@ -10,5 +10,6 @@ module.exports = {
     devServer: {
         contentBase: path.resolve(__dirname, 'public'),
         watchContentBase: true,
+        liveReload: true,
     }
 };
