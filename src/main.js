@@ -1,6 +1,5 @@
 import {tripMenu} from './view/trip-menu.js';
 import {tripFilters} from './view/trip-filters.js';
-import {tripInfo} from './view/trip-info.js';
 import {tripRoute} from './view/trip-route.js';
 import {tripCost} from './view/trip-cost.js';
 import {tripSort} from './view/trip-sort.js';
@@ -18,26 +17,31 @@ const tripControlsNavigation = bodyElement.querySelector('.trip-controls__naviga
 const tripControlsFilters = bodyElement.querySelector('.trip-controls__filters');
 const tripControlsMain = bodyElement.querySelector('.trip-main');
 
-const renderComponent = (container, component, place) => {
+const renderComponent = (container, component, place = 'beforeend') => {
   container.insertAdjacentHTML(place, component);
 };
 
-renderComponent(tripControlsNavigation, tripMenu(), 'beforeend');
-renderComponent(tripControlsFilters, tripFilters(), 'beforeend');
-renderComponent(tripControlsMain, tripInfo(), 'beforeend');
+renderComponent(tripControlsMain, tripRoute(), 'afterbegin');
 
 const tripControlsInfo = bodyElement.querySelector('.trip-info');
 const tripControlsEvents = bodyElement.querySelector('.trip-events');
 
-renderComponent(tripControlsInfo, tripRoute(), 'beforeend');
-renderComponent(tripControlsInfo, tripCost(), 'beforeend');
-renderComponent(tripControlsEvents, tripSort(), 'beforeend');
-renderComponent(tripControlsEvents, tripPointsContainer(), 'beforeend');
+renderComponent(tripControlsInfo, tripCost());
+
+renderComponent(tripControlsNavigation, tripMenu());
+renderComponent(tripControlsFilters, tripFilters());
+
+renderComponent(tripControlsEvents, tripSort());
+renderComponent(tripControlsEvents, tripPointsContainer());
 
 const tripControlsEventsContainer = bodyElement.querySelector('.trip-events__list');
 
-renderComponent(tripControlsEventsContainer, tripPointEdit(), 'beforeend');
+renderComponent(tripControlsEventsContainer, tripPointEdit());
 
-for (let i = 0; i < TRIP_POINTS_COUNT; i++) {
-  renderComponent(tripControlsEventsContainer, tripPoint(tripPoints[i]), 'beforeend');
-}
+const renderTripPoints = () => {
+  for (let i = 0; i < TRIP_POINTS_COUNT; i++) {
+    renderComponent(tripControlsEventsContainer, tripPoint(tripPoints[i]), 'beforeend');
+  }
+};
+
+renderTripPoints();

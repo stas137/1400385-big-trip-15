@@ -1,4 +1,4 @@
-const addPoint = () => (`<form class="event event--edit" action="#" method="post">
+const tripPointAdd = () => (`<form class="event event--edit" action="#" method="post">
 <header class="event__header">
   <div class="event__type-wrapper">
     <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -164,4 +164,4 @@ const addPoint = () => (`<form class="event event--edit" action="#" method="post
 </section>
 </form>`);
 
-export {addPoint};
+export {tripPointAdd};
