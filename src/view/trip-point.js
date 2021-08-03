@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 const getOffers = (offers) => {
   let listOffers = '';
 
@@ -16,14 +18,14 @@ const getOffers = (offers) => {
 
 const tripPoint = (point) => (`<li class="trip-events__item">
 <div class="event">
-  <time class="event__date" datetime="2019-03-18">MAR 18</time>
+  <time class="event__date" datetime="${dayjs(point.startDateTime).format('YYYY-MM-DD')}">${dayjs(point.startDateTime).format('MMM DD')}</time>
   <div class="event__type">
     <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
   </div>
   <h3 class="event__title">${point.typePoint} ${point.cityPoint}</h3>
   <div class="event__schedule">
     <p class="event__time">
-      <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+      <time class="event__start-time" datetime="${dayjs(point.startDateTime).format('YYYY-MM-DD')}T${dayjs(point.startDateTime).format('HH:mm')}">${dayjs(point.startDateTime).format('HH:mm')}</time>
       &mdash;
       <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
     </p>

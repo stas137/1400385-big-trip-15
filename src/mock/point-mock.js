@@ -28,7 +28,7 @@ const generatePointType = () => {
 
 const generateDate = () => {
 
-  const maxDateGap = 5;
+  const maxDateGap = 3;
   let firstDate = getRandomInteger(-maxDateGap, maxDateGap);
   let secondDate = getRandomInteger(-maxDateGap, maxDateGap);
 
@@ -146,13 +146,13 @@ export const generatePoint = () => {
 
   const typePoint = generatePointType();
   const date = generateDate();
-  const [startDate, endDate] = date;
+  const [startDateTime, endDateTime] = date;
 
   return {
     typePoint,
     cityPoint: generateCityPoint(),
-    startDateTime: startDate,
-    endDateTime: endDate,
+    startDateTime,
+    endDateTime,
     price: generatePrice(),
     offers: generateOffers(typePoint),
     description: generateDescription(),
