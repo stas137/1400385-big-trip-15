@@ -1,10 +1,26 @@
-const tripPoint = () => (`<li class="trip-events__item">
+const getOffers = (offers) => {
+  let listOffers = '';
+
+  for (let i=0; i <= offers.length - 1; i++) {
+    if (offers[i].checked) {
+      listOffers += `<li class="event__offer">
+      <span class="event__offer-title">${offers[i].name}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offers[i].price}</span>
+    </li>`;
+    }
+  }
+
+  return listOffers;
+};
+
+const tripPoint = (point) => (`<li class="trip-events__item">
 <div class="event">
   <time class="event__date" datetime="2019-03-18">MAR 18</time>
   <div class="event__type">
     <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
   </div>
-  <h3 class="event__title">Taxi Amsterdam</h3>
+  <h3 class="event__title">${point.typePoint} ${point.cityPoint}</h3>
   <div class="event__schedule">
     <p class="event__time">
       <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
@@ -14,15 +30,11 @@ const tripPoint = () => (`<li class="trip-events__item">
     <p class="event__duration">30M</p>
   </div>
   <p class="event__price">
-    &euro;&nbsp;<span class="event__price-value">20</span>
+    &euro;&nbsp;<span class="event__price-value">${point.price}</span>
   </p>
   <h4 class="visually-hidden">Offers:</h4>
   <ul class="event__selected-offers">
-    <li class="event__offer">
-      <span class="event__offer-title">Order Uber</span>
-      &plus;&euro;&nbsp;
-      <span class="event__offer-price">20</span>
-    </li>
+    ${getOffers(point.offers)}
   </ul>
   <button class="event__favorite-btn event__favorite-btn--active" type="button">
     <span class="visually-hidden">Add to favorite</span>

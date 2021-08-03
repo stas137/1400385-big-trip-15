@@ -7,8 +7,11 @@ import {tripSort} from './view/trip-sort.js';
 import {tripPointsContainer} from './view/trip-points-container.js';
 import {tripPoint} from './view/trip-point.js';
 import {tripPointEdit} from './view/trip-point-edit.js';
+import {generatePoint} from './mock/point-mock.js';
 
-const TRIP_POINTS_COUNT = 3;
+const TRIP_POINTS_COUNT = 15;
+
+const tripPoints = new Array(TRIP_POINTS_COUNT).fill().map(generatePoint);
 
 const bodyElement = document.querySelector('body');
 const tripControlsNavigation = bodyElement.querySelector('.trip-controls__navigation');
@@ -36,5 +39,5 @@ const tripControlsEventsContainer = bodyElement.querySelector('.trip-events__lis
 renderComponent(tripControlsEventsContainer, tripPointEdit(), 'beforeend');
 
 for (let i = 0; i < TRIP_POINTS_COUNT; i++) {
-  renderComponent(tripControlsEventsContainer, tripPoint(), 'beforeend');
+  renderComponent(tripControlsEventsContainer, tripPoint(tripPoints[i]), 'beforeend');
 }
