@@ -28,7 +28,7 @@ const generatePointType = () => {
 
 const generateDate = () => {
 
-  const maxDateGap = 3;
+  const maxDateGap = 0;
   let firstDate = getRandomInteger(-maxDateGap, maxDateGap);
   let secondDate = getRandomInteger(-maxDateGap, maxDateGap);
 
@@ -142,20 +142,36 @@ const generatePhoto = () => {
   return photosSet;
 };
 
+const getDurationTripPoint = (durationDays, durationHours, durationMinutes) => {
+  if (durationDays > 0) {
+    return `${durationDays}D ${durationHours}H ${durationMinutes}M`;
+  } else if (durationHours > 0) {
+    return `${durationHours}H ${durationMinutes}M`;
+  }
+  return `${durationMinutes}M`;
+};
+
 export const generatePoint = () => {
 
   const typePoint = generatePointType();
   const date = generateDate();
   const [startDateTime, endDateTime] = date;
+  const duration = endDateTime - startDateTime;
+  
+  const durationDays = dayjs(duration).format('DD');
+  const durationHours = dayjs(duration).format('HH');
+  const durationMinutes = dayjs(duration).format('MM');
 
   return {
     typePoint,
     cityPoint: generateCityPoint(),
     startDateTime,
     endDateTime,
+    duration: (duration) ? getDurationTripPoint(durationDays, durationHours, durationMinutes) : '00M',
     price: generatePrice(),
     offers: generateOffers(typePoint),
     description: generateDescription(),
     photos: generatePhoto(),
+    favorite: Boolean(getRandomInteger(0, 1)),
   };
 };

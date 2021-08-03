@@ -12,6 +12,10 @@ const TRIP_POINTS_COUNT = 15;
 
 const tripPoints = new Array(TRIP_POINTS_COUNT).fill().map(generatePoint);
 
+const compareDate = (a, b) => (a.startDateTime > b.startDateTime) ? 1 : -1;
+
+const tripPointsSort = tripPoints.sort(compareDate);
+
 const bodyElement = document.querySelector('body');
 const tripControlsNavigation = bodyElement.querySelector('.trip-controls__navigation');
 const tripControlsFilters = bodyElement.querySelector('.trip-controls__filters');
@@ -40,7 +44,7 @@ renderComponent(tripControlsEventsContainer, tripPointEdit());
 
 const renderTripPoints = () => {
   for (let i = 0; i < TRIP_POINTS_COUNT; i++) {
-    renderComponent(tripControlsEventsContainer, tripPoint(tripPoints[i]), 'beforeend');
+    renderComponent(tripControlsEventsContainer, tripPoint(tripPointsSort[i]), 'beforeend');
   }
 };
 
