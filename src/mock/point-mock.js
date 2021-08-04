@@ -68,11 +68,11 @@ const generatePrice = () => {
 const generateOffers = (typePoint) => {
   const offersPoint = {
     'Flight': [
-      {name: 'Add luggage', price: '50', checked: true},
-      {name: 'Switch to comfort', price: '80', checked: true},
-      {name: 'Add meal', price: '15', checked: false},
-      {name: 'Choose seats', price: '5', checked: false},
-      {name: 'Travel by train', price: '40', checked: true},
+      {name: 'Add luggage', 'name-input': 'luggage', price: '50', checked: true},
+      {name: 'Switch to comfort', 'name-input': 'comfort',price: '80', checked: true},
+      {name: 'Add meal', 'name-input': 'meal', price: '15', checked: false},
+      {name: 'Choose seats', 'name-input': 'seats', price: '5', checked: false},
+      {name: 'Travel by train', 'name-input': 'train', price: '40', checked: true},
     ],
     'Taxi': [
       {name: 'Order Uber', price: '20', checked: true},
@@ -121,7 +121,12 @@ const generateDescription = () => {
     }
   }
 
-  return sentencesSet;
+  let description = '';
+  for (const value of sentencesSet) {
+    description += `${value}. `;
+  }
+
+  return description;
 };
 
 const generatePhoto = () => {
