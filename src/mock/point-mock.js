@@ -1,36 +1,16 @@
 import dayjs from 'dayjs';
-
-const getRandomInteger = (a = 0, b = 1) => {
-  const lower  = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
+import {getRandomInteger} from '../utils.js';
+import {POINT_TYPE, MAX_MINUTES_GAP, CITY_POINT, OFFERS_POINT, PRICE_POINT, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS} from '../const.js';
 
 const generatePointType = () => {
-  const pointType = [
-    'Taxi',
-    'Bus',
-    'Train',
-    'Ship',
-    'Transport',
-    'Drive',
-    'Flight',
-    'Check-in',
-    'Sightseeing',
-    'Restaurant',
-  ];
-
-  const randomIndex = getRandomInteger(0, pointType.length - 1);
-
-  return pointType[randomIndex];
+  const randomIndex = getRandomInteger(0, POINT_TYPE.length - 1);
+  return POINT_TYPE[randomIndex];
 };
 
 const generateDate = () => {
 
-  const maxMinuteGap = 55;
-  let firstDate = getRandomInteger(-maxMinuteGap, maxMinuteGap);
-  let secondDate = getRandomInteger(-maxMinuteGap, maxMinuteGap);
+  let firstDate = getRandomInteger(-MAX_MINUTES_GAP, MAX_MINUTES_GAP);
+  let secondDate = getRandomInteger(-MAX_MINUTES_GAP, MAX_MINUTES_GAP);
 
   if (firstDate > secondDate) {
     [firstDate, secondDate] = [secondDate, firstDate];
@@ -40,78 +20,21 @@ const generateDate = () => {
 };
 
 const generateCityPoint = () => {
-  const cityPoint = [
-    'Amsterdam',
-    'Chamonix',
-    'Geneva',
-  ];
-
-  const randomIndex = getRandomInteger(0, cityPoint.length - 1);
-
-  return cityPoint[randomIndex];
+  const randomIndex = getRandomInteger(0, CITY_POINT.length - 1);
+  return CITY_POINT[randomIndex];
 };
 
 const generatePrice = () => {
-  const pricePoint = [
-    '200',
-    '100',
-    '50',
-    '15',
-    '5',
-  ];
-
-  const randomIndex = getRandomInteger(0, pricePoint.length - 1);
-
-  return pricePoint[randomIndex];
+  const randomIndex = getRandomInteger(0, PRICE_POINT.length - 1);
+  return PRICE_POINT[randomIndex];
 };
 
-const generateOffers = (typePoint) => {
-  const offersPoint = {
-    'Flight': [
-      {name: 'Add luggage', 'name-input': 'luggage', price: '50', checked: true},
-      {name: 'Switch to comfort', 'name-input': 'comfort',price: '80', checked: true},
-      {name: 'Add meal', 'name-input': 'meal', price: '15', checked: false},
-      {name: 'Choose seats', 'name-input': 'seats', price: '5', checked: false},
-      {name: 'Travel by train', 'name-input': 'train', price: '40', checked: true},
-    ],
-    'Taxi': [
-      {name: 'Order Uber', price: '20', checked: true},
-    ],
-    'Drive': [
-      {name: 'Rent a car', price: '200', checked: true},
-    ],
-    'Sightseeing': [
-      {name: 'Book tickets', price: '40', checked: true},
-      {name: 'Lunch in city', price: '30', checked: false},
-    ],
-    'Check-in': [
-      {name: 'Add breakfast', price: '50', checked: true},
-    ],
-    'Restaurant': [
-      {name: 'Add breakfast', price: '50', checked: true},
-    ],
-    'Bus': [
-      {name: 'Add breakfast', price: '50', checked: true},
-    ],
-    'Train': [
-      {name: 'Add breakfast', price: '50', checked: true},
-    ],
-    'Ship': [
-      {name: 'Add breakfast', price: '50', checked: true},
-    ],
-    'Transport': [
-      {name: 'Add breakfast', price: '50', checked: true},
-    ],
-  };
-
-  return offersPoint[typePoint];
-};
+const generateOffers = (typePoint) => OFFERS_POINT[typePoint];
 
 const generateDescription = () => {
-  const text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus';
-  const sentences = text.split('. ');
+  const sentences = TEXT_DESCRIPTION.split('. ');
 
-  const randomCount = getRandomInteger(1, 5);
+  const randomCount = getRandomInteger(1, MAX_COUNT_SENTENCES);
   const sentencesSet = new Set();
 
   while (sentencesSet.size <= randomCount){
@@ -130,9 +53,6 @@ const generateDescription = () => {
 };
 
 const generatePhoto = () => {
-
-  const MAX_COUNT_PHOTOS = 7;
-  const URL_PHOTO = 'http://picsum.photos/248/152?r=';
 
   const randomCount = getRandomInteger(0, MAX_COUNT_PHOTOS - 1);
   const photosSet = new Set();

@@ -1,3 +1,4 @@
+import {TRIP_POINTS_COUNT} from './const.js';
 import {tripMenu} from './view/trip-menu.js';
 import {tripFilters} from './view/trip-filters.js';
 import {tripRoute} from './view/trip-route.js';
@@ -5,10 +6,8 @@ import {tripCost} from './view/trip-cost.js';
 import {tripSort} from './view/trip-sort.js';
 import {tripPointsContainer} from './view/trip-points-container.js';
 import {tripPoint} from './view/trip-point.js';
-import {tripPointEdit} from './view/trip-point-edit.js';
+import {tripPointAddEdit} from './view/trip-point-add-edit.js';
 import {generatePoint} from './mock/point-mock.js';
-
-const TRIP_POINTS_COUNT = 15;
 
 const tripPoints = new Array(TRIP_POINTS_COUNT).fill().map(generatePoint);
 
@@ -25,7 +24,7 @@ const renderComponent = (container, component, place = 'beforeend') => {
   container.insertAdjacentHTML(place, component);
 };
 
-renderComponent(tripControlsMain, tripRoute(), 'afterbegin');
+renderComponent(tripControlsMain, tripRoute(tripPoints), 'afterbegin');
 
 const tripControlsInfo = bodyElement.querySelector('.trip-info');
 const tripControlsEvents = bodyElement.querySelector('.trip-events');
@@ -40,7 +39,7 @@ renderComponent(tripControlsEvents, tripPointsContainer());
 
 const tripControlsEventsContainer = bodyElement.querySelector('.trip-events__list');
 
-renderComponent(tripControlsEventsContainer, tripPointEdit(tripPointsSort[0]));
+renderComponent(tripControlsEventsContainer, tripPointAddEdit(tripPointsSort[0]));
 
 const renderTripPoints = () => {
   for (let i = 0; i < TRIP_POINTS_COUNT; i++) {

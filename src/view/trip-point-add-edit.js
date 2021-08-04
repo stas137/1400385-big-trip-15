@@ -30,7 +30,7 @@ const getPhotos = (photosSet) => {
 </div>`;
 };
 
-const tripPointEdit = (point = {}) => {
+const tripPointAddEdit = (point = {}) => {
   const {
     typePoint = 'Taxi',
     cityPoint = 'Amsterdam',
@@ -162,4 +162,4 @@ const tripPointEdit = (point = {}) => {
 </li>`;
 };
 
-export {tripPointEdit};
+export {tripPointAddEdit};
