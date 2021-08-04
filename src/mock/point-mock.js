@@ -28,15 +28,15 @@ const generatePointType = () => {
 
 const generateDate = () => {
 
-  const maxDateGap = 0;
-  let firstDate = getRandomInteger(-maxDateGap, maxDateGap);
-  let secondDate = getRandomInteger(-maxDateGap, maxDateGap);
+  const maxMinuteGap = 55;
+  let firstDate = getRandomInteger(-maxMinuteGap, maxMinuteGap);
+  let secondDate = getRandomInteger(-maxMinuteGap, maxMinuteGap);
 
   if (firstDate > secondDate) {
     [firstDate, secondDate] = [secondDate, firstDate];
   }
 
-  return [dayjs().add(firstDate, 'day').toDate(), dayjs().add(secondDate, 'day').toDate()];
+  return [dayjs().add(firstDate, 'minute').toDate(), dayjs().add(secondDate, 'minute').toDate()];
 };
 
 const generateCityPoint = () => {
@@ -108,7 +108,7 @@ const generateOffers = (typePoint) => {
 };
 
 const generateDescription = () => {
-  const text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.';
+  const text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus';
   const sentences = text.split('. ');
 
   const randomCount = getRandomInteger(1, 5);
@@ -147,27 +147,29 @@ const getDurationTripPoint = (durationDays, durationHours, durationMinutes) => {
     return `${durationDays}D ${durationHours}H ${durationMinutes}M`;
   } else if (durationHours > 0) {
     return `${durationHours}H ${durationMinutes}M`;
+  } else if (durationMinutes > 0) {
+    return `${durationMinutes}M`;
   }
-  return `${durationMinutes}M`;
+  return '00M';
 };
 
 export const generatePoint = () => {
 
   const typePoint = generatePointType();
-  const date = generateDate();
-  const [startDateTime, endDateTime] = date;
-  const duration = endDateTime - startDateTime;
-  
-  const durationDays = dayjs(duration).format('DD');
-  const durationHours = dayjs(duration).format('HH');
-  const durationMinutes = dayjs(duration).format('MM');
+  const [startDateTime, endDateTime] = generateDate();
+
+  const timestamp = new Date(0);
+  const duration = new Date(endDateTime - startDateTime);
+  const durationDays = duration.getDate() - timestamp.getDate();
+  const durationHours = duration.getHours() - timestamp.getHours();
+  const durationMinutes = duration.getMinutes();
 
   return {
     typePoint,
     cityPoint: generateCityPoint(),
     startDateTime,
     endDateTime,
-    duration: (duration) ? getDurationTripPoint(durationDays, durationHours, durationMinutes) : '00M',
+    duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
     price: generatePrice(),
     offers: generateOffers(typePoint),
     description: generateDescription(),

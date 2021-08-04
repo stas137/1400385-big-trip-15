@@ -40,7 +40,7 @@ renderComponent(tripControlsEvents, tripPointsContainer());
 
 const tripControlsEventsContainer = bodyElement.querySelector('.trip-events__list');
 
-renderComponent(tripControlsEventsContainer, tripPointEdit());
+renderComponent(tripControlsEventsContainer, tripPointEdit(tripPointsSort[0]));
 
 const renderTripPoints = () => {
   for (let i = 0; i < TRIP_POINTS_COUNT; i++) {
