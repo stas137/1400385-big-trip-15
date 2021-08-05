@@ -15,9 +15,9 @@ const tripRoute = (points = {}) => {
 
   const route = {
     cityStart: points[0].cityPoint,
-    cityFinish: points[length - 1].cityPoint,
+    cityFinish: length ? points[length - 1].cityPoint : points[0].cityPoint,
     dateStart: points[0].startDateTime,
-    dateFinish: points[length - 1].endDateTime,
+    dateFinish:  length ? points[length - 1].endDateTime : points[0].endDateTime,
   };
 
   return `<section class="trip-main__trip-info trip-info">
