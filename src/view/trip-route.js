@@ -4,14 +4,7 @@ const tripRoute = (points = {}) => {
 
   const {length = 0} = points;
 
-  if (length === 0) {
-    return `<section class="trip-main__trip-info trip-info">
-    <div class="trip-info__main">
-    <h1 class="trip-info__title">&mdash; ... &mdash;</h1>
-    <p class="trip-info__dates">&nbsp;&mdash;&nbsp;</p>
-    </div>
-    </section>`;
-  } else if (length > 3) {
+  if (length > 3) {
     return `<section class="trip-main__trip-info trip-info">
     <div class="trip-info__main">
     <h1 class="trip-info__title">${points[0].cityPoint} &mdash; ... &mdash; ${points[points.length - 1].cityPoint}</h1>
@@ -34,6 +27,12 @@ const tripRoute = (points = {}) => {
     </section>`;
   }
 
+  return `<section class="trip-main__trip-info trip-info">
+  <div class="trip-info__main">
+  <h1 class="trip-info__title">&mdash; ... &mdash;</h1>
+  <p class="trip-info__dates">&nbsp;&mdash;&nbsp;</p>
+  </div>
+  </section>`;
 };
 
 export {tripRoute};

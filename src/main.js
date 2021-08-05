@@ -29,7 +29,7 @@ renderComponent(tripControlsMain, tripRoute(tripPoints), 'afterbegin');
 const tripControlsInfo = bodyElement.querySelector('.trip-info');
 const tripControlsEvents = bodyElement.querySelector('.trip-events');
 
-renderComponent(tripControlsInfo, tripCost());
+renderComponent(tripControlsInfo, tripCost(tripPoints));
 
 renderComponent(tripControlsNavigation, tripMenu());
 renderComponent(tripControlsFilters, tripFilters());
