@@ -31,6 +31,7 @@ const getPhotos = (photosSet) => {
 };
 
 const tripPointAddEdit = (point = {}) => {
+
   const {
     typePoint = 'Taxi',
     cityPoint = 'Amsterdam',
