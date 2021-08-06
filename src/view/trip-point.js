@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 
 const getOffers = (offers) => (offers
   .map((offer) => offer.checked ? `<li class="event__offer">
-    <span class="event__offer-title">${offer.name}</span>
+    <span class="event__offer-title">${offer.title}</span>
     &plus;&euro;&nbsp;
     <span class="event__offer-price">${offer.price}</span>
   </li>` : '')

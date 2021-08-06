@@ -24,7 +24,10 @@ const generateCityPoint = () => {
   return POINT_CITIES[randomIndex];
 };
 
-const generateOffers = (typePoint) => POINT_OFFERS[typePoint];
+const generateOffers = (typePoint) => {
+  const pointOffer = POINT_OFFERS.find((item) => item.type === typePoint);
+  return pointOffer ? pointOffer.offers : '';
+};
 
 const generateDescription = () => {
   const sentences = TEXT_DESCRIPTION.split('. ');
