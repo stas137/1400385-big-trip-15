@@ -4,7 +4,7 @@ const getOffers = (pointOffers) => (pointOffers
   .map((pointOffer) => `<div class="event__offer-selector">
   <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-${pointOffer.type}" ${pointOffer.checked ? 'checked' : ''}>
   <label class="event__offer-label" for="event-offer-${pointOffer.type}">
-    <span class="event__offer-title">${pointOffer.name}</span>
+    <span class="event__offer-title">${pointOffer.title}</span>
     &plus;&euro;&nbsp;
     <span class="event__offer-price">${pointOffer.price}</span>
   </label>
