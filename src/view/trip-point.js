@@ -1,20 +1,12 @@
 import dayjs from 'dayjs';
 
-const getOffers = (offers) => {
-  let listOffers = '';
-
-  for (let i=0; i <= offers.length - 1; i++) {
-    if (offers[i].checked) {
-      listOffers += `<li class="event__offer">
-      <span class="event__offer-title">${offers[i].name}</span>
-      &plus;&euro;&nbsp;
-      <span class="event__offer-price">${offers[i].price}</span>
-    </li>`;
-    }
-  }
-
-  return listOffers;
-};
+const getOffers = (offers) => (offers
+  .map((offer) => offer.checked ? `<li class="event__offer">
+    <span class="event__offer-title">${offer.name}</span>
+    &plus;&euro;&nbsp;
+    <span class="event__offer-price">${offer.price}</span>
+  </li>` : '')
+  .join(''));
 
 const tripPoint = (point = {}) => {
 
@@ -29,11 +21,7 @@ const tripPoint = (point = {}) => {
     favorite = '',
   } = point;
 
-  if (typePoint === '') {
-    return '';
-  }
-
-  return `<li class="trip-events__item">
+  return (typePoint === '') ? '' : `<li class="trip-events__item">
   <div class="event">
     <time class="event__date" datetime="${dayjs(startDateTime).format('YYYY-MM-DD')}">${dayjs(startDateTime).format('MMM DD')}</time>
     <div class="event__type">
