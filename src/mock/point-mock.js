@@ -1,10 +1,10 @@
 import dayjs from 'dayjs';
 import {getRandomInteger} from '../utils.js';
-import {POINT_TYPE, MAX_MINUTES_GAP, CITY_POINT, OFFERS_POINT, PRICE_POINT, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS} from '../const.js';
+import {POINT_TYPES, MAX_MINUTES_GAP, POINT_CITIES, POINT_OFFERS, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS} from '../const.js';
 
 const generatePointType = () => {
-  const randomIndex = getRandomInteger(0, POINT_TYPE.length - 1);
-  return POINT_TYPE[randomIndex];
+  const randomIndex = getRandomInteger(0, POINT_TYPES.length - 1);
+  return POINT_TYPES[randomIndex];
 };
 
 const generateDate = () => {
@@ -20,16 +20,11 @@ const generateDate = () => {
 };
 
 const generateCityPoint = () => {
-  const randomIndex = getRandomInteger(0, CITY_POINT.length - 1);
-  return CITY_POINT[randomIndex];
+  const randomIndex = getRandomInteger(0, POINT_CITIES.length - 1);
+  return POINT_CITIES[randomIndex];
 };
 
-const generatePrice = () => {
-  const randomIndex = getRandomInteger(0, PRICE_POINT.length - 1);
-  return PRICE_POINT[randomIndex];
-};
-
-const generateOffers = (typePoint) => OFFERS_POINT[typePoint];
+const generateOffers = (typePoint) => POINT_OFFERS[typePoint];
 
 const generateDescription = () => {
   const sentences = TEXT_DESCRIPTION.split('. ');
@@ -95,7 +90,7 @@ export const generatePoint = () => {
     startDateTime,
     endDateTime,
     duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
-    price: generatePrice(),
+    price: getRandomInteger(0, 250),
     offers: generateOffers(typePoint),
     description: generateDescription(),
     photos: generatePhoto(),

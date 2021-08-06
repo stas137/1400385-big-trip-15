@@ -5,4 +5,6 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-export {getRandomInteger};
+const compareDate = (a, b) => (a.startDateTime > b.startDateTime) ? 1 : -1;
+
+export {getRandomInteger, compareDate};

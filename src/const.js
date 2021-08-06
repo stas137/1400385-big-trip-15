@@ -5,7 +5,7 @@ const URL_PHOTO = 'http://picsum.photos/248/152?r=';
 const MAX_COUNT_SENTENCES = 5;
 const MAX_COUNT_PHOTOS = 7;
 
-const POINT_TYPE = [
+const POINT_TYPES = [
   'Taxi',
   'Bus',
   'Train',
@@ -18,56 +18,48 @@ const POINT_TYPE = [
   'Restaurant',
 ];
 
-const CITY_POINT = [
+const POINT_CITIES = [
   'Amsterdam',
   'Chamonix',
   'Geneva',
 ];
 
-const OFFERS_POINT = {
-  'Flight': [
-    {name: 'Add luggage', 'name-input': 'luggage', price: '50', checked: true},
-    {name: 'Switch to comfort', 'name-input': 'comfort',price: '80', checked: true},
-    {name: 'Add meal', 'name-input': 'meal', price: '15', checked: false},
-    {name: 'Choose seats', 'name-input': 'seats', price: '5', checked: false},
-    {name: 'Travel by train', 'name-input': 'train', price: '40', checked: true},
+const POINT_OFFERS = {
+  'flight': [
+    {name: 'Add luggage', type: 'luggage', price: '50', checked: true},
+    {name: 'Switch to comfort', type: 'comfort', price: '80', checked: true},
+    {name: 'Add meal', type: 'meal', price: '15', checked: false},
+    {name: 'Choose seats', type: 'seats', price: '5', checked: false},
+    {name: 'Travel by train', type: 'train', price: '40', checked: true},
   ],
-  'Taxi': [
+  'taxi': [
     {name: 'Order Uber', price: '20', checked: true},
   ],
-  'Drive': [
+  'drive': [
     {name: 'Rent a car', price: '200', checked: true},
   ],
-  'Sightseeing': [
+  'sightseeing': [
     {name: 'Book tickets', price: '40', checked: true},
     {name: 'Lunch in city', price: '30', checked: false},
   ],
-  'Check-in': [
+  'check-in': [
     {name: 'Add breakfast', price: '50', checked: true},
   ],
-  'Restaurant': [
+  'restaurant': [
     {name: 'Add breakfast', price: '50', checked: true},
   ],
-  'Bus': [
+  'bus': [
     {name: 'Add breakfast', price: '50', checked: true},
   ],
-  'Train': [
+  'train': [
     {name: 'Add breakfast', price: '50', checked: true},
   ],
-  'Ship': [
+  'ship': [
     {name: 'Add breakfast', price: '50', checked: true},
   ],
-  'Transport': [
+  'transport': [
     {name: 'Add breakfast', price: '50', checked: true},
   ],
 };
 
-const PRICE_POINT = [
-  '200',
-  '100',
-  '50',
-  '15',
-  '5',
-];
-
-export {TRIP_POINTS_COUNT, POINT_TYPE, MAX_MINUTES_GAP, CITY_POINT, OFFERS_POINT, PRICE_POINT, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS};
+export {TRIP_POINTS_COUNT, POINT_TYPES, MAX_MINUTES_GAP, POINT_CITIES, POINT_OFFERS, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS};

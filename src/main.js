@@ -1,4 +1,5 @@
 import {TRIP_POINTS_COUNT} from './const.js';
+import {compareDate} from './utils.js';
 import {tripMenu} from './view/trip-menu.js';
 import {tripFilters} from './view/trip-filters.js';
 import {tripRoute} from './view/trip-route.js';
@@ -10,9 +11,6 @@ import {tripPointAddEdit} from './view/trip-point-add-edit.js';
 import {generatePoint} from './mock/point-mock.js';
 
 const tripPoints = new Array(TRIP_POINTS_COUNT).fill().map(generatePoint);
-
-const compareDate = (a, b) => (a.startDateTime > b.startDateTime) ? 1 : -1;
-
 const tripPointsSort = tripPoints.sort(compareDate);
 
 const bodyElement = document.querySelector('body');
@@ -43,7 +41,7 @@ renderComponent(tripControlsEventsContainer, tripPointAddEdit(tripPointsSort[0])
 
 const renderTripPoints = () => {
   for (let i = 0; i < TRIP_POINTS_COUNT; i++) {
-    renderComponent(tripControlsEventsContainer, tripPoint(tripPointsSort[i]), 'beforeend');
+    renderComponent(tripControlsEventsContainer, tripPoint(tripPointsSort[i]));
   }
 };
 
