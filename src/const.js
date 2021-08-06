@@ -1,3 +1,5 @@
+import {getRandomInteger} from './utils.js';
+
 const TRIP_POINTS_COUNT = 15;
 const MAX_MINUTES_GAP = 55;
 const TEXT_DESCRIPTION = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus';
@@ -26,39 +28,39 @@ const POINT_CITIES = [
 
 const POINT_OFFERS = {
   'flight': [
-    {name: 'Add luggage', type: 'luggage', price: '50', checked: true},
-    {name: 'Switch to comfort', type: 'comfort', price: '80', checked: true},
-    {name: 'Add meal', type: 'meal', price: '15', checked: false},
-    {name: 'Choose seats', type: 'seats', price: '5', checked: false},
-    {name: 'Travel by train', type: 'train', price: '40', checked: true},
+    {name: 'Add luggage', type: 'luggage', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
+    {name: 'Switch to comfort', type: 'comfort', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
+    {name: 'Add meal', type: 'meal', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
+    {name: 'Choose seats', type: 'seats', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
+    {name: 'Travel by train', type: 'train', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
   ],
   'taxi': [
-    {name: 'Order Uber', price: '20', checked: true},
+    {name: 'Order Uber', type: 'uber', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
   ],
   'drive': [
-    {name: 'Rent a car', price: '200', checked: true},
+    {name: 'Rent a car', type: 'car', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
   ],
   'sightseeing': [
-    {name: 'Book tickets', price: '40', checked: true},
-    {name: 'Lunch in city', price: '30', checked: false},
+    {name: 'Book tickets', type: 'tickets', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
+    {name: 'Lunch in city', type: 'lunch', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
   ],
   'check-in': [
-    {name: 'Add breakfast', price: '50', checked: true},
+    {name: 'Add breakfast', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
   ],
   'restaurant': [
-    {name: 'Add breakfast', price: '50', checked: true},
+    {name: 'Add breakfast', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
   ],
   'bus': [
-    {name: 'Add breakfast', price: '50', checked: true},
+    {name: 'Add breakfast', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
   ],
   'train': [
-    {name: 'Add breakfast', price: '50', checked: true},
+    {name: 'Add breakfast', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
   ],
   'ship': [
-    {name: 'Add breakfast', price: '50', checked: true},
+    {name: 'Add breakfast', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
   ],
   'transport': [
-    {name: 'Add breakfast', price: '50', checked: true},
+    {name: 'Add breakfast', price: String(getRandomInteger(1, 50)), checked: Boolean(getRandomInteger(0, 1))},
   ],
 };
 

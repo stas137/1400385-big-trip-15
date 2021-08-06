@@ -1,21 +1,15 @@
 import dayjs from 'dayjs';
 
-const getOffers = (pointOffers) => {
-  let offers = '';
-
-  for (let i = 0; i <= pointOffers.length - 1; i++) {
-    offers += `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-" ${pointOffers[i].checked ? 'checked' : ''}>
-    <label class="event__offer-label" for="event-offer-luggage-1">
-      <span class="event__offer-title">${pointOffers[i].name}</span>
-      &plus;&euro;&nbsp;
-      <span class="event__offer-price">${pointOffers[i].price}</span>
-    </label>
-  </div>`;
-  }
-
-  return offers;
-};
+const getOffers = (pointOffers) => (pointOffers
+  .map((pointOffer) => `<div class="event__offer-selector">
+  <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-${pointOffer.type}" ${pointOffer.checked ? 'checked' : ''}>
+  <label class="event__offer-label" for="event-offer-${pointOffer.type}">
+    <span class="event__offer-title">${pointOffer.name}</span>
+    &plus;&euro;&nbsp;
+    <span class="event__offer-price">${pointOffer.price}</span>
+  </label>
+</div>`)
+  .join(''));
 
 const getPhotos = (photosSet) => {
   let photos = '';
@@ -33,11 +27,11 @@ const getPhotos = (photosSet) => {
 const tripPointAddEdit = (point = {}) => {
 
   const {
-    typePoint = 'Taxi',
-    cityPoint = 'Amsterdam',
+    typePoint = '',
+    cityPoint = '',
     startDateTime = new Date(),
     endDateTime = new Date(),
-    price = '100',
+    price = '',
     offers = '',
     description = '',
     photos = '',
