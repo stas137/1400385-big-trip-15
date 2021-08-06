@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import {getRandomInteger} from '../utils.js';
 import {POINT_TYPES, MAX_MINUTES_GAP, POINT_CITIES, POINT_OFFERS, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS} from '../const.js';
 
-const generatePointType = () => {
+const generateTypePoint = () => {
   const randomIndex = getRandomInteger(0, POINT_TYPES.length - 1);
   return POINT_TYPES[randomIndex];
 };
@@ -35,7 +35,7 @@ const generateDescription = (countSentences = MAX_COUNT_SENTENCES) => {
   const randomCount = getRandomInteger(1, countSentences);
   const sentencesSet = new Set();
 
-  while (sentencesSet.size <= randomCount){
+  while (sentencesSet.size < randomCount){
     const randomIndex = getRandomInteger(0, sentences.length - 1);
     if (!sentencesSet.has(sentences[randomIndex])) {
       sentencesSet.add(sentences[randomIndex]);
@@ -50,19 +50,28 @@ const generateDescription = (countSentences = MAX_COUNT_SENTENCES) => {
   return description;
 };
 
+const checkPictureInSet = (picture, pictureSet) => {
+  for (const value of pictureSet) {
+    if (value.src === picture.src) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const generatePictures = () => {
 
   const randomCount = getRandomInteger(0, MAX_COUNT_PHOTOS - 1);
   const picturesSet = new Set();
   const pictures = [];
 
-  while (picturesSet.size <= randomCount) {
+  while (picturesSet.size < randomCount) {
     const randomIndex = getRandomInteger(0, MAX_COUNT_PHOTOS - 1);
     const pictureObj = {
       src: `${URL_PHOTO}${randomIndex}`,
       description: generateDescription(1),
     };
-    if (!picturesSet.has(pictureObj)) {
+    if (!checkPictureInSet(pictureObj, picturesSet)) {
       picturesSet.add(pictureObj);
     }
   }
@@ -74,13 +83,12 @@ const generatePictures = () => {
   return pictures;
 };
 
-const generateDestination = (name) => {
+const generateDestination = (city) => {
   const description = generateDescription();
   const pictures = generatePictures();
-  
   return {
     description,
-    name,
+    city,
     pictures,
   };
 };
@@ -98,7 +106,8 @@ const getDurationTripPoint = (durationDays, durationHours, durationMinutes) => {
 
 export const generatePoint = () => {
 
-  const typePoint = generatePointType();
+  const typePoint = generateTypePoint();
+  const cityPoint = generateCityPoint();
   const [startDateTime, endDateTime] = generateDate();
 
   const timestamp = new Date(0);
@@ -109,13 +118,13 @@ export const generatePoint = () => {
 
   return {
     typePoint,
-    cityPoint: generateCityPoint(),
+    cityPoint,
     startDateTime,
     endDateTime,
     duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
     price: String(getRandomInteger(1, 250)),
     offers: generateOffers(typePoint.toLowerCase()),
     destination: generateDestination(cityPoint),
-    favorite: Boolean(getRandomInteger(0, 1)),
+    isFavorite: Boolean(getRandomInteger(0, 1)),
   };
 };
