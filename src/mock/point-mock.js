@@ -29,10 +29,10 @@ const generateOffers = (typePoint) => {
   return pointOffer ? pointOffer.offers : '';
 };
 
-const generateDescription = () => {
+const generateDescription = (countSentences = MAX_COUNT_SENTENCES) => {
   const sentences = TEXT_DESCRIPTION.split('. ');
 
-  const randomCount = getRandomInteger(1, MAX_COUNT_SENTENCES);
+  const randomCount = getRandomInteger(1, countSentences);
   const sentencesSet = new Set();
 
   while (sentencesSet.size <= randomCount){
@@ -50,19 +50,39 @@ const generateDescription = () => {
   return description;
 };
 
-const generatePhoto = () => {
+const generatePictures = () => {
 
   const randomCount = getRandomInteger(0, MAX_COUNT_PHOTOS - 1);
-  const photosSet = new Set();
+  const picturesSet = new Set();
+  const pictures = [];
 
-  while (photosSet.size <= randomCount) {
+  while (picturesSet.size <= randomCount) {
     const randomIndex = getRandomInteger(0, MAX_COUNT_PHOTOS - 1);
-    if (!photosSet.has(`${URL_PHOTO}${randomIndex}`)) {
-      photosSet.add(`${URL_PHOTO}${randomIndex}`);
+    const pictureObj = {
+      src: `${URL_PHOTO}${randomIndex}`,
+      description: generateDescription(1),
+    };
+    if (!picturesSet.has(pictureObj)) {
+      picturesSet.add(pictureObj);
     }
   }
 
-  return photosSet;
+  for (const value of picturesSet) {
+    pictures.push(value);
+  }
+
+  return pictures;
+};
+
+const generateDestination = (name) => {
+  const description = generateDescription();
+  const pictures = generatePictures();
+  
+  return {
+    description,
+    name,
+    pictures,
+  };
 };
 
 const getDurationTripPoint = (durationDays, durationHours, durationMinutes) => {
@@ -95,8 +115,7 @@ export const generatePoint = () => {
     duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
     price: String(getRandomInteger(1, 250)),
     offers: generateOffers(typePoint.toLowerCase()),
-    description: generateDescription(),
-    photos: generatePhoto(),
+    destination: generateDestination(cityPoint),
     favorite: Boolean(getRandomInteger(0, 1)),
   };
 };
