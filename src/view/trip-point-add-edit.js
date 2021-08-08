@@ -11,15 +11,11 @@ const getOffers = (pointOffers) => (pointOffers
 </div>`)
   .join(''));
 
-const getPhotos = (photosSet) => {
-  let photos = '';
-  for (const value of photosSet) {
-    photos += `<img class="event__photo" src="${value}" alt="Event photo"></img>`;
-  }
-
+const getPictures = (pictures) => {
+  const pointPictures = pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}"></img>`).join('');
   return `<div class="event__photos-container">
   <div class="event__photos-tape">
-    ${photos}
+    ${pointPictures}
   </div>
 </div>`;
 };
@@ -33,8 +29,7 @@ const tripPointAddEdit = (point = {}) => {
     endDateTime = new Date(),
     price = '',
     offers = '',
-    description = '',
-    photos = '',
+    destination = '',
   } = point;
 
   return `<li class="trip-events__item">
@@ -149,8 +144,8 @@ const tripPointAddEdit = (point = {}) => {
 
     <section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${description}</p>
-      ${getPhotos(photos)}
+      <p class="event__destination-description">${destination.description}</p>
+      ${getPictures(destination.pictures)}
     </section>
   </section>
 </form>

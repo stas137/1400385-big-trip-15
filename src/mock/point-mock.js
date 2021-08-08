@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import {getRandomInteger} from '../utils.js';
 import {POINT_TYPES, MAX_MINUTES_GAP, POINT_CITIES, POINT_OFFERS, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS} from '../const.js';
 
-const generatePointType = () => {
+const generateTypePoint = () => {
   const randomIndex = getRandomInteger(0, POINT_TYPES.length - 1);
   return POINT_TYPES[randomIndex];
 };
@@ -29,13 +29,13 @@ const generateOffers = (typePoint) => {
   return pointOffer ? pointOffer.offers : '';
 };
 
-const generateDescription = () => {
+const generateDescription = (countSentences = MAX_COUNT_SENTENCES) => {
   const sentences = TEXT_DESCRIPTION.split('. ');
 
-  const randomCount = getRandomInteger(1, MAX_COUNT_SENTENCES);
+  const randomCount = getRandomInteger(1, countSentences);
   const sentencesSet = new Set();
 
-  while (sentencesSet.size <= randomCount){
+  while (sentencesSet.size < randomCount){
     const randomIndex = getRandomInteger(0, sentences.length - 1);
     if (!sentencesSet.has(sentences[randomIndex])) {
       sentencesSet.add(sentences[randomIndex]);
@@ -50,19 +50,47 @@ const generateDescription = () => {
   return description;
 };
 
-const generatePhoto = () => {
+const checkPictureInSet = (picture, pictureSet) => {
+  for (const value of pictureSet) {
+    if (value.src === picture.src) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const generatePictures = () => {
 
   const randomCount = getRandomInteger(0, MAX_COUNT_PHOTOS - 1);
-  const photosSet = new Set();
+  const picturesSet = new Set();
+  const pictures = [];
 
-  while (photosSet.size <= randomCount) {
+  while (picturesSet.size < randomCount) {
     const randomIndex = getRandomInteger(0, MAX_COUNT_PHOTOS - 1);
-    if (!photosSet.has(`${URL_PHOTO}${randomIndex}`)) {
-      photosSet.add(`${URL_PHOTO}${randomIndex}`);
+    const pictureObj = {
+      src: `${URL_PHOTO}${randomIndex}`,
+      description: generateDescription(1),
+    };
+    if (!checkPictureInSet(pictureObj, picturesSet)) {
+      picturesSet.add(pictureObj);
     }
   }
 
-  return photosSet;
+  for (const value of picturesSet) {
+    pictures.push(value);
+  }
+
+  return pictures;
+};
+
+const generateDestination = (city) => {
+  const description = generateDescription();
+  const pictures = generatePictures();
+  return {
+    description,
+    city,
+    pictures,
+  };
 };
 
 const getDurationTripPoint = (durationDays, durationHours, durationMinutes) => {
@@ -78,7 +106,8 @@ const getDurationTripPoint = (durationDays, durationHours, durationMinutes) => {
 
 export const generatePoint = () => {
 
-  const typePoint = generatePointType();
+  const typePoint = generateTypePoint();
+  const cityPoint = generateCityPoint();
   const [startDateTime, endDateTime] = generateDate();
 
   const timestamp = new Date(0);
@@ -89,14 +118,13 @@ export const generatePoint = () => {
 
   return {
     typePoint,
-    cityPoint: generateCityPoint(),
+    cityPoint,
     startDateTime,
     endDateTime,
     duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
     price: String(getRandomInteger(1, 250)),
     offers: generateOffers(typePoint.toLowerCase()),
-    description: generateDescription(),
-    photos: generatePhoto(),
-    favorite: Boolean(getRandomInteger(0, 1)),
+    destination: generateDestination(cityPoint),
+    isFavorite: Boolean(getRandomInteger(0, 1)),
   };
 };
