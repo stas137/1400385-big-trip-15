@@ -3,7 +3,7 @@ import {compareDate} from './utils.js';
 import {tripMenu} from './view/trip-menu.js';
 import {tripFilters} from './view/trip-filters.js';
 import {tripRoute} from './view/trip-route.js';
-import {tripCost} from './view/trip-cost.js';
+import TripCost from './view/trip-cost.js';
 import {tripSort} from './view/trip-sort.js';
 import {tripPointsContainer} from './view/trip-points-container.js';
 import {tripPoint} from './view/trip-point.js';
@@ -27,7 +27,8 @@ renderComponent(tripControlsMain, tripRoute(tripPoints), RENDER_POSITION.afterbe
 const tripControlsInfo = bodyElement.querySelector('.trip-info');
 const tripControlsEvents = bodyElement.querySelector('.trip-events');
 
-renderComponent(tripControlsInfo, tripCost(tripPoints));
+const tripCost = new TripCost(tripPoints);
+renderComponent(tripControlsInfo, tripCost.getElement());
 
 renderComponent(tripControlsNavigation, tripMenu());
 renderComponent(tripControlsFilters, tripFilters());

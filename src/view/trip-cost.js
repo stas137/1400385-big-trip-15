@@ -1,4 +1,6 @@
-const tripCost = (points = {}) => {
+import {createElement} from '../utils.js';
+
+const createTripCostTemplate = (points = {}) => {
   const {length = 0} = points;
 
   if (!length) {
@@ -14,4 +16,25 @@ const tripCost = (points = {}) => {
     </p>`;
 };
 
-export {tripCost};
+export default class TripCost {
+  constructor(points) {
+    this._element = null;
+    this._points = points;
+  }
+
+  getTemplate() {
+    return createTripCostTemplate(this._points);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element =  this.getTemplate();
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
