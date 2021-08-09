@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {createElement} from '../utils.js';
 
 const createTripRouteTemplate = (points = {}) => {
 
@@ -40,7 +41,7 @@ export default class TripRoute {
 
   getElement() {
     if (!this._element) {
-      this._element = this.getTemplate();
+      this._element = createElement(this.getTemplate());
     }
 
     return this._element;

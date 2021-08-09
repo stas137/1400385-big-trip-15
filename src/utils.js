@@ -9,7 +9,7 @@ const getRandomInteger = (a = 0, b = 1) => {
 
 const compareDate = (a, b) => (a.startDateTime > b.startDateTime) ? 1 : -1;
 
-const render = (container, element, place) => {
+const render = (container, element, place = RENDER_POSITION.beforeend) => {
   switch (place) {
     case RENDER_POSITION.afterbegin:
       container.prepend(element);

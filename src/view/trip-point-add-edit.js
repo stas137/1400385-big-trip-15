@@ -1,4 +1,6 @@
 import dayjs from 'dayjs';
+import {POINT_BLANK} from '../const';
+import {createElement} from '../utils.js';
 
 const getOffers = (pointOffers) => (pointOffers
   .map((pointOffer) => `<div class="event__offer-selector">
@@ -20,25 +22,13 @@ const getPictures = (pictures) => {
 </div>`;
 };
 
-const tripPointAddEdit = (point = {}) => {
-
-  const {
-    typePoint = '',
-    cityPoint = '',
-    startDateTime = new Date(),
-    endDateTime = new Date(),
-    price = '',
-    offers = '',
-    destination = '',
-  } = point;
-
-  return `<li class="trip-events__item">
+const createTripPointAddEditTemplate = (point) => (`<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
   <header class="event__header">
     <div class="event__type-wrapper">
       <label class="event__type  event__type-btn" for="event-type-toggle-1">
         <span class="visually-hidden">Choose event type</span>
-        <img class="event__type-icon" width="17" height="17" src="img/icons/${typePoint.toLowerCase()}.png" alt="Event type icon">
+        <img class="event__type-icon" width="17" height="17" src="img/icons/${point.typePoint.toLowerCase()}.png" alt="Event type icon">
       </label>
       <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -101,9 +91,9 @@ const tripPointAddEdit = (point = {}) => {
 
     <div class="event__field-group  event__field-group--destination">
       <label class="event__label  event__type-output" for="event-destination-1">
-        ${typePoint}
+        ${point.typePoint}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${cityPoint}" list="destination-list-1">
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.cityPoint}" list="destination-list-1">
       <datalist id="destination-list-1">
         <option value="Amsterdam"></option>
         <option value="Geneva"></option>
@@ -113,10 +103,10 @@ const tripPointAddEdit = (point = {}) => {
 
     <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden" for="event-start-time-1">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(startDateTime).format('DD[/]MM[/]DD HH[:]MM')}">
+      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(point.startDateTime).format('DD[/]MM[/]YYYY HH[:]mm')}">
       &mdash;
       <label class="visually-hidden" for="event-end-time-1">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(endDateTime).format('DD[/]MM[/]DD HH[:]MM')}">
+      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(point.picturesendDateTime).format('DD[/]MM[/]YYYY HH[:]mm')}">
     </div>
 
     <div class="event__field-group  event__field-group--price">
@@ -124,7 +114,7 @@ const tripPointAddEdit = (point = {}) => {
         <span class="visually-hidden">Price</span>
         &euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.price}">
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -138,18 +128,38 @@ const tripPointAddEdit = (point = {}) => {
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
       <div class="event__available-offers">
-        ${getOffers(offers)}
+        ${getOffers(point.offers)}
       </div>
     </section>
 
     <section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${destination.description}</p>
-      ${getPictures(destination.pictures)}
+      <p class="event__destination-description">${point.destination.description}</p>
+      ${getPictures(point.destination.pictures)}
     </section>
   </section>
 </form>
-</li>`;
-};
+</li>`);
 
-export {tripPointAddEdit};
+export default class TripPointAddEdit {
+  constructor(point = POINT_BLANK) {
+    this._element = null;
+    this._point = point;
+  }
+
+  getTemplate() {
+    return createTripPointAddEditTemplate(this._point);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

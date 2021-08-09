@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
-import {POINT_BLANK} from '../utils.js';
+import {createElement} from '../utils.js';
+import {POINT_BLANK} from '../const.js';
 
 const getOffers = (offers) => (offers
   .map((offer) => offer.checked ? `<li class="event__offer">
@@ -56,7 +57,7 @@ export default class TripPoint {
 
   getElement() {
     if (!this._element) {
-      this._element = this.getTemplate();
+      this._element = createElement(this.getTemplate());
     }
 
     return this._element;

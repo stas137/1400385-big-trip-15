@@ -28,7 +28,7 @@ export default class TripCost {
 
   getElement() {
     if (!this._element) {
-      this._element =  this.getTemplate();
+      this._element =  createElement(this.getTemplate());
     }
 
     return this._element;

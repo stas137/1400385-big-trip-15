@@ -20,6 +20,7 @@ const POINT_BLANK = {
   duration: '',
   price: '',
   offers: '',
+  destination: '',
   isFavorite: '',
 };
 

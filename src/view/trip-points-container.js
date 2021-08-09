@@ -1,3 +1,5 @@
+import {createElement} from '../utils.js';
+
 const createTripPointsContainerTemplate = () => '<ul class="trip-events__list"></ul>';
 
 export default class TripPointsContainer {
@@ -11,7 +13,7 @@ export default class TripPointsContainer {
 
   getElement() {
     if (!this._element) {
-      this._element = this.getTemplate();
+      this._element = createElement(this.getTemplate());
     }
 
     return this._element;
