@@ -40,7 +40,7 @@ const renderTripPoints = () => {
     const formPointAddEdit = tripPointAddEditView.getElement().querySelector('form');
     const rollupButtonForm = formPointAddEdit.querySelector('.event__rollup-btn');
 
-    rollupButtonPoint.addEventListener('click', (evt) => {
+    rollupButtonPoint.addEventListener('click', () => {
       const formHide = (evt) => {
         evt.preventDefault();
         formPointAddEdit.removeEventListener('submit', formHide);
