@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-const tripRoute = (points = {}) => {
+const createTripRouteTemplate = (points = {}) => {
 
   const {length = 0} = points;
 
@@ -28,4 +28,25 @@ const tripRoute = (points = {}) => {
   </section>`;
 };
 
-export {tripRoute};
+export default class TripRoute {
+  constructor(points = {}) {
+    this._element = null;
+    this._points = points;
+  }
+
+  getTemplate() {
+    return createTripRouteTemplate(this._points);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = this.getTemplate();
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
