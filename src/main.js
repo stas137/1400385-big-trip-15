@@ -1,4 +1,4 @@
-import {TRIP_POINTS_COUNT, RENDER_POSITION} from './const.js';
+import {TRIP_POINTS_COUNT, RenderPosition} from './const.js';
 import {compareDate} from './utils.js';
 import {tripMenu} from './view/trip-menu.js';
 import {tripFilters} from './view/trip-filters.js';
@@ -18,11 +18,11 @@ const tripControlsNavigation = bodyElement.querySelector('.trip-controls__naviga
 const tripControlsFilters = bodyElement.querySelector('.trip-controls__filters');
 const tripControlsMain = bodyElement.querySelector('.trip-main');
 
-const renderComponent = (container, component, place = RENDER_POSITION.beforeend) => {
+const renderComponent = (container, component, place = RenderPosition.BEFOREEND) => {
   container.insertAdjacentHTML(place, component);
 };
 
-renderComponent(tripControlsMain, tripRoute(tripPoints), RENDER_POSITION.afterbegin);
+renderComponent(tripControlsMain, tripRoute(tripPoints), RenderPosition.AFTERBEGIN);
 
 const tripControlsInfo = bodyElement.querySelector('.trip-info');
 const tripControlsEvents = bodyElement.querySelector('.trip-events');
