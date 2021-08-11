@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import {getRandomInteger} from '../utils.js';
-import {POINT_TYPES, MAX_MINUTES_GAP, POINT_CITIES, POINT_OFFERS, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS} from '../const.js';
+import {getRandomInteger, generateId} from '../utils.js';
+import {POINT_TYPES, MAX_DAYS_GAP, MAX_MINUTES_GAP, POINT_CITIES, OFFER_TITLES_TYPES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS, MAX_PRICE_OFFER} from '../const.js';
 
 const generateTypePoint = () => {
   const randomIndex = getRandomInteger(0, POINT_TYPES.length - 1);
@@ -9,14 +9,20 @@ const generateTypePoint = () => {
 
 const generateDate = () => {
 
-  let firstDate = getRandomInteger(-MAX_MINUTES_GAP, MAX_MINUTES_GAP);
-  let secondDate = getRandomInteger(-MAX_MINUTES_GAP, MAX_MINUTES_GAP);
+  let firstDateDay = getRandomInteger(-MAX_DAYS_GAP, MAX_DAYS_GAP);
+  let secondDateDay = getRandomInteger(-MAX_DAYS_GAP, MAX_DAYS_GAP);
 
-  if (firstDate > secondDate) {
-    [firstDate, secondDate] = [secondDate, firstDate];
+  const firstDateMinute = getRandomInteger(-MAX_MINUTES_GAP, MAX_MINUTES_GAP);
+  const secondDateMinute = getRandomInteger(-MAX_MINUTES_GAP, MAX_MINUTES_GAP);
+
+  if (firstDateDay > secondDateDay) {
+    [firstDateDay, secondDateDay] = [secondDateDay, firstDateDay];
   }
 
-  return [dayjs().add(firstDate, 'minute').toDate(), dayjs().add(secondDate, 'minute').toDate()];
+  return {
+    startDateTime: dayjs().add(firstDateDay, 'day').add(firstDateMinute, 'minute').toDate(),
+    endDateTime: dayjs().add(secondDateDay, 'day').add(secondDateMinute, 'minute').toDate(),
+  };
 };
 
 const generateCityPoint = () => {
@@ -24,10 +30,23 @@ const generateCityPoint = () => {
   return POINT_CITIES[randomIndex];
 };
 
-const generateOffers = (typePoint) => {
-  const pointOffer = POINT_OFFERS.find((item) => item.type === typePoint);
-  return pointOffer ? pointOffer.offers : '';
+const generateTypePointOffers = (typePoint) => {
+  const offersTitlesTypes = OFFER_TITLES_TYPES.filter((item) => item.point === typePoint);
+  const offers = offersTitlesTypes.map((item) => ({
+    title: item.title,
+    type: item.type,
+    price: String(getRandomInteger(1, MAX_PRICE_OFFER)),
+    checked: Boolean(getRandomInteger(0, 1)),
+  }));
+
+
+  return offers;
 };
+
+const generateOffers = (typePoint) => ({
+  type: typePoint,
+  offers: generateTypePointOffers(typePoint),
+});
 
 const generateDescription = (countSentences = MAX_COUNT_SENTENCES) => {
   const sentences = TEXT_DESCRIPTION.split('. ');
@@ -50,34 +69,22 @@ const generateDescription = (countSentences = MAX_COUNT_SENTENCES) => {
   return description;
 };
 
-const checkPictureInSet = (picture, pictureSet) => {
-  for (const value of pictureSet) {
-    if (value.src === picture.src) {
-      return true;
-    }
-  }
-  return false;
-};
+const checkPicture = (picture, pictures) => pictures.find((item) => item.src === picture.src);
 
 const generatePictures = () => {
 
   const randomCount = getRandomInteger(0, MAX_COUNT_PHOTOS - 1);
-  const picturesSet = new Set();
   const pictures = [];
 
-  while (picturesSet.size < randomCount) {
+  while (pictures.length < randomCount) {
     const randomIndex = getRandomInteger(0, MAX_COUNT_PHOTOS - 1);
-    const pictureObj = {
+    const picture = {
       src: `${URL_PHOTO}${randomIndex}`,
       description: generateDescription(1),
     };
-    if (!checkPictureInSet(pictureObj, picturesSet)) {
-      picturesSet.add(pictureObj);
+    if (!checkPicture(picture, pictures)) {
+      pictures.push(picture);
     }
-  }
-
-  for (const value of picturesSet) {
-    pictures.push(value);
   }
 
   return pictures;
@@ -90,6 +97,26 @@ const generateDestination = (city) => {
     description,
     city,
     pictures,
+  };
+};
+
+const getDuration = (startDateTime, endDateTime) => {
+  const timestamp = new Date(0);
+  const duration = new Date(endDateTime - startDateTime);
+  let durationDays = duration.getDate() - timestamp.getDate();
+  let durationHours = duration.getHours() - timestamp.getHours();
+  let durationMinutes = duration.getMinutes();
+
+  if (durationHours < 0) {
+    durationDays -= 1;
+    durationHours = 23;
+    durationMinutes = new Date(endDateTime).getMinutes();
+  }
+
+  return {
+    durationDays,
+    durationHours,
+    durationMinutes,
   };
 };
 
@@ -108,22 +135,27 @@ export const generatePoint = () => {
 
   const typePoint = generateTypePoint();
   const cityPoint = generateCityPoint();
-  const [startDateTime, endDateTime] = generateDate();
 
-  const timestamp = new Date(0);
-  const duration = new Date(endDateTime - startDateTime);
-  const durationDays = duration.getDate() - timestamp.getDate();
-  const durationHours = duration.getHours() - timestamp.getHours();
-  const durationMinutes = duration.getMinutes();
+  const {
+    startDateTime,
+    endDateTime,
+  } = generateDate();
+
+  const {
+    durationDays,
+    durationHours,
+    durationMinutes,
+  } = getDuration(startDateTime, endDateTime);
 
   return {
+    id: String(generateId()),
     typePoint,
     cityPoint,
     startDateTime,
     endDateTime,
     duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
     price: String(getRandomInteger(1, 250)),
-    offers: generateOffers(typePoint.toLowerCase()),
+    pointOffers: generateOffers(typePoint.toLowerCase()),
     destination: generateDestination(cityPoint),
     isFavorite: Boolean(getRandomInteger(0, 1)),
   };

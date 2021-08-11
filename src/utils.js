@@ -1,4 +1,4 @@
-import {RENDER_POSITION} from './const';
+import {RenderPosition} from './const';
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower  = Math.ceil(Math.min(a, b));
@@ -9,12 +9,12 @@ const getRandomInteger = (a = 0, b = 1) => {
 
 const compareDate = (a, b) => (a.startDateTime > b.startDateTime) ? 1 : -1;
 
-const render = (container, element, place = RENDER_POSITION.beforeend) => {
+const render = (container, element, place = RenderPosition.BEFOREEND) => {
   switch (place) {
-    case RENDER_POSITION.afterbegin:
+    case RenderPosition.AFTERBEGIN:
       container.prepend(element);
       break;
-    case RENDER_POSITION.beforeend:
+    case RenderPosition.BEFOREEND:
       container.append(element);
       break;
   }
@@ -26,4 +26,6 @@ const createElement = (template) => {
   return element.firstChild;
 };
 
-export {getRandomInteger, compareDate, render, createElement};
+const generateId = () => getRandomInteger(0, 250);
+
+export {getRandomInteger, compareDate, generateId, render, createElement};

@@ -1,11 +1,9 @@
 import dayjs from 'dayjs';
 import {createElement} from '../utils.js';
 
-const createTripRouteTemplate = (points = {}) => {
+const createTripRouteTemplate = (points = []) => {
 
-  const {length = 0} = points;
-
-  if (!length) {
+  if (!points.length) {
     return `<section class="trip-main__trip-info trip-info">
     <div class="trip-info__main">
     <h1 class="trip-info__title">&mdash; ... &mdash;</h1>
@@ -16,9 +14,9 @@ const createTripRouteTemplate = (points = {}) => {
 
   const route = {
     cityStart: points[0].cityPoint,
-    cityFinish: points[length - 1].cityPoint,
+    cityFinish: points[points.length - 1].cityPoint,
     dateStart: points[0].startDateTime,
-    dateFinish: points[length - 1].endDateTime,
+    dateFinish: points[points.length - 1].endDateTime,
   };
 
   return `<section class="trip-main__trip-info trip-info">

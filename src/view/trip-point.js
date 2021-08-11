@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import {createElement} from '../utils.js';
 import {POINT_BLANK} from '../const.js';
 
-const getOffers = (offers) => (offers
+const getOffers = ({pointOffers}) => (pointOffers.offers
   .map((offer) => offer.checked ? `<li class="event__offer">
     <span class="event__offer-title">${offer.title}</span>
     &plus;&euro;&nbsp;
@@ -30,7 +30,7 @@ const createTripPointTemplate = (point) => ((point.typePoint === '') ? '' : `<li
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      ${getOffers(point.offers)}
+      ${getOffers(point)}
     </ul>
     <button class="event__favorite-btn ${point.isFavorite ? 'event__favorite-btn--active':''}" type="button">
       <span class="visually-hidden">Add to favorite</span>

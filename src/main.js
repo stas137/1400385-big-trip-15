@@ -1,4 +1,4 @@
-import {TRIP_POINTS_COUNT, RENDER_POSITION} from './const.js';
+import {TRIP_POINTS_COUNT, RenderPosition} from './const.js';
 import {render, compareDate} from './utils.js';
 import TripMenuView from './view/trip-menu.js';
 import TripFiltersView from './view/trip-filters.js';
@@ -18,7 +18,7 @@ const tripControlsNavigation = bodyElement.querySelector('.trip-controls__naviga
 const tripControlsFilters = bodyElement.querySelector('.trip-controls__filters');
 const tripControlsMain = bodyElement.querySelector('.trip-main');
 
-render(tripControlsMain, new TripRouteView(tripPoints).getElement(), RENDER_POSITION.afterbegin);
+render(tripControlsMain, new TripRouteView(tripPoints).getElement(), RenderPosition.AFTERBEGIN);
 
 const tripControlsInfo = bodyElement.querySelector('.trip-info');
 const tripControlsEvents = bodyElement.querySelector('.trip-events');
