@@ -7,4 +7,6 @@ const getRandomInteger = (a = 0, b = 1) => {
 
 const compareDate = (a, b) => (a.startDateTime > b.startDateTime) ? 1 : -1;
 
-export {getRandomInteger, compareDate};
+const generateId = () => getRandomInteger(0, 250);
+
+export {getRandomInteger, compareDate, generateId};

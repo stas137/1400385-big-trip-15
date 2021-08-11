@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {generateId} from '../utils';
 
 const getOffers = (id, {offers}) => (offers
   .map((offer) => `<div class="event__offer-selector">
@@ -23,7 +24,7 @@ const getPictures = (pictures) => {
 const tripPointAddEdit = (point = {}) => {
 
   const {
-    id = '',
+    id = String(generateId(0, 250)),
     typePoint = '',
     cityPoint = '',
     startDateTime = new Date(),
@@ -114,10 +115,10 @@ const tripPointAddEdit = (point = {}) => {
 
     <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden" for="event-start-time-1">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(startDateTime).format('DD[/]MM[/]YYYY HH[:]mm')}">
+      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(startDateTime).format('DD[/]MM[/]YY HH[:]mm')}">
       &mdash;
       <label class="visually-hidden" for="event-end-time-1">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(endDateTime).format('DD[/]MM[/]YYYY HH[:]mm')}">
+      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(endDateTime).format('DD[/]MM[/]YY HH[:]mm')}">
     </div>
 
     <div class="event__field-group  event__field-group--price">

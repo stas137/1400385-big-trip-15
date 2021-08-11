@@ -1,8 +1,6 @@
 import dayjs from 'dayjs';
-import {getRandomInteger} from '../utils.js';
+import {getRandomInteger, generateId} from '../utils.js';
 import {POINT_TYPES, MAX_DAYS_GAP, MAX_MINUTES_GAP, POINT_CITIES, OFFER_TITLES_TYPES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS, MAX_PRICE_OFFER} from '../const.js';
-
-const generateId = () => getRandomInteger(0, 250);
 
 const generateTypePoint = () => {
   const randomIndex = getRandomInteger(0, POINT_TYPES.length - 1);
@@ -32,32 +30,22 @@ const generateCityPoint = () => {
   return POINT_CITIES[randomIndex];
 };
 
-const checkOffer = (offer, offers) => offers.find((item) => item.title === offer.title);
+const generateRandomOffers = (typePoint) => {
+  const offersTitlesTypes = OFFER_TITLES_TYPES.filter((item) => item.point === typePoint);
+  const offers = offersTitlesTypes.map((item) => ({
+    title: item.title,
+    type: item.type,
+    price: String(getRandomInteger(1, MAX_PRICE_OFFER)),
+    checked: Boolean(getRandomInteger(0, 1)),
+  }));
 
-const generateRandomOffers = () => {
-  const randomCount = getRandomInteger(0, OFFER_TITLES_TYPES.length - 1);
-  const offers = [];
-
-  while (offers.length < randomCount) {
-    const randomIndex = getRandomInteger(0, OFFER_TITLES_TYPES.length - 1);
-    const { title, type } = OFFER_TITLES_TYPES[randomIndex];
-    const offer = {
-      title,
-      type,
-      price: String(getRandomInteger(1, MAX_PRICE_OFFER)),
-      checked: Boolean(getRandomInteger(0, 1)),
-    };
-    if (!checkOffer(offer, offers)) {
-      offers.push(offer);
-    }
-  }
 
   return offers;
 };
 
 const generateOffers = (typePoint) => ({
   type: typePoint,
-  offers: generateRandomOffers(),
+  offers: generateRandomOffers(typePoint),
 });
 
 const generateDescription = (countSentences = MAX_COUNT_SENTENCES) => {
@@ -112,6 +100,26 @@ const generateDestination = (city) => {
   };
 };
 
+const getDuration = (startDateTime, endDateTime) => {
+  const timestamp = new Date(0);
+  const duration = new Date(endDateTime - startDateTime);
+  let durationDays = duration.getDate() - timestamp.getDate();
+  let durationHours = duration.getHours() - timestamp.getHours();
+  let durationMinutes = duration.getMinutes();
+
+  if (durationHours < 0) {
+    durationDays -= 1;
+    durationHours = 23;
+    durationMinutes = new Date(endDateTime).getMinutes();
+  }
+
+  return {
+    durationDays,
+    durationHours,
+    durationMinutes,
+  };
+};
+
 const getDurationTripPoint = (durationDays, durationHours, durationMinutes) => {
   if (durationDays > 0) {
     return `${durationDays}D ${durationHours}H ${durationMinutes}M`;
@@ -133,17 +141,11 @@ export const generatePoint = () => {
     endDateTime,
   } = generateDate();
 
-  const timestamp = new Date(0);
-  const duration = new Date(endDateTime - startDateTime);
-  let durationDays = duration.getDate() - timestamp.getDate();
-  let durationHours = duration.getHours() - timestamp.getHours();
-  let durationMinutes = duration.getMinutes();
-
-  if (durationHours < 0) {
-    durationDays -= 1;
-    durationHours = 23;
-    durationMinutes = new Date(endDateTime).getMinutes();
-  }
+  const {
+    durationDays,
+    durationHours,
+    durationMinutes,
+  } = getDuration(startDateTime, endDateTime);
 
   return {
     id: String(generateId(0, 250)),
