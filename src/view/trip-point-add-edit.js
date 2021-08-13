@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import {POINT_BLANK} from '../const';
 import {generateId, createElement} from '../utils.js';
 
-const getOffers = ({id, pointOffers}) => (pointOffers.offers
+const createOffersTemplate = ({id, pointOffers}) => (pointOffers.offers
   .map((offer) => `<div class="event__offer-selector">
   <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.type}-${id}" type="checkbox" name="event-offer-${offer.type}" ${offer.checked ? 'checked' : ''}>
   <label class="event__offer-label" for="event-offer-${offer.type}">
@@ -13,7 +13,14 @@ const getOffers = ({id, pointOffers}) => (pointOffers.offers
 </div>`)
   .join(''));
 
-const getPictures = (pictures) => {
+const createOffersContainerTemplate = (point) => (point.pointOffers.offers.length ? `<section class="event__section  event__section--offers">
+<h3 class="event__section-title  event__section-title--offers">Offers</h3>
+<div class="event__available-offers">
+  ${createOffersTemplate(point)}
+</div>
+</section>` : '');
+
+const createPicturesTemplate = (pictures) => {
   const pointPictures = pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
   return `<div class="event__photos-container">
   <div class="event__photos-tape">
@@ -124,17 +131,12 @@ const createTripPointAddEditTemplate = (point) => (`<li class="trip-events__item
     </button>
   </header>
   <section class="event__details">
-    <section class="event__section  event__section--offers">
-      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-      <div class="event__available-offers">
-        ${getOffers(point)}
-      </div>
-    </section>
+    ${createOffersContainerTemplate(point)}
 
     <section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
       <p class="event__destination-description">${point.destination.description}</p>
-      ${getPictures(point.destination.pictures)}
+      ${createPicturesTemplate(point.destination.pictures)}
     </section>
   </section>
 </form>

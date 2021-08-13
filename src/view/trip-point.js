@@ -1,8 +1,7 @@
 import dayjs from 'dayjs';
 import {createElement} from '../utils.js';
-import {POINT_BLANK} from '../const.js';
 
-const getOffers = ({pointOffers}) => (pointOffers.offers
+const createOffersTemplate = ({pointOffers}) => (pointOffers.offers
   .map((offer) => offer.checked ? `<li class="event__offer">
     <span class="event__offer-title">${offer.title}</span>
     &plus;&euro;&nbsp;
@@ -10,7 +9,7 @@ const getOffers = ({pointOffers}) => (pointOffers.offers
   </li>` : '')
   .join(''));
 
-const createTripPointTemplate = (point) => ((point.typePoint === '') ? '' : `<li class="trip-events__item">
+const createTripPointTemplate = (point) => (`<li class="trip-events__item">
   <div class="event">
     <time class="event__date" datetime="${dayjs(point.startDateTime).format('YYYY-MM-DD')}">${dayjs(point.startDateTime).format('MMM DD')}</time>
     <div class="event__type">
@@ -30,7 +29,7 @@ const createTripPointTemplate = (point) => ((point.typePoint === '') ? '' : `<li
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      ${getOffers(point)}
+      ${createOffersTemplate(point)}
     </ul>
     <button class="event__favorite-btn ${point.isFavorite ? 'event__favorite-btn--active':''}" type="button">
       <span class="visually-hidden">Add to favorite</span>
@@ -46,7 +45,7 @@ const createTripPointTemplate = (point) => ((point.typePoint === '') ? '' : `<li
   `);
 
 export default class TripPoint {
-  constructor(point = POINT_BLANK) {
+  constructor(point) {
     this._element = null;
     this._point = point;
   }
