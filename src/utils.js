@@ -1,5 +1,9 @@
 import {RenderPosition} from './const';
 
+const ESC_CODE = 'Escape';
+
+const isEscEvent = (code) => code === ESC_CODE;
+
 const getRandomInteger = (a = 0, b = 1) => {
   const lower  = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -28,4 +32,4 @@ const createElement = (template) => {
 
 const generateId = () => getRandomInteger(0, 250);
 
-export {getRandomInteger, compareDate, generateId, render, createElement};
+export {isEscEvent, getRandomInteger, compareDate, generateId, render, createElement};
