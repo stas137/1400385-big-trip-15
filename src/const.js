@@ -12,6 +12,19 @@ const RenderPosition = {
   BEFOREEND: 'beforeend',
 };
 
+const POINT_BLANK = {
+  id: '',
+  typePoint: '',
+  cityPoint: '',
+  startDateTime: '',
+  endDateTime: '',
+  duration: '',
+  price: '',
+  offers: '',
+  destination: '',
+  isFavorite: '',
+};
+
 const POINT_TYPES = [
   'Taxi',
   'Bus',
@@ -84,4 +97,4 @@ const OFFER_TITLES_TYPES = [
   },
 ];
 
-export {TRIP_POINTS_COUNT, RenderPosition, POINT_TYPES, MAX_DAYS_GAP, MAX_MINUTES_GAP, POINT_CITIES, OFFER_TITLES_TYPES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS, MAX_PRICE_OFFER};
+export {TRIP_POINTS_COUNT, RenderPosition, POINT_BLANK, POINT_TYPES, MAX_DAYS_GAP, MAX_MINUTES_GAP, POINT_CITIES, OFFER_TITLES_TYPES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS, MAX_PRICE_OFFER};

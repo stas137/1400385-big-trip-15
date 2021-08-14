@@ -30,7 +30,7 @@ const generateCityPoint = () => {
   return POINT_CITIES[randomIndex];
 };
 
-const generateRandomOffers = (typePoint) => {
+const generateTypePointOffers = (typePoint) => {
   const offersTitlesTypes = OFFER_TITLES_TYPES.filter((item) => item.point === typePoint);
   const offers = offersTitlesTypes.map((item) => ({
     title: item.title,
@@ -45,7 +45,7 @@ const generateRandomOffers = (typePoint) => {
 
 const generateOffers = (typePoint) => ({
   type: typePoint,
-  offers: generateRandomOffers(typePoint),
+  offers: generateTypePointOffers(typePoint),
 });
 
 const generateDescription = (countSentences = MAX_COUNT_SENTENCES) => {
@@ -148,14 +148,14 @@ export const generatePoint = () => {
   } = getDuration(startDateTime, endDateTime);
 
   return {
-    id: String(generateId(0, 250)),
+    id: String(generateId()),
     typePoint,
     cityPoint,
     startDateTime,
     endDateTime,
     duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
     price: String(getRandomInteger(1, 250)),
-    offers: generateOffers(typePoint.toLowerCase()),
+    pointOffers: generateOffers(typePoint.toLowerCase()),
     destination: generateDestination(cityPoint),
     isFavorite: Boolean(getRandomInteger(0, 1)),
   };

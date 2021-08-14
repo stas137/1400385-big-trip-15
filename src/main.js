@@ -1,13 +1,13 @@
 import {TRIP_POINTS_COUNT, RenderPosition} from './const.js';
-import {compareDate} from './utils.js';
-import {tripMenu} from './view/trip-menu.js';
-import {tripFilters} from './view/trip-filters.js';
-import {tripRoute} from './view/trip-route.js';
-import {tripCost} from './view/trip-cost.js';
-import {tripSort} from './view/trip-sort.js';
-import {tripPointsContainer} from './view/trip-points-container.js';
-import {tripPoint} from './view/trip-point.js';
-import {tripPointAddEdit} from './view/trip-point-add-edit.js';
+import {render, compareDate} from './utils.js';
+import TripMenuView from './view/trip-menu.js';
+import TripFiltersView from './view/trip-filters.js';
+import TripRouteView from './view/trip-route.js';
+import TripCostView from './view/trip-cost.js';
+import TripSortView from './view/trip-sort.js';
+import TripPointsContainerView from './view/trip-points-container.js';
+import TripPointView from './view/trip-point.js';
+import TripPointAddEditView from './view/trip-point-add-edit.js';
 import {generatePoint} from './mock/point-mock.js';
 
 const tripPoints = new Array(TRIP_POINTS_COUNT).fill().map(generatePoint);
@@ -18,30 +18,42 @@ const tripControlsNavigation = bodyElement.querySelector('.trip-controls__naviga
 const tripControlsFilters = bodyElement.querySelector('.trip-controls__filters');
 const tripControlsMain = bodyElement.querySelector('.trip-main');
 
-const renderComponent = (container, component, place = RenderPosition.BEFOREEND) => {
-  container.insertAdjacentHTML(place, component);
-};
-
-renderComponent(tripControlsMain, tripRoute(tripPoints), RenderPosition.AFTERBEGIN);
+render(tripControlsMain, new TripRouteView(tripPoints).getElement(), RenderPosition.AFTERBEGIN);
 
 const tripControlsInfo = bodyElement.querySelector('.trip-info');
 const tripControlsEvents = bodyElement.querySelector('.trip-events');
 
-renderComponent(tripControlsInfo, tripCost(tripPoints));
-
-renderComponent(tripControlsNavigation, tripMenu());
-renderComponent(tripControlsFilters, tripFilters());
-
-renderComponent(tripControlsEvents, tripSort());
-renderComponent(tripControlsEvents, tripPointsContainer());
+render(tripControlsInfo, new TripCostView(tripPoints).getElement());
+render(tripControlsNavigation, new TripMenuView().getElement());
+render(tripControlsFilters, new TripFiltersView().getElement());
+render(tripControlsEvents, new TripSortView().getElement());
+render(tripControlsEvents, new TripPointsContainerView().getElement());
 
 const tripControlsEventsContainer = bodyElement.querySelector('.trip-events__list');
 
-renderComponent(tripControlsEventsContainer, tripPointAddEdit(tripPointsSort[0]));
-
 const renderTripPoints = () => {
   for (let i = 0; i < TRIP_POINTS_COUNT; i++) {
-    renderComponent(tripControlsEventsContainer, tripPoint(tripPointsSort[i]));
+    const tripPointView = new TripPointView(tripPointsSort[i]);
+    const tripPointAddEditView = new TripPointAddEditView(tripPointsSort[i]);
+
+    const rollupButtonPoint = tripPointView.getElement().querySelector('.event__rollup-btn');
+    const formPointAddEdit = tripPointAddEditView.getElement().querySelector('form');
+    const rollupButtonForm = formPointAddEdit.querySelector('.event__rollup-btn');
+
+    rollupButtonPoint.addEventListener('click', () => {
+      const formHide = (evt) => {
+        evt.preventDefault();
+        formPointAddEdit.removeEventListener('submit', formHide);
+        rollupButtonForm.removeEventListener('click', formHide);
+        tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
+      };
+
+      tripControlsEventsContainer.replaceChild(tripPointAddEditView.getElement(), tripPointView.getElement());
+      formPointAddEdit.addEventListener('submit', formHide);
+      rollupButtonForm.addEventListener('click', formHide);
+    });
+
+    render(tripControlsEventsContainer, tripPointView.getElement());
   }
 };
 
