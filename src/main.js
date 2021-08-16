@@ -31,8 +31,6 @@ if (tripPoints.length) {
   const tripControlsInfo = bodyElement.querySelector('.trip-info');
 
   render(tripControlsInfo, new TripCostView(tripPoints).getElement());
-  /*   render(tripControlsNavigation, new TripMenuView().getElement());
-  render(tripControlsFilters, new TripFiltersView().getElement()); */
   render(tripControlsEvents, new TripSortView().getElement());
   render(tripControlsEvents, new TripPointsContainerView().getElement());
 
