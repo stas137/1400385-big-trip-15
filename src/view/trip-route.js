@@ -3,15 +3,6 @@ import {createElement} from '../utils.js';
 
 const createTripRouteTemplate = (points = []) => {
 
-  if (!points.length) {
-    return `<section class="trip-main__trip-info trip-info">
-    <div class="trip-info__main">
-    <h1 class="trip-info__title">&mdash; ... &mdash;</h1>
-    <p class="trip-info__dates">&nbsp;&mdash;&nbsp;</p>
-    </div>
-    </section>`;
-  }
-
   const route = {
     cityStart: points[0].cityPoint,
     cityFinish: points[points.length - 1].cityPoint,
