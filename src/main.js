@@ -36,11 +36,19 @@ const renderTripPoints = () => {
     const tripPointView = new TripPointView(tripPointsSort[i]);
     const tripPointAddEditView = new TripPointAddEditView(tripPointsSort[i]);
 
-    const rollupButtonPoint = tripPointView.getElement().querySelector('.event__rollup-btn');
-    const formPointAddEdit = tripPointAddEditView.getElement().querySelector('form');
-    const rollupButtonForm = formPointAddEdit.querySelector('.event__rollup-btn');
+    tripPointView.setRollupBtnClick(() => {
+      tripControlsEventsContainer.replaceChild(tripPointAddEditView.getElement(), tripPointView.getElement());
+    });
 
-    rollupButtonPoint.addEventListener('click', () => {
+    tripPointAddEditView.setRollupBtnClick(() => {
+      tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
+    });
+
+    /* const rollupButtonPoint = tripPointView.getElement().querySelector('.event__rollup-btn');
+    const formPointAddEdit = tripPointAddEditView.getElement().querySelector('form'); */
+    /* const rollupButtonForm = formPointAddEdit.querySelector('.event__rollup-btn'); */
+
+    /*     rollupButtonPoint.addEventListener('click', () => {
       const formHide = (evt) => {
         evt.preventDefault();
         formPointAddEdit.removeEventListener('submit', formHide);
@@ -51,7 +59,7 @@ const renderTripPoints = () => {
       tripControlsEventsContainer.replaceChild(tripPointAddEditView.getElement(), tripPointView.getElement());
       formPointAddEdit.addEventListener('submit', formHide);
       rollupButtonForm.addEventListener('click', formHide);
-    });
+    }); */
 
     render(tripControlsEventsContainer, tripPointView.getElement());
   }
