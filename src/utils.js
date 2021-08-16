@@ -1,4 +1,5 @@
 import {RenderPosition} from './const';
+import Abstract from './view/abstract.js';
 
 const ESC_CODE = 'Escape';
 
@@ -13,13 +14,21 @@ const getRandomInteger = (a = 0, b = 1) => {
 
 const compareDate = (a, b) => (a.startDateTime > b.startDateTime) ? 1 : -1;
 
-const render = (container, element, place = RenderPosition.BEFOREEND) => {
+const render = (container, child, place = RenderPosition.BEFOREEND) => {
+  if (container instanceof Abstract) {
+    container = container.getElement();
+  }
+
+  if (child instanceof Abstract) {
+    child = child.getElement();
+  }
+
   switch (place) {
     case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
+      container.prepend(child);
       break;
     case RenderPosition.BEFOREEND:
-      container.append(element);
+      container.append(child);
       break;
   }
 };

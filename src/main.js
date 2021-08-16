@@ -18,16 +18,16 @@ const tripControlsNavigation = bodyElement.querySelector('.trip-controls__naviga
 const tripControlsFilters = bodyElement.querySelector('.trip-controls__filters');
 const tripControlsMain = bodyElement.querySelector('.trip-main');
 
-render(tripControlsMain, new TripRouteView(tripPoints).getElement(), RenderPosition.AFTERBEGIN);
+render(tripControlsMain, new TripRouteView(tripPoints), RenderPosition.AFTERBEGIN);
 
 const tripControlsInfo = bodyElement.querySelector('.trip-info');
 const tripControlsEvents = bodyElement.querySelector('.trip-events');
 
-render(tripControlsInfo, new TripCostView(tripPoints).getElement());
-render(tripControlsNavigation, new TripMenuView().getElement());
-render(tripControlsFilters, new TripFiltersView().getElement());
-render(tripControlsEvents, new TripSortView().getElement());
-render(tripControlsEvents, new TripPointsContainerView().getElement());
+render(tripControlsInfo, new TripCostView(tripPoints));
+render(tripControlsNavigation, new TripMenuView());
+render(tripControlsFilters, new TripFiltersView());
+render(tripControlsEvents, new TripSortView());
+render(tripControlsEvents, new TripPointsContainerView());
 
 const tripControlsEventsContainer = bodyElement.querySelector('.trip-events__list');
 
@@ -59,7 +59,7 @@ const renderTripPoints = () => {
       document.removeEventListener('keydown', formHide);
     });
 
-    render(tripControlsEventsContainer, tripPointView.getElement());
+    render(tripControlsEventsContainer, tripPointView);
   }
 };
 
