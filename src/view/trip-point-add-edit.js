@@ -150,6 +150,7 @@ export default class TripPointAddEdit extends AbstractView {
     this._point.id = generateId();
 
     this._rollupBtnClickHandler = this._rollupBtnClickHandler.bind(this);
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
@@ -161,9 +162,18 @@ export default class TripPointAddEdit extends AbstractView {
     this._callback.rollupBtnClick();
   }
 
-  setRollupBtnClick(callback) {
+  setRollupBtnClickHandler(callback) {
     this._callback.rollupBtnClick = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._rollupBtnClickHandler);
   }
 
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
+  }
 }

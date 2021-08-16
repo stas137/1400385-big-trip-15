@@ -1,5 +1,5 @@
 import {TRIP_POINTS_COUNT, RenderPosition} from './const.js';
-import {render, compareDate} from './utils.js';
+import {isEscEvent, render, compareDate} from './utils.js';
 import TripMenuView from './view/trip-menu.js';
 import TripFiltersView from './view/trip-filters.js';
 import TripRouteView from './view/trip-route.js';
@@ -36,30 +36,28 @@ const renderTripPoints = () => {
     const tripPointView = new TripPointView(tripPointsSort[i]);
     const tripPointAddEditView = new TripPointAddEditView(tripPointsSort[i]);
 
-    tripPointView.setRollupBtnClick(() => {
-      tripControlsEventsContainer.replaceChild(tripPointAddEditView.getElement(), tripPointView.getElement());
-    });
-
-    tripPointAddEditView.setRollupBtnClick(() => {
-      tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
-    });
-
-    /* const rollupButtonPoint = tripPointView.getElement().querySelector('.event__rollup-btn');
-    const formPointAddEdit = tripPointAddEditView.getElement().querySelector('form'); */
-    /* const rollupButtonForm = formPointAddEdit.querySelector('.event__rollup-btn'); */
-
-    /*     rollupButtonPoint.addEventListener('click', () => {
-      const formHide = (evt) => {
+    const formHide = (evt) => {
+      if (isEscEvent(evt.code)) {
         evt.preventDefault();
-        formPointAddEdit.removeEventListener('submit', formHide);
-        rollupButtonForm.removeEventListener('click', formHide);
         tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
-      };
+        document.removeEventListener('keydown', formHide);
+      }
+    };
 
+    tripPointView.setRollupBtnClickHandler(() => {
       tripControlsEventsContainer.replaceChild(tripPointAddEditView.getElement(), tripPointView.getElement());
-      formPointAddEdit.addEventListener('submit', formHide);
-      rollupButtonForm.addEventListener('click', formHide);
-    }); */
+      document.addEventListener('keydown', formHide);
+    });
+
+    tripPointAddEditView.setRollupBtnClickHandler(() => {
+      tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
+      document.removeEventListener('keydown', formHide);
+    });
+
+    tripPointAddEditView.setFormSubmitHandler(() => {
+      tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
+      document.removeEventListener('keydown', formHide);
+    });
 
     render(tripControlsEventsContainer, tripPointView.getElement());
   }
