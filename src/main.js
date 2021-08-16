@@ -8,7 +8,7 @@ import TripSortView from './view/trip-sort.js';
 import TripPointsContainerView from './view/trip-points-container.js';
 import TripPointView from './view/trip-point.js';
 import TripPointAddEditView from './view/trip-point-add-edit.js';
-import TripPointInvitationView from './view/trip-point-invitation.js';
+import TripPointEmptyView from './view/trip-point-empty.js';
 import {generatePoint} from './mock/point-mock.js';
 
 const tripPoints = new Array(TRIP_POINTS_COUNT).fill().map(generatePoint);
@@ -19,6 +19,9 @@ const tripControlsEvents = bodyElement.querySelector('.trip-events');
 const tripControlsNavigation = bodyElement.querySelector('.trip-controls__navigation');
 const tripControlsFilters = bodyElement.querySelector('.trip-controls__filters');
 
+render(tripControlsNavigation, new TripMenuView().getElement());
+render(tripControlsFilters, new TripFiltersView().getElement());
+
 if (tripPoints.length) {
 
   const tripControlsMain = bodyElement.querySelector('.trip-main');
@@ -28,8 +31,8 @@ if (tripPoints.length) {
   const tripControlsInfo = bodyElement.querySelector('.trip-info');
 
   render(tripControlsInfo, new TripCostView(tripPoints).getElement());
-  render(tripControlsNavigation, new TripMenuView().getElement());
-  render(tripControlsFilters, new TripFiltersView().getElement());
+  /*   render(tripControlsNavigation, new TripMenuView().getElement());
+  render(tripControlsFilters, new TripFiltersView().getElement()); */
   render(tripControlsEvents, new TripSortView().getElement());
   render(tripControlsEvents, new TripPointsContainerView().getElement());
 
@@ -72,7 +75,5 @@ if (tripPoints.length) {
   renderTripPoints();
 
 } else {
-  render(tripControlsNavigation, new TripMenuView().getElement());
-  render(tripControlsFilters, new TripFiltersView().getElement());
-  render(tripControlsEvents, new TripPointInvitationView().getElement());
+  render(tripControlsEvents, new TripPointEmptyView().getElement());
 }
