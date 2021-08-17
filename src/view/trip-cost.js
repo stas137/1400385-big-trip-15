@@ -1,6 +1,7 @@
 import AbstractView from './abstract.js';
 
 const createTripCostTemplate = (points = {}) => {
+
   const costTrip = points.reduce((sum, item) => sum + Number(item.price), 0);
 
   return `<p class="trip-info__cost">

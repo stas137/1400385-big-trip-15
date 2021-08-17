@@ -8,59 +8,66 @@ import TripSortView from './view/trip-sort.js';
 import TripPointsContainerView from './view/trip-points-container.js';
 import TripPointView from './view/trip-point.js';
 import TripPointAddEditView from './view/trip-point-add-edit.js';
+import TripPointEmptyView from './view/trip-point-empty.js';
 import {generatePoint} from './mock/point-mock.js';
 
 const tripPoints = new Array(TRIP_POINTS_COUNT).fill().map(generatePoint);
 const tripPointsSort = tripPoints.sort(compareDate);
 
 const bodyElement = document.querySelector('body');
+const tripControlsEvents = bodyElement.querySelector('.trip-events');
 const tripControlsNavigation = bodyElement.querySelector('.trip-controls__navigation');
 const tripControlsFilters = bodyElement.querySelector('.trip-controls__filters');
-const tripControlsMain = bodyElement.querySelector('.trip-main');
 
-render(tripControlsMain, new TripRouteView(tripPoints), RenderPosition.AFTERBEGIN);
+render(tripControlsNavigation, new TripMenuView().getElement());
+render(tripControlsFilters, new TripFiltersView().getElement());
 
-const tripControlsInfo = bodyElement.querySelector('.trip-info');
-const tripControlsEvents = bodyElement.querySelector('.trip-events');
+if (tripPoints.length) {
+  const tripControlsMain = bodyElement.querySelector('.trip-main');
 
-render(tripControlsInfo, new TripCostView(tripPoints));
-render(tripControlsNavigation, new TripMenuView());
-render(tripControlsFilters, new TripFiltersView());
-render(tripControlsEvents, new TripSortView());
-render(tripControlsEvents, new TripPointsContainerView());
+  render(tripControlsMain, new TripRouteView(tripPoints), RenderPosition.AFTERBEGIN);
 
-const tripControlsEventsContainer = bodyElement.querySelector('.trip-events__list');
+  const tripControlsInfo = bodyElement.querySelector('.trip-info');
 
-const renderTripPoints = () => {
-  for (let i = 0; i < TRIP_POINTS_COUNT; i++) {
-    const tripPointView = new TripPointView(tripPointsSort[i]);
-    const tripPointAddEditView = new TripPointAddEditView(tripPointsSort[i]);
+  render(tripControlsInfo, new TripCostView(tripPoints));
+  render(tripControlsEvents, new TripSortView());
+  render(tripControlsEvents, new TripPointsContainerView());
 
-    const formHide = (evt) => {
-      if (isEscEvent(evt.code)) {
-        evt.preventDefault();
+  const tripControlsEventsContainer = bodyElement.querySelector('.trip-events__list');
+
+  const renderTripPoints = () => {
+    for (let i = 0; i < TRIP_POINTS_COUNT; i++) {
+      const tripPointView = new TripPointView(tripPointsSort[i]);
+      const tripPointAddEditView = new TripPointAddEditView(tripPointsSort[i]);
+
+      const formHide = (evt) => {
+        if (isEscEvent(evt.code)) {
+          evt.preventDefault();
+          tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
+          document.removeEventListener('keydown', formHide);
+        }
+      };
+
+      tripPointView.setRollupBtnClickHandler(() => {
+        tripControlsEventsContainer.replaceChild(tripPointAddEditView.getElement(), tripPointView.getElement());
+        document.addEventListener('keydown', formHide);
+      });
+
+      tripPointAddEditView.setRollupBtnClickHandler(() => {
         tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
         document.removeEventListener('keydown', formHide);
-      }
-    };
+      });
 
-    tripPointView.setRollupBtnClickHandler(() => {
-      tripControlsEventsContainer.replaceChild(tripPointAddEditView.getElement(), tripPointView.getElement());
-      document.addEventListener('keydown', formHide);
-    });
+      tripPointAddEditView.setFormSubmitHandler(() => {
+        tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
+        document.removeEventListener('keydown', formHide);
+      });
 
-    tripPointAddEditView.setRollupBtnClickHandler(() => {
-      tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
-      document.removeEventListener('keydown', formHide);
-    });
+      render(tripControlsEventsContainer, tripPointView);
+    }
+  };
 
-    tripPointAddEditView.setFormSubmitHandler(() => {
-      tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
-      document.removeEventListener('keydown', formHide);
-    });
-
-    render(tripControlsEventsContainer, tripPointView);
-  }
-};
-
-renderTripPoints();
+  renderTripPoints();
+} else {
+  render(tripControlsEvents, new TripPointEmptyView());
+}
