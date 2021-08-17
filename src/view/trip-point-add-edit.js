@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import {POINT_BLANK} from '../const';
-import {generateId} from '../utils.js';
+import {generateId} from '../utils/common.js';
 import AbstractView from './abstract.js';
 
 const createOffersTemplate = ({id, pointOffers}) => (pointOffers.offers

@@ -1,5 +1,6 @@
-import {TRIP_POINTS_COUNT, RenderPosition} from './const.js';
-import {isEscEvent, render, compareDate} from './utils.js';
+import {TRIP_POINTS_COUNT} from './const.js';
+import {isEscEvent, compareDate} from './utils/common.js';
+import {RenderPosition, render, replace} from './utils/render.js';
 import TripMenuView from './view/trip-menu.js';
 import TripFiltersView from './view/trip-filters.js';
 import TripRouteView from './view/trip-route.js';
@@ -40,26 +41,34 @@ if (tripPoints.length) {
       const tripPointView = new TripPointView(tripPointsSort[i]);
       const tripPointAddEditView = new TripPointAddEditView(tripPointsSort[i]);
 
+      const replacePointToForm = () => {
+        replace(tripPointAddEditView, tripPointView);
+      };
+
+      const replaceFormToPoint = () => {
+        replace(tripPointView, tripPointAddEditView);
+      };
+
       const formHide = (evt) => {
         if (isEscEvent(evt.code)) {
           evt.preventDefault();
-          tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
+          replaceFormToPoint();
           document.removeEventListener('keydown', formHide);
         }
       };
 
       tripPointView.setRollupBtnClickHandler(() => {
-        tripControlsEventsContainer.replaceChild(tripPointAddEditView.getElement(), tripPointView.getElement());
+        replacePointToForm();
         document.addEventListener('keydown', formHide);
       });
 
       tripPointAddEditView.setRollupBtnClickHandler(() => {
-        tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
+        replaceFormToPoint();
         document.removeEventListener('keydown', formHide);
       });
 
       tripPointAddEditView.setFormSubmitHandler(() => {
-        tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
+        replaceFormToPoint();
         document.removeEventListener('keydown', formHide);
       });
 
