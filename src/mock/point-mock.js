@@ -39,7 +39,6 @@ const generateTypePointOffers = (typePoint) => {
     checked: Boolean(getRandomInteger(0, 1)),
   }));
 
-
   return offers;
 };
 
