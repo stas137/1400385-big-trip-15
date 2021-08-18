@@ -1,5 +1,6 @@
-import {TRIP_POINTS_COUNT, RenderPosition} from './const.js';
-import {isEscEvent, render, compareDate} from './utils.js';
+import {TRIP_POINTS_COUNT} from './const.js';
+import {isEscEvent, compareDate} from './utils/common.js';
+import {RenderPosition, render, replace} from './utils/render.js';
 import TripMenuView from './view/trip-menu.js';
 import TripFiltersView from './view/trip-filters.js';
 import TripRouteView from './view/trip-route.js';
@@ -23,16 +24,15 @@ render(tripControlsNavigation, new TripMenuView().getElement());
 render(tripControlsFilters, new TripFiltersView().getElement());
 
 if (tripPoints.length) {
-
   const tripControlsMain = bodyElement.querySelector('.trip-main');
 
-  render(tripControlsMain, new TripRouteView(tripPoints).getElement(), RenderPosition.AFTERBEGIN);
+  render(tripControlsMain, new TripRouteView(tripPoints), RenderPosition.AFTERBEGIN);
 
   const tripControlsInfo = bodyElement.querySelector('.trip-info');
 
-  render(tripControlsInfo, new TripCostView(tripPoints).getElement());
-  render(tripControlsEvents, new TripSortView().getElement());
-  render(tripControlsEvents, new TripPointsContainerView().getElement());
+  render(tripControlsInfo, new TripCostView(tripPoints));
+  render(tripControlsEvents, new TripSortView());
+  render(tripControlsEvents, new TripPointsContainerView());
 
   const tripControlsEventsContainer = bodyElement.querySelector('.trip-events__list');
 
@@ -41,37 +41,42 @@ if (tripPoints.length) {
       const tripPointView = new TripPointView(tripPointsSort[i]);
       const tripPointAddEditView = new TripPointAddEditView(tripPointsSort[i]);
 
-      const rollupButtonPoint = tripPointView.getElement().querySelector('.event__rollup-btn');
-      const formPointAddEdit = tripPointAddEditView.getElement().querySelector('form');
-      const rollupButtonForm = formPointAddEdit.querySelector('.event__rollup-btn');
+      const replacePointToForm = () => {
+        replace(tripPointAddEditView, tripPointView);
+      };
 
-      rollupButtonPoint.addEventListener('click', () => {
-        const formHide = (evt) => {
+      const replaceFormToPoint = () => {
+        replace(tripPointView, tripPointAddEditView);
+      };
+
+      const formHide = (evt) => {
+        if (isEscEvent(evt.code)) {
           evt.preventDefault();
-          formPointAddEdit.removeEventListener('submit', formHide);
-          rollupButtonForm.removeEventListener('click', formHide);
-          tripControlsEventsContainer.replaceChild(tripPointView.getElement(), tripPointAddEditView.getElement());
-        };
+          replaceFormToPoint();
+          document.removeEventListener('keydown', formHide);
+        }
+      };
 
-        const formHideEsc = (evt) => {
-          if (isEscEvent(evt.code)) {
-            document.removeEventListener('keydown', formHideEsc);
-            formHide(evt);
-          }
-        };
-
-        tripControlsEventsContainer.replaceChild(tripPointAddEditView.getElement(), tripPointView.getElement());
-        formPointAddEdit.addEventListener('submit', formHide);
-        rollupButtonForm.addEventListener('click', formHide);
-        document.addEventListener('keydown', formHideEsc);
+      tripPointView.setRollupBtnClickHandler(() => {
+        replacePointToForm();
+        document.addEventListener('keydown', formHide);
       });
 
-      render(tripControlsEventsContainer, tripPointView.getElement());
+      tripPointAddEditView.setRollupBtnClickHandler(() => {
+        replaceFormToPoint();
+        document.removeEventListener('keydown', formHide);
+      });
+
+      tripPointAddEditView.setFormSubmitHandler(() => {
+        replaceFormToPoint();
+        document.removeEventListener('keydown', formHide);
+      });
+
+      render(tripControlsEventsContainer, tripPointView);
     }
   };
 
   renderTripPoints();
-
 } else {
-  render(tripControlsEvents, new TripPointEmptyView().getElement());
+  render(tripControlsEvents, new TripPointEmptyView());
 }

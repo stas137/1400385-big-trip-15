@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {getRandomInteger, generateId} from '../utils.js';
+import {getRandomInteger, generateId} from '../utils/common.js';
 import {POINT_TYPES, MAX_DAYS_GAP, MAX_MINUTES_GAP, POINT_CITIES, OFFER_TITLES_TYPES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS, MAX_PRICE_OFFER} from '../const.js';
 
 const generateTypePoint = () => {
@@ -38,7 +38,6 @@ const generateTypePointOffers = (typePoint) => {
     price: String(getRandomInteger(1, MAX_PRICE_OFFER)),
     checked: Boolean(getRandomInteger(0, 1)),
   }));
-
 
   return offers;
 };

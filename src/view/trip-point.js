@@ -1,15 +1,17 @@
 import dayjs from 'dayjs';
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
-const createOffersTemplate = ({pointOffers}) => (pointOffers.offers
-  .map((offer) => offer.checked ? `<li class="event__offer">
+const createOffersTemplate = ({pointOffers}) => (
+  pointOffers.offers
+    .map((offer) => offer.checked ? `<li class="event__offer">
     <span class="event__offer-title">${offer.title}</span>
     &plus;&euro;&nbsp;
     <span class="event__offer-price">${offer.price}</span>
   </li>` : '')
-  .join(''));
+    .join(''));
 
-const createTripPointTemplate = (point) => (`<li class="trip-events__item">
+const createTripPointTemplate = (point) => (
+  `<li class="trip-events__item">
   <div class="event">
     <time class="event__date" datetime="${dayjs(point.startDateTime).format('YYYY-MM-DD')}">${dayjs(point.startDateTime).format('MMM DD')}</time>
     <div class="event__type">
@@ -44,25 +46,25 @@ const createTripPointTemplate = (point) => (`<li class="trip-events__item">
   </li>
   `);
 
-export default class TripPoint {
+export default class TripPoint extends AbstractView {
   constructor(point) {
-    this._element = null;
+    super();
     this._point = point;
+
+    this._rollupBtnClickHandler = this._rollupBtnClickHandler.bind(this);
   }
 
   getTemplate() {
     return createTripPointTemplate(this._point);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _rollupBtnClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.rollupBtnClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setRollupBtnClickHandler(callback) {
+    this._callback.rollupBtnClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._rollupBtnClickHandler);
   }
 }

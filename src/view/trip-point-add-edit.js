@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import {POINT_BLANK} from '../const';
-import {generateId, createElement} from '../utils.js';
+import {generateId} from '../utils/common.js';
+import AbstractView from './abstract.js';
 
 const createOffersTemplate = ({id, pointOffers}) => (pointOffers.offers
   .map((offer) => `<div class="event__offer-selector">
@@ -142,26 +143,37 @@ const createTripPointAddEditTemplate = (point) => (`<li class="trip-events__item
 </form>
 </li>`);
 
-export default class TripPointAddEdit {
+export default class TripPointAddEdit extends AbstractView {
   constructor(point = POINT_BLANK) {
-    this._element = null;
+    super();
     this._point = point;
     this._point.id = generateId();
+
+    this._rollupBtnClickHandler = this._rollupBtnClickHandler.bind(this);
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
     return createTripPointAddEditTemplate(this._point);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _rollupBtnClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.rollupBtnClick();
   }
 
-  removeElement() {
-    this._element = null;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setRollupBtnClickHandler(callback) {
+    this._callback.rollupBtnClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._rollupBtnClickHandler);
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 }
