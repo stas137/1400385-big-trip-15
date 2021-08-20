@@ -32,6 +32,7 @@ tripPresenter.init(tripPointsSort);
 
   render(tripControlsInfo, new TripCostView(tripPoints));
   render(tripControlsEvents, new TripSortView());
+
   render(tripControlsEvents, new TripPointsContainerView());
 
   const tripControlsEventsContainer = bodyElement.querySelector('.trip-events__list');
