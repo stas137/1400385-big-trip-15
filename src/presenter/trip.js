@@ -11,6 +11,10 @@ export default class Trip {
 
     this._tripContainer = tripContainer;
     this._tripControlsEvents = tripControlsEvents;
+    this._tripPointsPresenter = new Map();
+
+    this._handleModeChange = this._handleModeChange.bind(this);
+    this._handleFavoriteChange = this._handleFavoriteChange.bind(this);
 
     this._pointEmptyComponent = new TripPointEmptyView();
   }
@@ -21,6 +25,14 @@ export default class Trip {
     this._renderTrip();
   }
 
+  _handleModeChange() {
+    this._tripPointsPresenter.forEach((tripPointPresenter) => tripPointPresenter.resetView());
+  }
+
+  _handleFavoriteChange() {
+    this._tripPointsPresenter.forEach((tripPointPresenter) => tripPointPresenter.resetView());
+  }
+
   _renderPointEmpty() {
     render(this._tripControlsEvents, this._pointEmptyComponent);
   }
@@ -28,9 +40,10 @@ export default class Trip {
   _renderTripPoint(tripPoint) {
     this._tripPointsListContainer = this._tripContainer.querySelector('.trip-events__list');
 
-    const tripPointPresenter = new TripPointPresenter(this._tripPointsListContainer);
+    const tripPointPresenter = new TripPointPresenter(this._tripPointsListContainer, this._handleModeChange, this._handleFavoriteChange);
 
     tripPointPresenter.init(tripPoint);
+    this._tripPointsPresenter.set(tripPoint.id, tripPointPresenter);
   }
 
   _renderTripPointsList() {

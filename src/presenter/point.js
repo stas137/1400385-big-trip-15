@@ -9,10 +9,15 @@ const Mode = {
 };
 
 export default class Point {
-  constructor(tripPointsListContainer, changeMode) {
+  constructor(tripPointsListContainer, changeMode, changeFavorite) {
     this._tripPointsListContainer = tripPointsListContainer;
     this._changeMode = changeMode;
+    this._changeFavorite = changeFavorite;
 
+    this._mode = Mode.DEFAULT;
+
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleRolldownBtnClick = this._handleRolldownBtnClick.bind(this);
     this._handleRollupBtnClick = this._handleRollupBtnClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
@@ -23,16 +28,24 @@ export default class Point {
     this._tripPointComponent = new TripPointView(tripPoint);
     this._tripPointEditComponent = new TripPointEditView(tripPoint);
 
-    this._tripPointComponent.setRollupBtnClickHandler(this._handleRollupBtnClick);
+    this._tripPointComponent.setRolldownBtnClickHandler(this._handleRolldownBtnClick);
+    this._tripPointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._tripPointEditComponent.setRollupBtnClickHandler(this._handleRollupBtnClick);
 
     render(this._tripPointsListContainer, this._tripPointComponent);
   }
 
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceFormToTripPoint(); 
+    }
+  }
+
   _replaceTripPointToForm() {
+    this._changeMode();
+    this._mode = Mode.EDITING;
     replace(this._tripPointEditComponent, this._tripPointComponent);
     document.addEventListener('keydown', this._escKeyDownHandler);
-    /* this._changeMode(); */
-    this._mode = Mode.EDITING;
   }
 
   _replaceFormToTripPoint() {
@@ -41,8 +54,16 @@ export default class Point {
     this._mode = Mode.DEFAULT;
   }
 
-  _handleRollupBtnClick() {
+  _handleFavoriteClick() {
+    this._changeFavorite();
+  }
+
+  _handleRolldownBtnClick() {
     this._replaceTripPointToForm();
+  }
+
+  _handleRollupBtnClick() {
+    this._replaceFormToTripPoint();
   }
 
   _escKeyDownHandler(evt) {
