@@ -1,12 +1,8 @@
-import {render, replace} from '../utils/render.js';
+import {render, replace, remove} from '../utils/render.js';
 import {isEscEvent} from '../utils/common.js';
+import {Mode} from '../const.js';
 import TripPointView from '../view/trip-point.js';
 import TripPointEditView from '../view/trip-point-edit.js';
-
-const Mode = {
-  DEFAULT: 'default',
-  EDITING: 'editing',
-};
 
 export default class Point {
   constructor(tripPointsListContainer, changeMode, changeFavorite) {
@@ -49,12 +45,20 @@ export default class Point {
     if (this._mode === Mode.EDITING) {
       replace(this._tripPointEditComponent, prevTripPointEditComponent);
     }
+
+    remove(prevTripPointComponent);
+    remove(prevTripPointEditComponent);
   }
 
   resetView() {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceFormToTripPoint();
     }
+  }
+
+  destroy() {
+    remove(this._tripPointComponent);
+    remove(this._tripPointEditComponent);
   }
 
   _replaceTripPointToForm() {

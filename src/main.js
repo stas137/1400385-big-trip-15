@@ -7,7 +7,7 @@ import TripFiltersView from './view/trip-filters.js';
 import TripPresenter from './presenter/trip.js';
 
 const tripPoints = new Array(TRIP_POINTS_COUNT).fill().map(generatePoint);
-const tripPointsSort = tripPoints.sort(compareDate);
+const tripPointsSort = tripPoints.sort(compareDate).slice();
 
 const bodyElement = document.querySelector('body');
 

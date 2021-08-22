@@ -12,6 +12,8 @@ const getRandomInteger = (a = 0, b = 1) => {
 const generateId = () => getRandomInteger(0, 250);
 
 const compareDate = (a, b) => (a.startDateTime > b.startDateTime) ? 1 : -1;
+const compareTime = (a, b) => ((a.endDateTime - a.startDateTime) > (b.endDateTime - b.startDateTime)) ? 1 : -1;
+const comparePrice = (a, b) => (Number(a.price) > Number(b.price)) ? 1 : -1;
 
 const updateItem = (items, updatedItem) => {
   const index = items.findIndex((item) => item.id === updatedItem.id);
@@ -28,4 +30,4 @@ const updateItem = (items, updatedItem) => {
 
 };
 
-export {isEscEvent, getRandomInteger, generateId, compareDate, updateItem};
+export {isEscEvent, getRandomInteger, generateId, compareDate, compareTime, comparePrice, updateItem};
