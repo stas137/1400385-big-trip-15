@@ -1,4 +1,5 @@
 import {RenderPosition, render} from '../utils/render.js';
+import {updateItem} from '../utils/common.js';
 import TripRouteView from '../view/trip-route.js';
 import TripCostView from '../view/trip-cost.js';
 import TripSortView from '../view/trip-sort.js';
@@ -29,8 +30,10 @@ export default class Trip {
     this._tripPointsPresenter.forEach((tripPointPresenter) => tripPointPresenter.resetView());
   }
 
-  _handleFavoriteChange() {
-    this._tripPointsPresenter.forEach((tripPointPresenter) => tripPointPresenter.resetView());
+  _handleFavoriteChange(updatedTripPoint) {
+    //this._tripPointsPresenter.forEach((tripPointPresenter) => tripPointPresenter.resetView());
+    this._tripPoints = updateItem(this._tripPoints, updatedTripPoint);
+    this._tripPointsPresenter.get(updatedTripPoint.id).init(updatedTripPoint);
   }
 
   _renderPointEmpty() {

@@ -14,6 +14,8 @@ export default class Point {
     this._changeMode = changeMode;
     this._changeFavorite = changeFavorite;
 
+    this._tripPointComponent = null;
+    this._tripPointEditComponent = null;
     this._mode = Mode.DEFAULT;
 
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
@@ -25,6 +27,9 @@ export default class Point {
   init(tripPoint) {
     this._tripPoint = tripPoint;
 
+    const prevTripPointComponent = this._tripPointComponent;
+    const prevTripPointEditComponent = this._tripPointEditComponent;
+
     this._tripPointComponent = new TripPointView(tripPoint);
     this._tripPointEditComponent = new TripPointEditView(tripPoint);
 
@@ -32,12 +37,23 @@ export default class Point {
     this._tripPointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._tripPointEditComponent.setRollupBtnClickHandler(this._handleRollupBtnClick);
 
-    render(this._tripPointsListContainer, this._tripPointComponent);
+    if (prevTripPointComponent === null || prevTripPointEditComponent === null) {
+      render(this._tripPointsListContainer, this._tripPointComponent);
+      return;
+    }
+
+    if (this._mode === Mode.DEFAULT) {
+      replace(this._tripPointComponent, prevTripPointComponent);
+    }
+
+    if (this._mode === Mode.EDITING) {
+      replace(this._tripPointEditComponent, prevTripPointEditComponent);
+    }
   }
 
   resetView() {
     if (this._mode !== Mode.DEFAULT) {
-      this._replaceFormToTripPoint(); 
+      this._replaceFormToTripPoint();
     }
   }
 
@@ -55,7 +71,14 @@ export default class Point {
   }
 
   _handleFavoriteClick() {
-    this._changeFavorite();
+    const tripPointEdit = Object.assign(
+      {},
+      this._tripPoint,
+      {
+        isFavorite: !this._tripPoint.isFavorite,
+      });
+
+    this._changeFavorite(tripPointEdit);
   }
 
   _handleRolldownBtnClick() {
@@ -69,7 +92,7 @@ export default class Point {
   _escKeyDownHandler(evt) {
     if (isEscEvent(evt.code)) {
       evt.preventDefault();
-      console.log(this);
+      /* console.log(this); */
       this._replaceFormToTripPoint();
       document.removeEventListener('keydown', this._escKeyDownHandler);
     }
