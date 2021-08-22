@@ -30,7 +30,7 @@ const createPicturesTemplate = (pictures) => {
 </div>`;
 };
 
-const createTripPointAddEditTemplate = (point) => (`<li class="trip-events__item">
+const createTripPointEditTemplate = (point) => (`<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
   <header class="event__header">
     <div class="event__type-wrapper">
@@ -143,18 +143,22 @@ const createTripPointAddEditTemplate = (point) => (`<li class="trip-events__item
 </form>
 </li>`);
 
-export default class TripPointAddEdit extends AbstractView {
+export default class TripPointEdit extends AbstractView {
   constructor(point = POINT_BLANK) {
     super();
+
     this._point = point;
-    this._point.id = generateId();
+
+    if (point === POINT_BLANK) {
+      this._point.id = generateId();
+    }
 
     this._rollupBtnClickHandler = this._rollupBtnClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
-    return createTripPointAddEditTemplate(this._point);
+    return createTripPointEditTemplate(this._point);
   }
 
   _rollupBtnClickHandler(evt) {

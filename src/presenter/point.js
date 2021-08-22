@@ -92,10 +92,8 @@ export default class Point {
   _escKeyDownHandler(evt) {
     if (isEscEvent(evt.code)) {
       evt.preventDefault();
-      /* console.log(this); */
       this._replaceFormToTripPoint();
       document.removeEventListener('keydown', this._escKeyDownHandler);
     }
-
   }
 }

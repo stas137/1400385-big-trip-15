@@ -22,7 +22,6 @@ export default class Trip {
 
   init(tripPoints) {
     this._tripPoints = tripPoints;
-
     this._renderTrip();
   }
 
@@ -31,7 +30,6 @@ export default class Trip {
   }
 
   _handleFavoriteChange(updatedTripPoint) {
-    //this._tripPointsPresenter.forEach((tripPointPresenter) => tripPointPresenter.resetView());
     this._tripPoints = updateItem(this._tripPoints, updatedTripPoint);
     this._tripPointsPresenter.get(updatedTripPoint.id).init(updatedTripPoint);
   }
