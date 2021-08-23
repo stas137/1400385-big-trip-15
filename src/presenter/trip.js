@@ -1,4 +1,4 @@
-import {RenderPosition, render} from '../utils/render.js';
+import {RenderPosition, render, remove} from '../utils/render.js';
 import {compareDate, compareTime, comparePrice, updateItem} from '../utils/common.js';
 import {SortType} from '../const.js';
 import TripRouteView from '../view/trip-route.js';
@@ -37,7 +37,13 @@ export default class Trip {
     }
 
     this._sortTripPoints(sortType);
+
     this._clearTripPoints();
+    this._clearTripPointsContainer();
+    this._clearSort();
+  
+    this._renderSort(sortType);
+    this._renderTripPointsContainer();
     this._renderTripPointsList();
   }
 
@@ -68,6 +74,17 @@ export default class Trip {
     this._currentSortType = sortType;
   }
 
+  _renderSort(sortType) {
+    this._sortComponent = new TripSortView(sortType);
+    this._sortComponent.setSortClickHandler(this._handleSortChange);
+    render(this._tripControlsEvents, this._sortComponent);
+  }
+
+  _renderTripPointsContainer() {
+    this._tripPointsContainerComponent = new TripPointsContainerView();
+    render(this._tripControlsEvents, this._tripPointsContainerComponent);
+  }
+
   _renderPointEmpty() {
     render(this._tripControlsEvents, this._pointEmptyComponent);
   }
@@ -93,26 +110,28 @@ export default class Trip {
 
     this._routeComponent = new TripRouteView(this._tripPoints);
     this._costComponent = new TripCostView(this._tripPoints);
-    this._sortComponent = new TripSortView();
-    this._sortComponent.setSortClickHandler(this._handleSortChange);
 
     this._tripControlsMain = this._tripContainer.querySelector('.trip-main');
-
     render(this._tripControlsMain, this._routeComponent, RenderPosition.AFTERBEGIN);
 
     this._tripControlsInfo = this._tripContainer.querySelector('.trip-info');
-
     render(this._tripControlsInfo, this._costComponent);
-    render(this._tripControlsEvents, this._sortComponent);
 
-    this._tripPointsContainerComponent = new TripPointsContainerView();
-    render(this._tripControlsEvents, this._tripPointsContainerComponent);
-
+    this._renderSort(this._currentSortType);
+    this._renderTripPointsContainer();
     this._renderTripPointsList();
   }
 
   _clearTripPoints() {
     this._tripPointsPresenter.forEach((tripPointPresenter) => tripPointPresenter.destroy());
     this._tripPointsPresenter.clear();
+  }
+
+  _clearSort() {
+    remove(this._sortComponent);
+  }
+
+  _clearTripPointsContainer() {
+    remove(this._tripPointsContainerComponent);
   }
 }
