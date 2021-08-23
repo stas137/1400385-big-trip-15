@@ -41,7 +41,7 @@ export default class Trip {
     this._clearTripPoints();
     this._clearTripPointsContainer();
     this._clearSort();
-  
+
     this._renderSort(sortType);
     this._renderTripPointsContainer();
     this._renderTripPointsList();
