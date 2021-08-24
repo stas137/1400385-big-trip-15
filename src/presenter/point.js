@@ -15,8 +15,8 @@ export default class Point {
     this._mode = Mode.DEFAULT;
 
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-    this._handleRolldownBtnClick = this._handleRolldownBtnClick.bind(this);
-    this._handleRollupBtnClick = this._handleRollupBtnClick.bind(this);
+    this._handleOpenBtnClick = this._handleOpenBtnClick.bind(this);
+    this._handleCloseBtnClick = this._handleCloseBtnClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
@@ -29,9 +29,9 @@ export default class Point {
     this._tripPointComponent = new TripPointView(tripPoint);
     this._tripPointEditComponent = new TripPointEditView(tripPoint);
 
-    this._tripPointComponent.setRolldownBtnClickHandler(this._handleRolldownBtnClick);
+    this._tripPointComponent.setOpenBtnClickHandler(this._handleOpenBtnClick);
     this._tripPointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-    this._tripPointEditComponent.setRollupBtnClickHandler(this._handleRollupBtnClick);
+    this._tripPointEditComponent.setCloseBtnClickHandler(this._handleCloseBtnClick);
 
     if (prevTripPointComponent === null || prevTripPointEditComponent === null) {
       render(this._tripPointsListContainer, this._tripPointComponent);
@@ -85,11 +85,11 @@ export default class Point {
     this._changeFavorite(tripPointEdit);
   }
 
-  _handleRolldownBtnClick() {
+  _handleOpenBtnClick() {
     this._replaceTripPointToForm();
   }
 
-  _handleRollupBtnClick() {
+  _handleCloseBtnClick() {
     this._replaceFormToTripPoint();
   }
 

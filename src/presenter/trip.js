@@ -15,7 +15,7 @@ export default class Trip {
     this._tripControlsEvents = tripControlsEvents;
     this._tripPointsPresenter = new Map();
 
-    this._currentSortType = SortType.DAY;
+    this._activeSort = SortType.DAY;
 
     this._handleSortChange = this._handleSortChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -30,19 +30,19 @@ export default class Trip {
     this._renderTrip();
   }
 
-  _handleSortChange(sortType) {
+  _handleSortChange(activeSort) {
 
-    if (sortType === this._currentSortType) {
+    if (activeSort === this._activeSort || activeSort === SortType.EVENT || activeSort === SortType.OFFER) {
       return;
     }
 
-    this._sortTripPoints(sortType);
+    this._sortTripPoints(activeSort);
 
     this._clearTripPoints();
     this._clearTripPointsContainer();
     this._clearSort();
 
-    this._renderSort(sortType);
+    this._renderSort(activeSort);
     this._renderTripPointsContainer();
     this._renderTripPointsList();
   }
@@ -56,8 +56,8 @@ export default class Trip {
     this._tripPointsPresenter.get(updatedTripPoint.id).init(updatedTripPoint);
   }
 
-  _sortTripPoints(sortType) {
-    switch (sortType) {
+  _sortTripPoints(activeSort) {
+    switch (activeSort) {
       case SortType.DAY:
         this._tripPoints.sort(compareDate);
         break;
@@ -71,11 +71,11 @@ export default class Trip {
         this._tripPoints = this._tripPointsDefault.slice();
     }
 
-    this._currentSortType = sortType;
+    this._activeSort = activeSort;
   }
 
-  _renderSort(sortType) {
-    this._sortComponent = new TripSortView(sortType);
+  _renderSort(activeSort) {
+    this._sortComponent = new TripSortView(activeSort);
     this._sortComponent.setSortClickHandler(this._handleSortChange);
     render(this._tripControlsEvents, this._sortComponent);
   }
@@ -117,7 +117,7 @@ export default class Trip {
     this._tripControlsInfo = this._tripContainer.querySelector('.trip-info');
     render(this._tripControlsInfo, this._costComponent);
 
-    this._renderSort(this._currentSortType);
+    this._renderSort(this._activeSort);
     this._renderTripPointsContainer();
     this._renderTripPointsList();
   }
