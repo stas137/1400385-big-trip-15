@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {POINT_BLANK} from '../const';
 import {generateId} from '../utils/common.js';
-import AbstractView from './abstract.js';
+import SmartView from './smart.js';
 
 const createOffersTemplate = ({id, pointOffers}) => (pointOffers.offers
   .map((offer) => `<div class="event__offer-selector">
@@ -30,7 +30,8 @@ const createPicturesTemplate = (pictures) => {
 </div>`;
 };
 
-const createTripPointEditTemplate = (point) => (`<li class="trip-events__item">
+const createTripPointEditTemplate = (point) => (
+  `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
   <header class="event__header">
     <div class="event__type-wrapper">
@@ -143,7 +144,7 @@ const createTripPointEditTemplate = (point) => (`<li class="trip-events__item">
 </form>
 </li>`);
 
-export default class TripPointEdit extends AbstractView {
+export default class TripPointEdit extends SmartView {
   constructor(point = POINT_BLANK) {
     super();
 
@@ -153,12 +154,19 @@ export default class TripPointEdit extends AbstractView {
       this._point.id = generateId();
     }
 
+    this._changeTripPointTypeHandler = this._changeTripPointTypeHandler.bind(this);
     this._closeBtnClickHandler = this._closeBtnClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
     return createTripPointEditTemplate(this._point);
+  }
+
+  _changeTripPointTypeHandler(evt) {
+    evt.preventDefault();
+    console.log(evt.target.textContent);
+    /* this._callback.closeBtnClick(); */
   }
 
   _closeBtnClickHandler(evt) {
@@ -169,6 +177,11 @@ export default class TripPointEdit extends AbstractView {
   _formSubmitHandler(evt) {
     evt.preventDefault();
     this._callback.formSubmit();
+  }
+
+  setChangeTripPointTypeHandler(callback) {
+    this._callback.changeTripPointClick = callback;
+    this.getElement().querySelector('.event__type-group').addEventListener('click', this._changeTripPointTypeHandler);
   }
 
   setCloseBtnClickHandler(callback) {
