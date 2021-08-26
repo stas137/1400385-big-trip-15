@@ -149,12 +149,14 @@ export default class TripPointEdit extends SmartView {
     super();
 
     this._point = point;
+    this._isChangeTripPointType = null;
 
     if (point === POINT_BLANK) {
       this._point.id = generateId();
     }
 
     this._changeTripPointTypeHandler = this._changeTripPointTypeHandler.bind(this);
+    this._selectTripPointTypeHandler = this._selectTripPointTypeHandler.bind(this);
     this._closeBtnClickHandler = this._closeBtnClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
@@ -163,10 +165,22 @@ export default class TripPointEdit extends SmartView {
     return createTripPointEditTemplate(this._point);
   }
 
+
+  _selectTripPointTypeHandler() {
+    if (this._newTripPointType !== null) {
+      this._isChangeTripPointType = null;
+      console.log('yes');
+    } else {
+      console.log('no');
+    }
+  }
+
   _changeTripPointTypeHandler(evt) {
     evt.preventDefault();
-    console.log(evt.target.textContent);
-    /* this._callback.closeBtnClick(); */
+    if (evt.target.classList.contains('event__type-label')) {
+      this._isChangeTypeTripPoint = true;
+      console.log(this._newTypeTripPoint);
+    }
   }
 
   _closeBtnClickHandler(evt) {
@@ -177,6 +191,11 @@ export default class TripPointEdit extends SmartView {
   _formSubmitHandler(evt) {
     evt.preventDefault();
     this._callback.formSubmit();
+  }
+
+  setSelectTripPointTypeHandler(callback) {
+    this._callback.selectTripPointClick = callback;
+    this.getElement().querySelector('.event__type-btn').addEventListener('click', this._selectTripPointTypeHandler);
   }
 
   setChangeTripPointTypeHandler(callback) {
