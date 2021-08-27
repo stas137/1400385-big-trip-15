@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {POINT_BLANK} from '../const';
+import {POINT_TYPES, POINT_BLANK} from '../const';
 import {generateId} from '../utils/common.js';
 import SmartView from './smart.js';
 
@@ -30,8 +30,13 @@ const createPicturesTemplate = (pictures) => {
 </div>`;
 };
 
-const createTripPointEditTemplate = (point) => (
-  `<li class="trip-events__item">
+const createTripPointEditTemplate = (point) => {
+  const getItemTemplate = (value, isChecked) => (`<div class="event__type-item">
+    <input id="event-type-${value.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${value.toLowerCase()}" ${isChecked ? 'checked' : ''}>
+    <label class="event__type-label  event__type-label--${value.toLowerCase()}" for="event-type-${value.toLowerCase()}-1">${value}</label>
+  </div>`);
+
+  return `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
   <header class="event__header">
     <div class="event__type-wrapper">
@@ -44,56 +49,7 @@ const createTripPointEditTemplate = (point) => (
       <div class="event__type-list">
         <fieldset class="event__type-group">
           <legend class="visually-hidden">Event type</legend>
-
-          <div class="event__type-item">
-            <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
-            <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
-            <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
-            <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
-            <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport">
-            <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
-            <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
-            <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
-            <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
-            <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
-            <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-          </div>
+          ${POINT_TYPES.map((value) => getItemTemplate(value, point.typePoint === value)).join('')}
         </fieldset>
       </div>
     </div>
@@ -142,14 +98,14 @@ const createTripPointEditTemplate = (point) => (
     </section>
   </section>
 </form>
-</li>`);
+</li>`;
+};
 
 export default class TripPointEdit extends SmartView {
   constructor(point = POINT_BLANK) {
     super();
 
-    this._point = TripPointEdit.tripPointToState(this._point, false, '');;
-    this._state = null;
+    this._point = TripPointEdit.tripPointToData(point);
 
     if (point === POINT_BLANK) {
       this._point.id = generateId();
@@ -165,10 +121,10 @@ export default class TripPointEdit extends SmartView {
     return createTripPointEditTemplate(this._point);
   }
 
-  static tripPointToState(point) {
+  static tripPointToData(data) {
     return Object.assign(
       {},
-      point,
+      data,
       {
         isChangeTripPointType: false,
         newTripPointType: '',
@@ -176,7 +132,7 @@ export default class TripPointEdit extends SmartView {
     );
   }
 
-  static stateToTripPoint(data) {
+  static dataToTripPoint(data) {
     data =  Object.assign({}, data);
 
     if (data.isChangeTripPointType) {
@@ -191,22 +147,24 @@ export default class TripPointEdit extends SmartView {
 
   _selectTripPointTypeHandler() {
     if (this._point.isChangeTripPointType) {
-      /* this._point.isChangeTripPointType = null; */
-      console.log('yes');
-    } else {
-      console.log('no');
+      this._point = TripPointEdit.dataToTripPoint(this._point);
+      this.updateElement();
     }
   }
 
   _changeTripPointTypeHandler(evt) {
-    evt.preventDefault();
     if (evt.target.classList.contains('event__type-label')) {
-      this.updateData({
+      if (evt.target.textContent.toLowerCase() !== this._point.typePoint.toLowerCase()) {
+        this.updateData({
           isChangeTripPointType: true,
           newTripPointType: evt.target.textContent,
-      }, true);
-    }
-      console.log(this._state);
+        }, true);
+      } else {
+        this.updateData({
+          isChangeTripPointType: false,
+          newTripPointType: evt.target.textContent,
+        }, true);
+      }
     }
   }
 
