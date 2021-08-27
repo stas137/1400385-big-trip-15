@@ -18,21 +18,6 @@ const SortType = {
   TIME: 'time',
   PRICE: 'price',
   OFFER: 'offer',
-  getItemTemplate(sortType, isChecked, isDisabled) {
-    return `<div class="trip-sort__item  trip-sort__item--${sortType}">
-    <input id="sort-${sortType}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sortType}" ${isChecked ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
-    <label class="trip-sort__btn" for="sort-${sortType}" data-active-sort="${sortType}">${sortType}</label>
-  </div>`;
-  },
-  getTemplate(activeSort) {
-    return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-    ${this.getItemTemplate(SortType.DAY, activeSort === SortType.DAY, false)}
-    ${this.getItemTemplate(SortType.EVENT, false, true)}
-    ${this.getItemTemplate(SortType.TIME, activeSort === SortType.TIME, false)}
-    ${this.getItemTemplate(SortType.PRICE, activeSort === SortType.PRICE, false)}
-    ${this.getItemTemplate(SortType.OFFER, false, true)}
-    </form>`;
-  },
 };
 
 const POINT_BLANK = {

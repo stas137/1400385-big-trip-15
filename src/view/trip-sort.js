@@ -1,7 +1,21 @@
 import AbstractView from './abstract.js';
 import {SortType} from '../const.js';
 
-const createTripSortTemplate = (activeSort) => SortType.getTemplate(activeSort);
+const createTripSortTemplate = (activeSort) => {
+  const getItemTemplate = (sortType, isChecked, isDisabled = false) => (
+    `<div class="trip-sort__item  trip-sort__item--${sortType}">
+    <input id="sort-${sortType}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sortType}" ${isChecked ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
+    <label class="trip-sort__btn" for="sort-${sortType}" data-active-sort="${sortType}">${sortType}</label>
+  </div>`);
+
+  return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+    ${getItemTemplate(SortType.DAY, activeSort === SortType.DAY)}
+    ${getItemTemplate(SortType.EVENT, false, true)}
+    ${getItemTemplate(SortType.TIME, activeSort === SortType.TIME)}
+    ${getItemTemplate(SortType.PRICE, activeSort === SortType.PRICE)}
+    ${getItemTemplate(SortType.OFFER, false, true)}
+    </form>`;
+};
 
 export default class TripSort extends AbstractView {
   constructor(activeSort) {
