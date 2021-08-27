@@ -9,11 +9,8 @@ const createTripSortTemplate = (activeSort) => {
   </div>`);
 
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-    ${getItemTemplate(SortType.DAY, activeSort === SortType.DAY)}
-    ${getItemTemplate(SortType.EVENT, false, true)}
-    ${getItemTemplate(SortType.TIME, activeSort === SortType.TIME)}
-    ${getItemTemplate(SortType.PRICE, activeSort === SortType.PRICE)}
-    ${getItemTemplate(SortType.OFFER, false, true)}
+    ${Object.values(SortType).map((value) => getItemTemplate(value, activeSort === value, value === SortType.EVENT || value === SortType.OFFER))
+    .join('')}
     </form>`;
 };
 
