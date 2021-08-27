@@ -32,6 +32,8 @@ export default class Point {
     this._tripPointComponent.setOpenBtnClickHandler(this._handleOpenBtnClick);
     this._tripPointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._tripPointEditComponent.setCloseBtnClickHandler(this._handleCloseBtnClick);
+    this._tripPointEditComponent.setChangeTripPointTypeHandler(this._handleCloseBtnClick);
+    this._tripPointEditComponent.setSelectTripPointTypeHandler(this._handleCloseBtnClick);
 
     if (prevTripPointComponent === null || prevTripPointEditComponent === null) {
       render(this._tripPointsListContainer, this._tripPointComponent);

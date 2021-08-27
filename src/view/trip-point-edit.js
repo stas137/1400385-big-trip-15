@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {POINT_BLANK} from '../const';
 import {generateId} from '../utils/common.js';
-import AbstractView from './abstract.js';
+import SmartView from './smart.js';
 
 const createOffersTemplate = ({id, pointOffers}) => (pointOffers.offers
   .map((offer) => `<div class="event__offer-selector">
@@ -30,7 +30,8 @@ const createPicturesTemplate = (pictures) => {
 </div>`;
 };
 
-const createTripPointEditTemplate = (point) => (`<li class="trip-events__item">
+const createTripPointEditTemplate = (point) => (
+  `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
   <header class="event__header">
     <div class="event__type-wrapper">
@@ -143,22 +144,43 @@ const createTripPointEditTemplate = (point) => (`<li class="trip-events__item">
 </form>
 </li>`);
 
-export default class TripPointEdit extends AbstractView {
+export default class TripPointEdit extends SmartView {
   constructor(point = POINT_BLANK) {
     super();
 
     this._point = point;
+    this._isChangeTripPointType = null;
 
     if (point === POINT_BLANK) {
       this._point.id = generateId();
     }
 
+    this._changeTripPointTypeHandler = this._changeTripPointTypeHandler.bind(this);
+    this._selectTripPointTypeHandler = this._selectTripPointTypeHandler.bind(this);
     this._closeBtnClickHandler = this._closeBtnClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
     return createTripPointEditTemplate(this._point);
+  }
+
+
+  _selectTripPointTypeHandler() {
+    if (this._newTripPointType !== null) {
+      this._isChangeTripPointType = null;
+      console.log('yes');
+    } else {
+      console.log('no');
+    }
+  }
+
+  _changeTripPointTypeHandler(evt) {
+    evt.preventDefault();
+    if (evt.target.classList.contains('event__type-label')) {
+      this._isChangeTypeTripPoint = true;
+      console.log(this._newTypeTripPoint);
+    }
   }
 
   _closeBtnClickHandler(evt) {
@@ -169,6 +191,16 @@ export default class TripPointEdit extends AbstractView {
   _formSubmitHandler(evt) {
     evt.preventDefault();
     this._callback.formSubmit();
+  }
+
+  setSelectTripPointTypeHandler(callback) {
+    this._callback.selectTripPointClick = callback;
+    this.getElement().querySelector('.event__type-btn').addEventListener('click', this._selectTripPointTypeHandler);
+  }
+
+  setChangeTripPointTypeHandler(callback) {
+    this._callback.changeTripPointClick = callback;
+    this.getElement().querySelector('.event__type-group').addEventListener('click', this._changeTripPointTypeHandler);
   }
 
   setCloseBtnClickHandler(callback) {
