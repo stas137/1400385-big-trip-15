@@ -148,8 +148,8 @@ export default class TripPointEdit extends SmartView {
   constructor(point = POINT_BLANK) {
     super();
 
-    this._point = point;
-    this._isChangeTripPointType = null;
+    this._point = TripPointEdit.tripPointToState(this._point, false, '');;
+    this._state = null;
 
     if (point === POINT_BLANK) {
       this._point.id = generateId();
@@ -165,10 +165,33 @@ export default class TripPointEdit extends SmartView {
     return createTripPointEditTemplate(this._point);
   }
 
+  static tripPointToState(point) {
+    return Object.assign(
+      {},
+      point,
+      {
+        isChangeTripPointType: false,
+        newTripPointType: '',
+      },
+    );
+  }
+
+  static stateToTripPoint(data) {
+    data =  Object.assign({}, data);
+
+    if (data.isChangeTripPointType) {
+      data.typePoint = data.newTripPointType;
+    }
+
+    delete data.isChangeTripPointType;
+    delete data.newTripPointType;
+
+    return data;
+  }
 
   _selectTripPointTypeHandler() {
-    if (this._newTripPointType !== null) {
-      this._isChangeTripPointType = null;
+    if (this._point.isChangeTripPointType) {
+      /* this._point.isChangeTripPointType = null; */
       console.log('yes');
     } else {
       console.log('no');
@@ -178,8 +201,12 @@ export default class TripPointEdit extends SmartView {
   _changeTripPointTypeHandler(evt) {
     evt.preventDefault();
     if (evt.target.classList.contains('event__type-label')) {
-      this._isChangeTypeTripPoint = true;
-      console.log(this._newTypeTripPoint);
+      this.updateData({
+          isChangeTripPointType: true,
+          newTripPointType: evt.target.textContent,
+      }, true);
+    }
+      console.log(this._state);
     }
   }
 
