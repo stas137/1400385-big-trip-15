@@ -71,7 +71,7 @@ const createTripPointEditTemplate = (point) => {
       <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(point.startDateTime).format('DD[/]MM[/]YY HH[:]mm')}">
       &mdash;
       <label class="visually-hidden" for="event-end-time-1">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(point.picturesendDateTime).format('DD[/]MM[/]YY HH[:]mm')}">
+      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(point.endDateTime).format('DD[/]MM[/]YY HH[:]mm')}">
     </div>
 
     <div class="event__field-group  event__field-group--price">
@@ -150,7 +150,7 @@ export default class TripPointEdit extends SmartView {
   _selectTripPointTypeHandler() {
     if (this._point.isChangeTripPointType) {
       this._point = TripPointEdit.dataToTripPoint(this._point);
-      this.updateElement();
+      this.updateElement({}, false);
       this._setHandlers();
     }
   }
@@ -178,32 +178,30 @@ export default class TripPointEdit extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._point = TripPointEdit.dataToTripPoint(this._point);
+    this._callback.formSubmit(this._point);
   }
 
   _setHandlers() {
     this.getElement().querySelector('.event__type-btn').addEventListener('click', this._selectTripPointTypeHandler);
+    this.getElement().querySelector('.event__type-group').addEventListener('click', this._changeTripPointTypeHandler);
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeBtnClickHandler);
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 
   setSelectTripPointTypeHandler(callback) {
     this._callback.selectTripPointClick = callback;
-    this.getElement().querySelector('.event__type-btn').addEventListener('click', this._selectTripPointTypeHandler);
   }
 
   setChangeTripPointTypeHandler(callback) {
     this._callback.changeTripPointClick = callback;
-    this.getElement().querySelector('.event__type-group').addEventListener('click', this._changeTripPointTypeHandler);
   }
 
   setCloseBtnClickHandler(callback) {
     this._callback.closeBtnClick = callback;
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeBtnClickHandler);
   }
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
-    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 }
