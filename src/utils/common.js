@@ -1,3 +1,5 @@
+import {OFFER_TITLES_TYPES, MAX_PRICE_OFFER, MAX_COUNT_SENTENCES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_PHOTOS} from '../const.js';
+
 const ESC_CODE = 'Escape';
 
 const isEscEvent = (code) => code === ESC_CODE;
@@ -15,6 +17,75 @@ const compareDate = (a, b) => (a.startDateTime > b.startDateTime) ? 1 : -1;
 const compareTime = (a, b) => ((a.endDateTime - a.startDateTime) > (b.endDateTime - b.startDateTime)) ? 1 : -1;
 const comparePrice = (a, b) => (Number(a.price) > Number(b.price)) ? 1 : -1;
 
+const generateTypePointOffers = (typePoint) => {
+  const offersTitlesTypes = OFFER_TITLES_TYPES.filter((item) => item.point === typePoint);
+  const offers = offersTitlesTypes.map((item) => ({
+    title: item.title,
+    type: item.type,
+    price: String(getRandomInteger(1, MAX_PRICE_OFFER)),
+    checked: Boolean(getRandomInteger(0, 1)),
+  }));
+
+  return offers;
+};
+
+const generateOffers = (typePoint) => ({
+  type: typePoint,
+  offers: generateTypePointOffers(typePoint),
+});
+
+const generateDescription = (countSentences = MAX_COUNT_SENTENCES) => {
+  const sentences = TEXT_DESCRIPTION.split('. ');
+
+  const randomCount = getRandomInteger(1, countSentences);
+  const sentencesSet = new Set();
+
+  while (sentencesSet.size < randomCount){
+    const randomIndex = getRandomInteger(0, sentences.length - 1);
+    if (!sentencesSet.has(sentences[randomIndex])) {
+      sentencesSet.add(sentences[randomIndex]);
+    }
+  }
+
+  let description = '';
+  for (const value of sentencesSet) {
+    description += `${value}. `;
+  }
+
+  return description;
+};
+
+const checkPicture = (picture, pictures) => pictures.find((item) => item.src === picture.src);
+
+const generatePictures = () => {
+
+  const randomCount = getRandomInteger(0, MAX_COUNT_PHOTOS - 1);
+  const pictures = [];
+
+  while (pictures.length < randomCount) {
+    const randomIndex = getRandomInteger(0, MAX_COUNT_PHOTOS - 1);
+    const picture = {
+      src: `${URL_PHOTO}${randomIndex}`,
+      description: generateDescription(1),
+    };
+    if (!checkPicture(picture, pictures)) {
+      pictures.push(picture);
+    }
+  }
+
+  return pictures;
+};
+
+const generateDestination = (city) => {
+  const description = generateDescription();
+  const pictures = generatePictures();
+  return {
+    description,
+    city,
+    pictures,
+  };
+};
+
 const updateItem = (items, updatedItem) => {
   const index = items.findIndex((item) => item.id === updatedItem.id);
 
@@ -30,4 +101,4 @@ const updateItem = (items, updatedItem) => {
 
 };
 
-export {isEscEvent, getRandomInteger, generateId, compareDate, compareTime, comparePrice, updateItem};
+export {isEscEvent, getRandomInteger, generateId, compareDate, compareTime, comparePrice, generateOffers, generateDestination, updateItem};

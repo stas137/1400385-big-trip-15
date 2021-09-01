@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import {POINT_TYPES, POINT_BLANK} from '../const';
-import {generateId} from '../utils/common.js';
+import {generateId, generateOffers, generateDestination} from '../utils/common.js';
 import SmartView from './smart.js';
 
 const createOffersTemplate = ({id, pointOffers}) => (pointOffers.offers
@@ -60,9 +60,9 @@ const createTripPointEditTemplate = (point) => {
       </label>
       <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.cityPoint}" list="destination-list-1">
       <datalist id="destination-list-1">
-        <option value="Amsterdam"></option>
-        <option value="Geneva"></option>
-        <option value="Chamonix"></option>
+        <option value="Amsterdam">Amsterdam</option>
+        <option value="Geneva">Geneva</option>
+        <option value="Chamonix">Chamonix</option>
       </datalist>
     </div>
 
@@ -113,6 +113,7 @@ export default class TripPointEdit extends SmartView {
 
     this._changeTripPointTypeHandler = this._changeTripPointTypeHandler.bind(this);
     this._selectTripPointTypeHandler = this._selectTripPointTypeHandler.bind(this);
+    this._changeTripPointCityHandler = this._changeTripPointCityHandler.bind(this);
     this._closeBtnClickHandler = this._closeBtnClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
 
@@ -135,14 +136,46 @@ export default class TripPointEdit extends SmartView {
   }
 
   static dataToTripPoint(data) {
-    data =  Object.assign({}, data);
 
-    if (data.isChangeTripPointType) {
+    if (data.isChangeTripPointType && data.isChangeTripPointCity) {
       data.typePoint = data.newTripPointType;
+      data.cityPoint = data.newTripPointCity;
+
+      data =  Object.assign(
+        {}, 
+        data,
+        {
+          pointOffers: generateOffers(data.typePoint.toLowerCase()),
+          destination: generateDestination(data.cityPoint),
+        }
+      );
+
+    } else if (data.isChangeTripPointType) {
+      data.typePoint = data.newTripPointType;
+
+      data =  Object.assign(
+        {}, 
+        data,
+        {
+          pointOffers: generateOffers(data.typePoint.toLowerCase()),
+        }
+      );
+    } else if (data.isChangeTripPointCity) {
+      data.cityPoint = data.newTripPointCity;
+
+      data =  Object.assign(
+        {}, 
+        data,
+        {
+          destination: generateDestination(data.cityPoint),
+        }
+      );
     }
 
     delete data.isChangeTripPointType;
     delete data.newTripPointType;
+    delete data.isChangeTripPointCity;
+    delete data.newTripPointCity;
 
     return data;
   }
@@ -171,6 +204,24 @@ export default class TripPointEdit extends SmartView {
     }
   }
 
+  _changeTripPointCityHandler(evt) {
+    if (evt.target.value !== '') {
+      this.updateData({
+        isChangeTripPointCity: true,
+        newTripPointCity: evt.target.value,
+      }, false);
+      this._point = TripPointEdit.dataToTripPoint(this._point);
+      this.updateElement({}, false);
+      this._setHandlers();
+    }
+    else {
+      this.updateData({
+        isChangeTripPointCity: false,
+        newTripPointCity: '',
+      }, true);
+    }
+  }
+
   _closeBtnClickHandler(evt) {
     evt.preventDefault();
     this._callback.closeBtnClick();
@@ -185,6 +236,7 @@ export default class TripPointEdit extends SmartView {
   _setHandlers() {
     this.getElement().querySelector('.event__type-btn').addEventListener('click', this._selectTripPointTypeHandler);
     this.getElement().querySelector('.event__type-group').addEventListener('click', this._changeTripPointTypeHandler);
+    this.getElement().querySelector('.event__input--destination').addEventListener('change', this._changeTripPointCityHandler);
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeBtnClickHandler);
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
@@ -195,6 +247,10 @@ export default class TripPointEdit extends SmartView {
 
   setChangeTripPointTypeHandler(callback) {
     this._callback.changeTripPointClick = callback;
+  }
+
+  setChangeTripPointCityHandler(callback) {
+    this._callback.changeTripPointCityClick = callback;
   }
 
   setCloseBtnClickHandler(callback) {
