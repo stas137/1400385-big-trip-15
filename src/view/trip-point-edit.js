@@ -144,33 +144,32 @@ export default class TripPointEdit extends SmartView {
       data.cityPoint = data.newTripPointCity;
 
       data =  Object.assign(
-        {}, 
+        {},
         data,
         {
           pointOffers: generateOffers(data.typePoint.toLowerCase()),
           destination: generateDestination(data.cityPoint),
-        }
+        },
       );
-
     } else if (data.isChangeTripPointType) {
       data.typePoint = data.newTripPointType;
 
       data =  Object.assign(
-        {}, 
+        {},
         data,
         {
           pointOffers: generateOffers(data.typePoint.toLowerCase()),
-        }
+        },
       );
     } else if (data.isChangeTripPointCity) {
       data.cityPoint = data.newTripPointCity;
 
       data =  Object.assign(
-        {}, 
+        {},
         data,
         {
           destination: generateDestination(data.cityPoint),
-        }
+        },
       );
     }
 
