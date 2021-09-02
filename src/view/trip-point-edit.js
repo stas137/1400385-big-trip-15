@@ -130,7 +130,9 @@ export default class TripPointEdit extends SmartView {
       data,
       {
         isChangeTripPointType: false,
+        isChangeTripPointCity: false,
         newTripPointType: '',
+        newTripPointCity: '',
       },
     );
   }
@@ -183,8 +185,7 @@ export default class TripPointEdit extends SmartView {
   _selectTripPointTypeHandler() {
     if (this._point.isChangeTripPointType) {
       this._point = TripPointEdit.dataToTripPoint(this._point);
-      this.updateElement({}, false);
-      this._setHandlers();
+      this.updateData({}, false);
     }
   }
 
@@ -209,10 +210,9 @@ export default class TripPointEdit extends SmartView {
       this.updateData({
         isChangeTripPointCity: true,
         newTripPointCity: evt.target.value,
-      }, false);
+      }, true);
       this._point = TripPointEdit.dataToTripPoint(this._point);
-      this.updateElement({}, false);
-      this._setHandlers();
+      this.updateData({}, false);
     }
     else {
       this.updateData({
@@ -231,6 +231,10 @@ export default class TripPointEdit extends SmartView {
     evt.preventDefault();
     this._point = TripPointEdit.dataToTripPoint(this._point);
     this._callback.formSubmit(this._point);
+  }
+
+  restoreHandlers() {
+    this._setHandlers();
   }
 
   _setHandlers() {
