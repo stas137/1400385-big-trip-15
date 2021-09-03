@@ -219,7 +219,7 @@ export default class TripPointEdit extends SmartView {
   _offerTripPointClickHandler(evt) {
     evt.preventDefault();
     if (evt.target.classList.contains('event__offer-label') || (evt.target.classList.contains('event__offer-title') || evt.target.classList.contains('event__offer-price'))) {
-      
+
       const parentElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement : evt.target.parentElement.parentElement;
 
       const labelElement = parentElement.lastElementChild;
@@ -253,7 +253,7 @@ export default class TripPointEdit extends SmartView {
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._changeTripPointCityHandler);
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeBtnClickHandler);
 
-    if (this.getElement().querySelector('.event__available-offers')) { 
+    if (this.getElement().querySelector('.event__available-offers')) {
       this.getElement().querySelector('.event__available-offers').addEventListener('click', this._offerTripPointClickHandler);
     }
 
