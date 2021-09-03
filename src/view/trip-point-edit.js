@@ -112,8 +112,8 @@ export default class TripPointEdit extends SmartView {
     }
 
     this._changeTripPointTypeHandler = this._changeTripPointTypeHandler.bind(this);
-    this._selectTripPointTypeHandler = this._selectTripPointTypeHandler.bind(this);
     this._changeTripPointCityHandler = this._changeTripPointCityHandler.bind(this);
+    this._offerTripPointClickHandler =  this._offerTripPointClickHandler.bind(this);
     this._closeBtnClickHandler = this._closeBtnClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
 
@@ -181,13 +181,6 @@ export default class TripPointEdit extends SmartView {
     return data;
   }
 
-  _selectTripPointTypeHandler() {
-    if (this._point.isChangeTripPointType) {
-      this._point = TripPointEdit.dataToTripPoint(this._point);
-      this.updateData({}, false);
-    }
-  }
-
   _changeTripPointTypeHandler(evt) {
     if (evt.target.classList.contains('event__type-label')) {
       if (evt.target.textContent.toLowerCase() !== this._point.typePoint.toLowerCase()) {
@@ -195,6 +188,8 @@ export default class TripPointEdit extends SmartView {
           isChangeTripPointType: true,
           newTripPointType: evt.target.textContent,
         }, true);
+        this._point = TripPointEdit.dataToTripPoint(this._point);
+        this.updateData({}, false);
       } else {
         this.updateData({
           isChangeTripPointType: false,
@@ -221,6 +216,22 @@ export default class TripPointEdit extends SmartView {
     }
   }
 
+  _offerTripPointClickHandler(evt) {
+    evt.preventDefault();
+    if (evt.target.classList.contains('event__offer-label') || (evt.target.classList.contains('event__offer-title') || evt.target.classList.contains('event__offer-price'))) {
+      
+      const parentElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement : evt.target.parentElement.parentElement;
+
+      const labelElement = parentElement.lastElementChild;
+      const spanElement = labelElement.firstElementChild;
+
+      const offerIndex = this._point.pointOffers.offers.findIndex((item) => item.title === spanElement.textContent);
+
+      this._point.pointOffers.offers[offerIndex].checked = !this._point.pointOffers.offers[offerIndex].checked;
+      this.updateData({}, false);
+    }
+  }
+
   _closeBtnClickHandler(evt) {
     evt.preventDefault();
     this._callback.closeBtnClick();
@@ -241,6 +252,11 @@ export default class TripPointEdit extends SmartView {
     this.getElement().querySelector('.event__type-group').addEventListener('click', this._changeTripPointTypeHandler);
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._changeTripPointCityHandler);
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeBtnClickHandler);
+
+    if (this.getElement().querySelector('.event__available-offers')) { 
+      this.getElement().querySelector('.event__available-offers').addEventListener('click', this._offerTripPointClickHandler);
+    }
+
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 
