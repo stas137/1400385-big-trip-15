@@ -12,4 +12,12 @@ module.exports = {
         watchContentBase: true,
         liveReload: true,
     },
+    module: {
+        rules: [
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
+            }
+        ]
+    }
 };
