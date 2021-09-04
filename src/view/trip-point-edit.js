@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import {POINT_TYPES, POINT_BLANK} from '../const';
 import {generateId, generateOffers, generateDestination} from '../utils/common.js';
+import {createElement, replace} from '../utils/render.js';
 import SmartView from './smart.js';
 
 const createOffersTemplate = ({id, pointOffers}) => (pointOffers.offers
@@ -116,6 +117,7 @@ export default class TripPointEdit extends SmartView {
     this._offerTripPointClickHandler =  this._offerTripPointClickHandler.bind(this);
     this._closeBtnClickHandler = this._closeBtnClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._updateOffers = this._updateOffers.bind(this);
 
     this._setHandlers();
   }
@@ -216,19 +218,27 @@ export default class TripPointEdit extends SmartView {
     }
   }
 
+  _updateOffers(newChild, oldChild) {
+    replace(newChild, oldChild);
+  }
+
   _offerTripPointClickHandler(evt) {
     evt.preventDefault();
+    console.log(evt.target);
     if (evt.target.classList.contains('event__offer-label') || (evt.target.classList.contains('event__offer-title') || evt.target.classList.contains('event__offer-price'))) {
 
       const parentElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement : evt.target.parentElement.parentElement;
 
+      const inputElementOld = parentElement.firstElementChild;
       const labelElement = parentElement.lastElementChild;
       const spanElement = labelElement.firstElementChild;
 
       const offerIndex = this._point.pointOffers.offers.findIndex((item) => item.title === spanElement.textContent);
 
       this._point.pointOffers.offers[offerIndex].checked = !this._point.pointOffers.offers[offerIndex].checked;
-      this.updateData({}, false);
+      const inputElementNew = createElement(`<input class="event__offer-checkbox  visually-hidden" id="event-offer-${this._point.pointOffers.offers[offerIndex].type}-${this._point.id}" type="checkbox" name="event-offer-${this._point.pointOffers.offers[offerIndex].type}" ${this._point.pointOffers.offers[offerIndex].checked ? 'checked' : ''}>`);
+
+      this._updateOffers(inputElementNew, inputElementOld);
     }
   }
 
