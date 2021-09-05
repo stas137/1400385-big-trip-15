@@ -224,22 +224,18 @@ export default class TripPointEdit extends SmartView {
 
   _offerTripPointClickHandler(evt) {
     evt.preventDefault();
-    console.log(evt.target);
-    if (evt.target.classList.contains('event__offer-label') || (evt.target.classList.contains('event__offer-title') || evt.target.classList.contains('event__offer-price'))) {
+    const inputElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.firstElementChild : evt.target.parentElement.parentElement.firstElementChild;
+    const spanElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.lastElementChild.firstElementChild : evt.target.parentElement.parentElement.lastElementChild.firstElementChild;
+    const checkboxElement = evt.target.classList.contains('event__offer-label') ?  evt.target.parentElement.querySelector('.event__offer-checkbox') : evt.target.parentElement.parentElement.querySelector('.event__offer-checkbox') ;
 
-      const parentElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement : evt.target.parentElement.parentElement;
+    console.log(checkboxElement, spanElement);
 
-      const inputElementOld = parentElement.firstElementChild;
-      const labelElement = parentElement.lastElementChild;
-      const spanElement = labelElement.firstElementChild;
+    inputElement.checked = !inputElement.checked;
 
-      const offerIndex = this._point.pointOffers.offers.findIndex((item) => item.title === spanElement.textContent);
+    const offerIndex = this._point.pointOffers.offers.findIndex((item) => item.title === spanElement.textContent);
 
-      this._point.pointOffers.offers[offerIndex].checked = !this._point.pointOffers.offers[offerIndex].checked;
-      const inputElementNew = createElement(`<input class="event__offer-checkbox  visually-hidden" id="event-offer-${this._point.pointOffers.offers[offerIndex].type}-${this._point.id}" type="checkbox" name="event-offer-${this._point.pointOffers.offers[offerIndex].type}" ${this._point.pointOffers.offers[offerIndex].checked ? 'checked' : ''}>`);
+    this._point.pointOffers.offers[offerIndex].checked = !this._point.pointOffers.offers[offerIndex].checked;
 
-      this._updateOffers(inputElementNew, inputElementOld);
-    }
   }
 
   _closeBtnClickHandler(evt) {
