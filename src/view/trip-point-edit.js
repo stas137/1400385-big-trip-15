@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {POINT_TYPES, POINT_BLANK} from '../const';
 import {generateId, generateOffers, generateDestination} from '../utils/common.js';
-import {createElement, replace} from '../utils/render.js';
+import {replace} from '../utils/render.js';
 import SmartView from './smart.js';
 
 const createOffersTemplate = ({id, pointOffers}) => (pointOffers.offers
@@ -226,9 +226,7 @@ export default class TripPointEdit extends SmartView {
     evt.preventDefault();
     const inputElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.firstElementChild : evt.target.parentElement.parentElement.firstElementChild;
     const spanElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.lastElementChild.firstElementChild : evt.target.parentElement.parentElement.lastElementChild.firstElementChild;
-    const checkboxElement = evt.target.classList.contains('event__offer-label') ?  evt.target.parentElement.querySelector('.event__offer-checkbox') : evt.target.parentElement.parentElement.querySelector('.event__offer-checkbox') ;
-
-    console.log(checkboxElement, spanElement);
+    //const checkboxElement = evt.target.classList.contains('event__offer-label') ?  evt.target.parentElement.querySelector('.event__offer-checkbox') : evt.target.parentElement.parentElement.querySelector('.event__offer-checkbox') ;
 
     inputElement.checked = !inputElement.checked;
 
