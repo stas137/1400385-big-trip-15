@@ -114,8 +114,8 @@ export default class TripPointEdit extends SmartView {
       this._point.id = generateId();
     }
 
-    this._datepickerStart = null;
-    this._datepickerEnd = null;
+    this._datepickerStartDateTime = null;
+    this._datepickerEndDateTime = null;
 
     this._changeTripPointTypeHandler = this._changeTripPointTypeHandler.bind(this);
     this._changeTripPointCityHandler = this._changeTripPointCityHandler.bind(this);
@@ -252,18 +252,40 @@ export default class TripPointEdit extends SmartView {
     this._callback.formSubmit(this._point);
   }
 
-  _datepickerStartClickHandler(evt) {
-    this._datepickerStart = flatpickr(
+  _datepickerStartClickHandler() {
+
+    if (this._datepickerStartDateTime) {
+      this._datepickerStartDateTime.clear();
+      this._datepickerStartDateTime.close();
+      this._datepickerStartDateTime.destroy();
+      this._datepickerStartDateTime = null;
+    }
+
+    this._datepickerStartDateTime = flatpickr(
       this.getElement().querySelector('#event-start-time-1'),
       {
+        dateFormat: "d/m/y H:i",
+        defaultDate: this._point.startDateTime,
         enableTime: true,
-        dateFormat: "Y-m-d H:i",
       },
     );
   }
 
   _datepickerEndClickHandler() {
-    console.log('end');
+
+    if (this._datepickerEndDateTime) {
+      this._datepickerEndDateTime.destroy();
+      this._datepickerEndDateTime = null;
+    }
+
+    this._datepickerEndDateTime = flatpickr(
+      this.getElement().querySelector('#event-end-time-1'),
+      {
+        dateFormat: "d/m/y H:i",
+        defaultDate: this._point.endDateTime,
+        enableTime: true,
+      },
+    );
   }
 
   restoreHandlers() {
