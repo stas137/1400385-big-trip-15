@@ -224,16 +224,13 @@ export default class TripPointEdit extends SmartView {
 
   _offerTripPointClickHandler(evt) {
     evt.preventDefault();
-    const inputElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.firstElementChild : evt.target.parentElement.parentElement.firstElementChild;
-    const spanElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.lastElementChild.firstElementChild : evt.target.parentElement.parentElement.lastElementChild.firstElementChild;
-    //const checkboxElement = evt.target.classList.contains('event__offer-label') ?  evt.target.parentElement.querySelector('.event__offer-checkbox') : evt.target.parentElement.parentElement.querySelector('.event__offer-checkbox') ;
-
-    inputElement.checked = !inputElement.checked;
+    const spanElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.querySelector('.event__offer-title') : evt.target.parentElement.parentElement.querySelector('.event__offer-title');
+    const inputElement = evt.target.classList.contains('event__offer-label') ?  evt.target.parentElement.querySelector('.event__offer-checkbox') : evt.target.parentElement.parentElement.querySelector('.event__offer-checkbox') ;
 
     const offerIndex = this._point.pointOffers.offers.findIndex((item) => item.title === spanElement.textContent);
 
-    this._point.pointOffers.offers[offerIndex].checked = !this._point.pointOffers.offers[offerIndex].checked;
-
+    inputElement.checked = !inputElement.checked;
+    this._point.pointOffers.offers[offerIndex].checked = inputElement.checked;
   }
 
   _closeBtnClickHandler(evt) {
