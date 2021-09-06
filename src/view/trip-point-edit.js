@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import {POINT_TYPES, POINT_BLANK} from '../const';
 import {generateId, generateOffers, generateDestination} from '../utils/common.js';
+import {replace} from '../utils/render.js';
 import SmartView from './smart.js';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
@@ -121,6 +122,7 @@ export default class TripPointEdit extends SmartView {
     this._offerTripPointClickHandler =  this._offerTripPointClickHandler.bind(this);
     this._closeBtnClickHandler = this._closeBtnClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._updateOffers = this._updateOffers.bind(this);
 
     this._datepickerStartClickHandler = this._datepickerStartClickHandler.bind(this);
     this._datepickerEndClickHandler = this._datepickerEndClickHandler.bind(this);
@@ -224,20 +226,19 @@ export default class TripPointEdit extends SmartView {
     }
   }
 
+  _updateOffers(newChild, oldChild) {
+    replace(newChild, oldChild);
+  }
+
   _offerTripPointClickHandler(evt) {
     evt.preventDefault();
-    if (evt.target.classList.contains('event__offer-label') || (evt.target.classList.contains('event__offer-title') || evt.target.classList.contains('event__offer-price'))) {
+    const spanElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.querySelector('.event__offer-title') : evt.target.parentElement.parentElement.querySelector('.event__offer-title');
+    const inputElement = evt.target.classList.contains('event__offer-label') ?  evt.target.parentElement.querySelector('.event__offer-checkbox') : evt.target.parentElement.parentElement.querySelector('.event__offer-checkbox') ;
 
-      const parentElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement : evt.target.parentElement.parentElement;
+    const offerIndex = this._point.pointOffers.offers.findIndex((item) => item.title === spanElement.textContent);
 
-      const labelElement = parentElement.lastElementChild;
-      const spanElement = labelElement.firstElementChild;
-
-      const offerIndex = this._point.pointOffers.offers.findIndex((item) => item.title === spanElement.textContent);
-
-      this._point.pointOffers.offers[offerIndex].checked = !this._point.pointOffers.offers[offerIndex].checked;
-      this.updateData({}, false);
-    }
+    inputElement.checked = !inputElement.checked;
+    this._point.pointOffers.offers[offerIndex].checked = inputElement.checked;
   }
 
   _closeBtnClickHandler(evt) {
