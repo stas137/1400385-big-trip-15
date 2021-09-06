@@ -251,12 +251,12 @@ export default class TripPointEdit extends SmartView {
     const offers = this._point.pointOffers.offers.map((item) => Object.assign({}, item));
 
     inputElement.checked = !inputElement.checked;
-    
+
     offers[offerIndex].checked = inputElement.checked;
-    
+
     this.updateData({
       pointOffers: {
-        offers
+        offers,
       },
     });
   }
@@ -300,7 +300,7 @@ export default class TripPointEdit extends SmartView {
     this._datepickerStartDateTime = flatpickr(
       this.getElement().querySelector('#event-start-time-1'),
       {
-        dateFormat: "d/m/y H:i",
+        dateFormat: 'd/m/y H:i',
         defaultDate: this._point.startDateTime,
         enableTime: true,
         time_24hr: true,
@@ -321,7 +321,7 @@ export default class TripPointEdit extends SmartView {
     this._datepickerEndDateTime = flatpickr(
       this.getElement().querySelector('#event-end-time-1'),
       {
-        dateFormat: "d/m/y H:i",
+        dateFormat: 'd/m/y H:i',
         defaultDate: this._point.endDateTime,
         enableTime: true,
         time_24hr: true,
