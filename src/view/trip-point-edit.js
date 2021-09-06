@@ -303,7 +303,6 @@ export default class TripPointEdit extends SmartView {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._point.startDateTime,
         enableTime: true,
-        time_24hr: true,
         onChange: this._startDateTimeChangeHandler,
       },
     );
@@ -324,7 +323,6 @@ export default class TripPointEdit extends SmartView {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._point.endDateTime,
         enableTime: true,
-        time_24hr: true,
         onChange: this._endDateTimeChangeHandler,
       },
     );
