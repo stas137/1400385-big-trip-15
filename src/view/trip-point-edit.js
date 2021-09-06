@@ -127,11 +127,24 @@ export default class TripPointEdit extends SmartView {
     this._datepickerStartClickHandler = this._datepickerStartClickHandler.bind(this);
     this._datepickerEndClickHandler = this._datepickerEndClickHandler.bind(this);
 
+    this._startDateTimeChangeHandler = this._startDateTimeChangeHandler.bind(this);
+    this._endDateTimeChangeHandler = this._endDateTimeChangeHandler.bind(this);
+
     this._setHandlers();
   }
 
   getTemplate() {
     return createTripPointEditTemplate(this._point);
+  }
+
+  restoreHandlers() {
+    this._setHandlers();
+  }
+
+  resetTripPoint(point) {
+    this.updateData(
+      TripPointEdit.tripPointToData(point),
+    );
   }
 
   static tripPointToData(data) {
@@ -197,24 +210,24 @@ export default class TripPointEdit extends SmartView {
         this.updateData({
           isChangeTripPointType: true,
           newTripPointType: evt.target.textContent,
-        }, true);
+        });
         this._point = TripPointEdit.dataToTripPoint(this._point);
         this.updateData({}, false);
       } else {
         this.updateData({
           isChangeTripPointType: false,
-          newTripPointType: evt.target.textContent,
-        }, true);
+          newTripPointType: '',
+        });
       }
     }
   }
 
   _changeTripPointCityHandler(evt) {
-    if (evt.target.value !== '') {
+    if ((evt.target.value !== '') && (evt.target.value.toLowerCase() !== this._point.cityPoint.toLowerCase())) {
       this.updateData({
         isChangeTripPointCity: true,
         newTripPointCity: evt.target.value,
-      }, true);
+      });
       this._point = TripPointEdit.dataToTripPoint(this._point);
       this.updateData({}, false);
     }
@@ -222,7 +235,7 @@ export default class TripPointEdit extends SmartView {
       this.updateData({
         isChangeTripPointCity: false,
         newTripPointCity: '',
-      }, true);
+      });
     }
   }
 
@@ -234,11 +247,17 @@ export default class TripPointEdit extends SmartView {
     evt.preventDefault();
     const spanElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.querySelector('.event__offer-title') : evt.target.parentElement.parentElement.querySelector('.event__offer-title');
     const inputElement = evt.target.classList.contains('event__offer-label') ?  evt.target.parentElement.querySelector('.event__offer-checkbox') : evt.target.parentElement.parentElement.querySelector('.event__offer-checkbox') ;
-
     const offerIndex = this._point.pointOffers.offers.findIndex((item) => item.title === spanElement.textContent);
+    const offers = this._point.pointOffers.offers.map((item) => Object.assign({}, item));
 
     inputElement.checked = !inputElement.checked;
-    this._point.pointOffers.offers[offerIndex].checked = inputElement.checked;
+    offers[offerIndex].checked = inputElement.checked;
+    
+    this.updateData({
+      pointOffers: {
+        offers
+      },
+    });
   }
 
   _closeBtnClickHandler(evt) {
@@ -250,6 +269,22 @@ export default class TripPointEdit extends SmartView {
     evt.preventDefault();
     this._point = TripPointEdit.dataToTripPoint(this._point);
     this._callback.formSubmit(this._point);
+  }
+
+  _startDateTimeChangeHandler([userStartDateTime]) {
+    if (userStartDateTime) {
+      this.updateData({
+        startDateTime: userStartDateTime,
+      });
+    }
+  }
+
+  _endDateTimeChangeHandler([userEndDateTime]) {
+    if (userEndDateTime) {
+      this.updateData({
+        endDateTime: userEndDateTime,
+      });
+    }
   }
 
   _datepickerStartClickHandler() {
@@ -267,6 +302,8 @@ export default class TripPointEdit extends SmartView {
         dateFormat: "d/m/y H:i",
         defaultDate: this._point.startDateTime,
         enableTime: true,
+        time_24hr: true,
+        onChange: this._startDateTimeChangeHandler,
       },
     );
   }
@@ -274,6 +311,8 @@ export default class TripPointEdit extends SmartView {
   _datepickerEndClickHandler() {
 
     if (this._datepickerEndDateTime) {
+      this._datepickerEndDateTime.clear();
+      this._datepickerEndDateTime.close();
       this._datepickerEndDateTime.destroy();
       this._datepickerEndDateTime = null;
     }
@@ -284,12 +323,10 @@ export default class TripPointEdit extends SmartView {
         dateFormat: "d/m/y H:i",
         defaultDate: this._point.endDateTime,
         enableTime: true,
+        time_24hr: true,
+        onChange: this._endDateTimeChangeHandler,
       },
     );
-  }
-
-  restoreHandlers() {
-    this._setHandlers();
   }
 
   _setHandlers() {
