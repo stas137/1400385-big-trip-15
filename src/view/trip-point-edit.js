@@ -1,7 +1,8 @@
 import dayjs from 'dayjs';
-import {POINT_BLANK} from '../const';
-import {generateId} from '../utils/common.js';
-import AbstractView from './abstract.js';
+import {POINT_TYPES, POINT_BLANK} from '../const';
+import {generateId, generateOffers, generateDestination} from '../utils/common.js';
+import {replace} from '../utils/render.js';
+import SmartView from './smart.js';
 
 const createOffersTemplate = ({id, pointOffers}) => (pointOffers.offers
   .map((offer) => `<div class="event__offer-selector">
@@ -30,7 +31,13 @@ const createPicturesTemplate = (pictures) => {
 </div>`;
 };
 
-const createTripPointEditTemplate = (point) => (`<li class="trip-events__item">
+const createTripPointEditTemplate = (point) => {
+  const getItemTemplate = (value, isChecked) => (`<div class="event__type-item">
+    <input id="event-type-${value.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${value.toLowerCase()}" ${isChecked ? 'checked' : ''}>
+    <label class="event__type-label  event__type-label--${value.toLowerCase()}" for="event-type-${value.toLowerCase()}-1">${value}</label>
+  </div>`);
+
+  return `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
   <header class="event__header">
     <div class="event__type-wrapper">
@@ -43,56 +50,7 @@ const createTripPointEditTemplate = (point) => (`<li class="trip-events__item">
       <div class="event__type-list">
         <fieldset class="event__type-group">
           <legend class="visually-hidden">Event type</legend>
-
-          <div class="event__type-item">
-            <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
-            <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
-            <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
-            <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
-            <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport">
-            <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
-            <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
-            <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
-            <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
-            <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-          </div>
-
-          <div class="event__type-item">
-            <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
-            <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-          </div>
+          ${POINT_TYPES.map((value) => getItemTemplate(value, point.typePoint === value)).join('')}
         </fieldset>
       </div>
     </div>
@@ -103,9 +61,9 @@ const createTripPointEditTemplate = (point) => (`<li class="trip-events__item">
       </label>
       <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.cityPoint}" list="destination-list-1">
       <datalist id="destination-list-1">
-        <option value="Amsterdam"></option>
-        <option value="Geneva"></option>
-        <option value="Chamonix"></option>
+        <option value="Amsterdam">Amsterdam</option>
+        <option value="Geneva">Geneva</option>
+        <option value="Chamonix">Chamonix</option>
       </datalist>
     </div>
 
@@ -114,7 +72,7 @@ const createTripPointEditTemplate = (point) => (`<li class="trip-events__item">
       <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(point.startDateTime).format('DD[/]MM[/]YY HH[:]mm')}">
       &mdash;
       <label class="visually-hidden" for="event-end-time-1">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(point.picturesendDateTime).format('DD[/]MM[/]YY HH[:]mm')}">
+      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(point.endDateTime).format('DD[/]MM[/]YY HH[:]mm')}">
     </div>
 
     <div class="event__field-group  event__field-group--price">
@@ -141,24 +99,138 @@ const createTripPointEditTemplate = (point) => (`<li class="trip-events__item">
     </section>
   </section>
 </form>
-</li>`);
+</li>`;
+};
 
-export default class TripPointEdit extends AbstractView {
+export default class TripPointEdit extends SmartView {
   constructor(point = POINT_BLANK) {
     super();
 
-    this._point = point;
+    this._point = TripPointEdit.tripPointToData(point);
 
     if (point === POINT_BLANK) {
       this._point.id = generateId();
     }
 
+    this._changeTripPointTypeHandler = this._changeTripPointTypeHandler.bind(this);
+    this._changeTripPointCityHandler = this._changeTripPointCityHandler.bind(this);
+    this._offerTripPointClickHandler =  this._offerTripPointClickHandler.bind(this);
     this._closeBtnClickHandler = this._closeBtnClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._updateOffers = this._updateOffers.bind(this);
+
+    this._setHandlers();
   }
 
   getTemplate() {
     return createTripPointEditTemplate(this._point);
+  }
+
+  static tripPointToData(data) {
+    return Object.assign(
+      {},
+      data,
+      {
+        isChangeTripPointType: false,
+        isChangeTripPointCity: false,
+        newTripPointType: '',
+        newTripPointCity: '',
+      },
+    );
+  }
+
+  static dataToTripPoint(data) {
+
+    if (data.isChangeTripPointType && data.isChangeTripPointCity) {
+      data.typePoint = data.newTripPointType;
+      data.cityPoint = data.newTripPointCity;
+
+      data =  Object.assign(
+        {},
+        data,
+        {
+          pointOffers: generateOffers(data.typePoint.toLowerCase()),
+          destination: generateDestination(data.cityPoint),
+        },
+      );
+    } else if (data.isChangeTripPointType) {
+      data.typePoint = data.newTripPointType;
+
+      data =  Object.assign(
+        {},
+        data,
+        {
+          pointOffers: generateOffers(data.typePoint.toLowerCase()),
+        },
+      );
+    } else if (data.isChangeTripPointCity) {
+      data.cityPoint = data.newTripPointCity;
+
+      data =  Object.assign(
+        {},
+        data,
+        {
+          destination: generateDestination(data.cityPoint),
+        },
+      );
+    }
+
+    delete data.isChangeTripPointType;
+    delete data.newTripPointType;
+    delete data.isChangeTripPointCity;
+    delete data.newTripPointCity;
+
+    return data;
+  }
+
+  _changeTripPointTypeHandler(evt) {
+    if (evt.target.classList.contains('event__type-label')) {
+      if (evt.target.textContent.toLowerCase() !== this._point.typePoint.toLowerCase()) {
+        this.updateData({
+          isChangeTripPointType: true,
+          newTripPointType: evt.target.textContent,
+        }, true);
+        this._point = TripPointEdit.dataToTripPoint(this._point);
+        this.updateData({}, false);
+      } else {
+        this.updateData({
+          isChangeTripPointType: false,
+          newTripPointType: evt.target.textContent,
+        }, true);
+      }
+    }
+  }
+
+  _changeTripPointCityHandler(evt) {
+    if (evt.target.value !== '') {
+      this.updateData({
+        isChangeTripPointCity: true,
+        newTripPointCity: evt.target.value,
+      }, true);
+      this._point = TripPointEdit.dataToTripPoint(this._point);
+      this.updateData({}, false);
+    }
+    else {
+      this.updateData({
+        isChangeTripPointCity: false,
+        newTripPointCity: '',
+      }, true);
+    }
+  }
+
+  _updateOffers(newChild, oldChild) {
+    replace(newChild, oldChild);
+  }
+
+  _offerTripPointClickHandler(evt) {
+    evt.preventDefault();
+    const spanElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.querySelector('.event__offer-title') : evt.target.parentElement.parentElement.querySelector('.event__offer-title');
+    const inputElement = evt.target.classList.contains('event__offer-label') ?  evt.target.parentElement.querySelector('.event__offer-checkbox') : evt.target.parentElement.parentElement.querySelector('.event__offer-checkbox') ;
+
+    const offerIndex = this._point.pointOffers.offers.findIndex((item) => item.title === spanElement.textContent);
+
+    inputElement.checked = !inputElement.checked;
+    this._point.pointOffers.offers[offerIndex].checked = inputElement.checked;
   }
 
   _closeBtnClickHandler(evt) {
@@ -168,16 +240,44 @@ export default class TripPointEdit extends AbstractView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._point = TripPointEdit.dataToTripPoint(this._point);
+    this._callback.formSubmit(this._point);
+  }
+
+  restoreHandlers() {
+    this._setHandlers();
+  }
+
+  _setHandlers() {
+    this.getElement().querySelector('.event__type-btn').addEventListener('click', this._selectTripPointTypeHandler);
+    this.getElement().querySelector('.event__type-group').addEventListener('click', this._changeTripPointTypeHandler);
+    this.getElement().querySelector('.event__input--destination').addEventListener('change', this._changeTripPointCityHandler);
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeBtnClickHandler);
+
+    if (this.getElement().querySelector('.event__available-offers')) {
+      this.getElement().querySelector('.event__available-offers').addEventListener('click', this._offerTripPointClickHandler);
+    }
+
+    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
+  }
+
+  setSelectTripPointTypeHandler(callback) {
+    this._callback.selectTripPointClick = callback;
+  }
+
+  setChangeTripPointTypeHandler(callback) {
+    this._callback.changeTripPointClick = callback;
+  }
+
+  setChangeTripPointCityHandler(callback) {
+    this._callback.changeTripPointCityClick = callback;
   }
 
   setCloseBtnClickHandler(callback) {
     this._callback.closeBtnClick = callback;
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeBtnClickHandler);
   }
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
-    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 }

@@ -20,6 +20,7 @@ export default class Trip {
     this._handleSortChange = this._handleSortChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleFavoriteChange = this._handleFavoriteChange.bind(this);
+    this._handleFormSubmit = this._handleFormSubmit.bind(this);
 
     this._pointEmptyComponent = new TripPointEmptyView();
   }
@@ -52,6 +53,11 @@ export default class Trip {
   }
 
   _handleFavoriteChange(updatedTripPoint) {
+    this._tripPoints = updateItem(this._tripPoints, updatedTripPoint);
+    this._tripPointsPresenter.get(updatedTripPoint.id).init(updatedTripPoint);
+  }
+
+  _handleFormSubmit(updatedTripPoint) {
     this._tripPoints = updateItem(this._tripPoints, updatedTripPoint);
     this._tripPointsPresenter.get(updatedTripPoint.id).init(updatedTripPoint);
   }
@@ -92,7 +98,7 @@ export default class Trip {
   _renderTripPoint(tripPoint) {
     this._tripPointsListContainer = this._tripContainer.querySelector('.trip-events__list');
 
-    const tripPointPresenter = new TripPointPresenter(this._tripPointsListContainer, this._handleModeChange, this._handleFavoriteChange);
+    const tripPointPresenter = new TripPointPresenter(this._tripPointsListContainer, this._handleModeChange, this._handleFavoriteChange, this._handleFormSubmit);
 
     tripPointPresenter.init(tripPoint);
     this._tripPointsPresenter.set(tripPoint.id, tripPointPresenter);
