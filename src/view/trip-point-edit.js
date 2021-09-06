@@ -251,6 +251,7 @@ export default class TripPointEdit extends SmartView {
     const offers = this._point.pointOffers.offers.map((item) => Object.assign({}, item));
 
     inputElement.checked = !inputElement.checked;
+    
     offers[offerIndex].checked = inputElement.checked;
     
     this.updateData({
