@@ -124,13 +124,12 @@ export default class TripPointEdit extends SmartView {
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._updateOffers = this._updateOffers.bind(this);
 
-    this._datepickerStartClickHandler = this._datepickerStartClickHandler.bind(this);
-    this._datepickerEndClickHandler = this._datepickerEndClickHandler.bind(this);
-
     this._startDateTimeChangeHandler = this._startDateTimeChangeHandler.bind(this);
     this._endDateTimeChangeHandler = this._endDateTimeChangeHandler.bind(this);
 
     this._setHandlers();
+    this._setDatepickerStart();
+    this._setDatepickerEnd();
   }
 
   getTemplate() {
@@ -139,6 +138,8 @@ export default class TripPointEdit extends SmartView {
 
   restoreHandlers() {
     this._setHandlers();
+    this._setDatepickerStart();
+    this._setDatepickerEnd();
   }
 
   resetTripPoint(point) {
@@ -288,7 +289,7 @@ export default class TripPointEdit extends SmartView {
     }
   }
 
-  _datepickerStartClickHandler() {
+  _setDatepickerStart() {
 
     if (this._datepickerStartDateTime) {
       this._datepickerStartDateTime.clear();
@@ -308,7 +309,7 @@ export default class TripPointEdit extends SmartView {
     );
   }
 
-  _datepickerEndClickHandler() {
+  _setDatepickerEnd() {
 
     if (this._datepickerEndDateTime) {
       this._datepickerEndDateTime.clear();
@@ -339,9 +340,6 @@ export default class TripPointEdit extends SmartView {
     }
 
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
-
-    this.getElement().querySelector('#event-start-time-1').addEventListener('click', this._datepickerStartClickHandler);
-    this.getElement().querySelector('#event-end-time-1').addEventListener('click', this._datepickerEndClickHandler);
   }
 
   setSelectTripPointTypeHandler(callback) {
