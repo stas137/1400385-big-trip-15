@@ -12,6 +12,7 @@ export default class Trip {
   constructor(tripContainer, tripControlsEvents, tripPointsModel) {
 
     this._tripPointsModel = tripPointsModel;
+
     this._tripContainer = tripContainer;
     this._tripControlsEvents = tripControlsEvents;
     this._tripPointsPresenter = new Map();
