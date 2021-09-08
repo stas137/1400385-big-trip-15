@@ -16,6 +16,8 @@ const generateId = () => getRandomInteger(0, 250);
 const compareDate = (a, b) => (a.startDateTime > b.startDateTime) ? 1 : -1;
 const compareTime = (a, b) => ((a.endDateTime - a.startDateTime) > (b.endDateTime - b.startDateTime)) ? 1 : -1;
 const comparePrice = (a, b) => (Number(a.price) > Number(b.price)) ? 1 : -1;
+const compareFuture = (a, b = new Date()) => (a.startDateTime > b) ? 1 : -1;
+const comparePast = (a, b = new Date()) => (a.startDateTime < b) ? 1 : -1;
 
 const generateTypePointOffers = (typePoint) => {
   const offersTitlesTypes = OFFER_TITLES_TYPES.filter((item) => item.point === typePoint);
@@ -101,4 +103,4 @@ const updateItem = (items, updatedItem) => {
 
 };
 
-export {isEscEvent, getRandomInteger, generateId, compareDate, compareTime, comparePrice, generateOffers, generateDestination, updateItem};
+export {isEscEvent, getRandomInteger, generateId, compareDate, compareTime, comparePrice, compareFuture, comparePast, generateOffers, generateDestination, updateItem};

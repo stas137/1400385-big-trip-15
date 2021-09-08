@@ -9,7 +9,7 @@ const createTripSortTemplate = (activeSort) => {
   </div>`);
 
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-    ${Object.values(SortType).map((value) => getItemTemplate(value, activeSort === value, value === SortType.EVENT || value === SortType.OFFER))
+    ${Object.values(SortType).map((sortType) => getItemTemplate(sortType, activeSort === sortType, sortType === SortType.EVENT || sortType === SortType.OFFER))
     .join('')}
     </form>`;
 };

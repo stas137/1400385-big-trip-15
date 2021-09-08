@@ -1,6 +1,6 @@
 import {RenderPosition, render, remove} from '../utils/render.js';
-import {compareDate, compareTime, comparePrice} from '../utils/common.js';
-import {SortType} from '../const.js';
+import {compareDate, compareTime, comparePrice, compareFuture, comparePast} from '../utils/common.js';
+import {FilterType, SortType} from '../const.js';
 import TripRouteView from '../view/trip-route.js';
 import TripCostView from '../view/trip-cost.js';
 import TripSortView from '../view/trip-sort.js';
@@ -17,8 +17,6 @@ export default class Trip {
     this._tripControlsEvents = tripControlsEvents;
     this._tripPointsPresenter = new Map();
 
-    this._activeSort = SortType.DAY;
-
     this._handleSortChange = this._handleSortChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleFavoriteChange = this._handleFavoriteChange.bind(this);
@@ -27,11 +25,26 @@ export default class Trip {
     this._pointEmptyComponent = new TripPointEmptyView();
   }
 
-  init() {
+  init(activeSort = SortType.DAY, activeFilter = FilterType.EVERYTHING) {
+    this._activeSort = activeSort;
+    this._activeFilter = activeFilter;
     this._renderTrip();
   }
 
-  _getTripPoints() {
+  _getTripPoints(activeSort = SortType.DAY, activeFilter = FilterType.EVERYTHING) {
+
+    this._activeSort = activeSort;
+    this._activeFilter = activeFilter;
+
+    if (this._activeFilter !== FilterType.EVERYTHING) {
+      switch (this._activeFilter) {
+        case FilterType.FUTURE:
+          return this._tripPointsModel.getPoints().slice().sort(compareFuture);
+        case FilterType.PAST:
+          return this._tripPointsModel.getPoints().slice().sort(comparePast);
+      }
+    }
+
     switch (this._activeSort) {
       case SortType.DAY:
         return this._tripPointsModel.getPoints().slice().sort(compareDate);
@@ -40,11 +53,12 @@ export default class Trip {
       case SortType.PRICE:
         return this._tripPointsModel.getPoints().slice().sort(comparePrice);
     }
+
     return this._tripPointsModel.getPoints();
   }
 
   _setTripPoint(updatedItem) {
-    this._tripPointsModel.setPoint(updatedItem);
+    this._tripPointsModel.updatePoint('update', updatedItem);
   }
 
   _handleSortChange(activeSort) {
@@ -102,7 +116,8 @@ export default class Trip {
     this._tripPointsPresenter.set(tripPoint.id, tripPointPresenter);
   }
 
-  _renderTripPointsList() {
+  _renderTripPointsList(activeFilter = FilterType.EVERYTHING) {
+    this._activeFilter = activeFilter;
     this._getTripPoints().forEach((tripPoint) => this._renderTripPoint(tripPoint));
   }
 

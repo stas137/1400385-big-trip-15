@@ -13,6 +13,7 @@ export default class Point {
 
     this._tripPointComponent = null;
     this._tripPointEditComponent = null;
+
     this._mode = Mode.DEFAULT;
 
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);

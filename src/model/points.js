@@ -10,17 +10,29 @@ export default class Points extends AbstractObserver {
     this._points = points.slice();
   }
 
-  setPoint(point) {
-    if (!point) {
-      return;
+  updatePoint(updateType, update) {
+    const index = this._points.findIndex((item) => item.id === update.id);
+
+    if (index === -1) {
+      throw new Error('Can\'t update unexisting task');
     }
-    const index = this._points.findIndex((item) => item.id === point.id);
+
     this.setPoints([
-      this.getPoints().slice(0, index),
-      point,
-      this.getPoints().slice(index + 1),
-    ],
-    );
+      ...this.getPoints().slice(0, index),
+      update,
+      ...this.getPoints().slice(index + 1),
+    ]);
+
+    this._notify(updateType, update);
+  }
+
+  addPoint(updateType, update) {
+    this.setPoints([
+      ...this.getPoints().slice(),
+      update,
+    ]);
+
+    this._notify(updateType, update);
   }
 
   getPoints() {
