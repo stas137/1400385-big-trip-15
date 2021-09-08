@@ -1,8 +1,10 @@
 import dayjs from 'dayjs';
+import flatpickr from 'flatpickr';
 import {POINT_TYPES, POINT_BLANK} from '../const';
 import {generateId, generateOffers, generateDestination} from '../utils/common.js';
 import {replace} from '../utils/render.js';
 import SmartView from './smart.js';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createOffersTemplate = ({id, pointOffers}) => (pointOffers.offers
   .map((offer) => `<div class="event__offer-selector">
@@ -112,6 +114,9 @@ export default class TripPointEdit extends SmartView {
       this._point.id = generateId();
     }
 
+    this._datepickerStartDateTime = null;
+    this._datepickerEndDateTime = null;
+
     this._changeTripPointTypeHandler = this._changeTripPointTypeHandler.bind(this);
     this._changeTripPointCityHandler = this._changeTripPointCityHandler.bind(this);
     this._offerTripPointClickHandler =  this._offerTripPointClickHandler.bind(this);
@@ -119,11 +124,28 @@ export default class TripPointEdit extends SmartView {
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._updateOffers = this._updateOffers.bind(this);
 
+    this._startDateTimeChangeHandler = this._startDateTimeChangeHandler.bind(this);
+    this._endDateTimeChangeHandler = this._endDateTimeChangeHandler.bind(this);
+
     this._setHandlers();
+    this._setDatepickerStart();
+    this._setDatepickerEnd();
   }
 
   getTemplate() {
     return createTripPointEditTemplate(this._point);
+  }
+
+  restoreHandlers() {
+    this._setHandlers();
+    this._setDatepickerStart();
+    this._setDatepickerEnd();
+  }
+
+  resetTripPoint(point) {
+    this.updateData(
+      TripPointEdit.tripPointToData(point),
+    );
   }
 
   static tripPointToData(data) {
@@ -189,24 +211,24 @@ export default class TripPointEdit extends SmartView {
         this.updateData({
           isChangeTripPointType: true,
           newTripPointType: evt.target.textContent,
-        }, true);
+        });
         this._point = TripPointEdit.dataToTripPoint(this._point);
         this.updateData({}, false);
       } else {
         this.updateData({
           isChangeTripPointType: false,
-          newTripPointType: evt.target.textContent,
-        }, true);
+          newTripPointType: '',
+        });
       }
     }
   }
 
   _changeTripPointCityHandler(evt) {
-    if (evt.target.value !== '') {
+    if ((evt.target.value !== '') && (evt.target.value.toLowerCase() !== this._point.cityPoint.toLowerCase())) {
       this.updateData({
         isChangeTripPointCity: true,
         newTripPointCity: evt.target.value,
-      }, true);
+      });
       this._point = TripPointEdit.dataToTripPoint(this._point);
       this.updateData({}, false);
     }
@@ -214,7 +236,7 @@ export default class TripPointEdit extends SmartView {
       this.updateData({
         isChangeTripPointCity: false,
         newTripPointCity: '',
-      }, true);
+      });
     }
   }
 
@@ -226,11 +248,18 @@ export default class TripPointEdit extends SmartView {
     evt.preventDefault();
     const spanElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.querySelector('.event__offer-title') : evt.target.parentElement.parentElement.querySelector('.event__offer-title');
     const inputElement = evt.target.classList.contains('event__offer-label') ?  evt.target.parentElement.querySelector('.event__offer-checkbox') : evt.target.parentElement.parentElement.querySelector('.event__offer-checkbox') ;
-
     const offerIndex = this._point.pointOffers.offers.findIndex((item) => item.title === spanElement.textContent);
+    const offers = this._point.pointOffers.offers.map((item) => Object.assign({}, item));
 
     inputElement.checked = !inputElement.checked;
-    this._point.pointOffers.offers[offerIndex].checked = inputElement.checked;
+
+    offers[offerIndex].checked = inputElement.checked;
+
+    this.updateData({
+      pointOffers: {
+        offers,
+      },
+    });
   }
 
   _closeBtnClickHandler(evt) {
@@ -244,8 +273,60 @@ export default class TripPointEdit extends SmartView {
     this._callback.formSubmit(this._point);
   }
 
-  restoreHandlers() {
-    this._setHandlers();
+  _startDateTimeChangeHandler([userStartDateTime]) {
+    if (userStartDateTime) {
+      this.updateData({
+        startDateTime: userStartDateTime,
+      });
+    }
+  }
+
+  _endDateTimeChangeHandler([userEndDateTime]) {
+    if (userEndDateTime) {
+      this.updateData({
+        endDateTime: userEndDateTime,
+      });
+    }
+  }
+
+  _setDatepickerStart() {
+
+    if (this._datepickerStartDateTime) {
+      this._datepickerStartDateTime.clear();
+      this._datepickerStartDateTime.close();
+      this._datepickerStartDateTime.destroy();
+      this._datepickerStartDateTime = null;
+    }
+
+    this._datepickerStartDateTime = flatpickr(
+      this.getElement().querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._point.startDateTime,
+        enableTime: true,
+        onChange: this._startDateTimeChangeHandler,
+      },
+    );
+  }
+
+  _setDatepickerEnd() {
+
+    if (this._datepickerEndDateTime) {
+      this._datepickerEndDateTime.clear();
+      this._datepickerEndDateTime.close();
+      this._datepickerEndDateTime.destroy();
+      this._datepickerEndDateTime = null;
+    }
+
+    this._datepickerEndDateTime = flatpickr(
+      this.getElement().querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._point.endDateTime,
+        enableTime: true,
+        onChange: this._endDateTimeChangeHandler,
+      },
+    );
   }
 
   _setHandlers() {
