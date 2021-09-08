@@ -9,8 +9,9 @@ import TripPointEmptyView from '../view/trip-point-empty.js';
 import TripPointPresenter from './point.js';
 
 export default class Trip {
-  constructor(tripContainer, tripControlsEvents) {
+  constructor(tripContainer, tripControlsEvents, tripPointsModel) {
 
+    this._tripPointsModel = tripPointsModel;
     this._tripContainer = tripContainer;
     this._tripControlsEvents = tripControlsEvents;
     this._tripPointsPresenter = new Map();
