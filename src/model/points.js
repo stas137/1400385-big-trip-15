@@ -10,8 +10,17 @@ export default class Points extends AbstractObserver {
     this._points = points.slice();
   }
 
-  setPoint(pointIndex, point) {
-    this._points[pointIndex] = point;
+  setPoint(point) {
+    if (!point) {
+      return;
+    }
+    const index = this._points.findIndex((item) => item.id === point.id);
+    this.setPoints([
+      this.getPoints().slice(0, index),
+      point,
+      this.getPoints().slice(index + 1),
+    ],
+    );
   }
 
   getPoints() {
