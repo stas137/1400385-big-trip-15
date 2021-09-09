@@ -120,6 +120,8 @@ export default class TripPointEdit extends SmartView {
     this._changeTripPointTypeHandler = this._changeTripPointTypeHandler.bind(this);
     this._changeTripPointCityHandler = this._changeTripPointCityHandler.bind(this);
     this._offerTripPointClickHandler =  this._offerTripPointClickHandler.bind(this);
+
+    this._deleteBtnClickHandler = this._deleteBtnClickHandler.bind(this);
     this._closeBtnClickHandler = this._closeBtnClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._updateOffers = this._updateOffers.bind(this);
@@ -267,6 +269,11 @@ export default class TripPointEdit extends SmartView {
     this._callback.closeBtnClick();
   }
 
+  _deleteBtnClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteBtnClick(this._point);
+  }
+
   _formSubmitHandler(evt) {
     evt.preventDefault();
     this._point = TripPointEdit.dataToTripPoint(this._point);
@@ -330,10 +337,11 @@ export default class TripPointEdit extends SmartView {
   }
 
   _setHandlers() {
-    this.getElement().querySelector('.event__type-btn').addEventListener('click', this._selectTripPointTypeHandler);
+    /* this.getElement().querySelector('.event__type-btn').addEventListener('click', this._selectTripPointTypeHandler); */
     this.getElement().querySelector('.event__type-group').addEventListener('click', this._changeTripPointTypeHandler);
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._changeTripPointCityHandler);
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeBtnClickHandler);
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._deleteBtnClickHandler);
 
     if (this.getElement().querySelector('.event__available-offers')) {
       this.getElement().querySelector('.event__available-offers').addEventListener('click', this._offerTripPointClickHandler);
@@ -356,6 +364,10 @@ export default class TripPointEdit extends SmartView {
 
   setCloseBtnClickHandler(callback) {
     this._callback.closeBtnClick = callback;
+  }
+
+  setDeleteBtnClickHandler(callback) {
+    this._callback.deleteBtnClick = callback;
   }
 
   setFormSubmitHandler(callback) {

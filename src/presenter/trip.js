@@ -26,7 +26,7 @@ export default class Trip {
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
-    this._pointEmptyComponent = new TripPointEmptyView();
+    this._pointEmptyComponent = null;
   }
 
   init() {
@@ -64,6 +64,8 @@ export default class Trip {
         this._renderTripPointsList();
         break;
       case UpdateType.MAJOR:
+        this._clearTrip(true);
+        this._renderTrip();
         break;
     }
 
@@ -144,6 +146,7 @@ export default class Trip {
 
   _renderTrip() {
     if (!this._getTripPoints().length) {
+      this._pointEmptyComponent = new TripPointEmptyView();
       this._renderPointEmpty();
       return;
     }
@@ -162,6 +165,10 @@ export default class Trip {
     this._renderTripPointsList();
   }
 
+  _clearTripPointsContainer() {
+    remove(this._tripPointsContainerComponent);
+  }
+
   _clearTripPoints() {
     this._tripPointsPresenter.forEach((tripPointPresenter) => tripPointPresenter.destroy());
     this._tripPointsPresenter.clear();
@@ -171,7 +178,31 @@ export default class Trip {
     remove(this._sortComponent);
   }
 
-  _clearTripPointsContainer() {
-    remove(this._tripPointsContainerComponent);
+  _clearCost() {
+    remove(this._costComponent);
+  }
+
+  _clearRoute() {
+    remove(this._routeComponent);
+  }
+
+  _clearTripPointEmpty() {
+    remove(this._pointEmptyComponent);
+  }
+
+  _clearTrip(resetSortType = false) {
+
+    this._clearTripPoints();
+    this._clearTripPointsContainer();
+    this._clearSort();
+    this._clearRoute();
+
+    if (this._pointEmptyComponent) {
+      this._clearTripPointEmpty();
+    }
+
+    if (resetSortType) {
+      this._activeSort = SortType.DAY;
+    }
   }
 }
