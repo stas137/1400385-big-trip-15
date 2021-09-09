@@ -28,8 +28,6 @@ export default class Filter {
       remove(this._tripFilterComponent);
       this.init(activeFilter);
 
-      this._tripPresenter._clearTripPoints();
-      this._tripPresenter._renderTripPointsList(this._activeFilter);
     }
   }
 }

@@ -12,9 +12,10 @@ export default class Trip {
   constructor(tripContainer, tripControlsEvents, tripPointsModel) {
 
     this._tripPointsModel = tripPointsModel;
-
+    
     this._tripContainer = tripContainer;
     this._tripControlsEvents = tripControlsEvents;
+
     this._tripPointsPresenter = new Map();
 
     this._handleSortChange = this._handleSortChange.bind(this);
@@ -23,27 +24,27 @@ export default class Trip {
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
 
     this._pointEmptyComponent = new TripPointEmptyView();
+
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._tripPointsModel.addObserver(this._handleModelEvent);
   }
 
-  init(activeSort = SortType.DAY, activeFilter = FilterType.EVERYTHING) {
+  init(activeSort = SortType.DAY) {
     this._activeSort = activeSort;
-    this._activeFilter = activeFilter;
     this._renderTrip();
   }
 
-  _getTripPoints(activeSort = SortType.DAY, activeFilter = FilterType.EVERYTHING) {
+  _handleViewAction(actionType, updateType, data) {
+    console.log(actionType, updateType, data);
+  }
+
+  _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
+  }
+
+  _getTripPoints(activeSort = SortType.DAY) {
 
     this._activeSort = activeSort;
-    this._activeFilter = activeFilter;
-
-    if (this._activeFilter !== FilterType.EVERYTHING) {
-      switch (this._activeFilter) {
-        case FilterType.FUTURE:
-          return this._tripPointsModel.getPoints().slice().sort(compareFuture);
-        case FilterType.PAST:
-          return this._tripPointsModel.getPoints().slice().sort(comparePast);
-      }
-    }
 
     switch (this._activeSort) {
       case SortType.DAY:
@@ -75,7 +76,7 @@ export default class Trip {
 
     this._renderSort(this._activeSort);
     this._renderTripPointsContainer();
-    this._renderTripPointsList();
+    this._renderTripPointsList(this._activeSort);
   }
 
   _handleModeChange() {
@@ -116,9 +117,8 @@ export default class Trip {
     this._tripPointsPresenter.set(tripPoint.id, tripPointPresenter);
   }
 
-  _renderTripPointsList(activeFilter = FilterType.EVERYTHING) {
-    this._activeFilter = activeFilter;
-    this._getTripPoints().forEach((tripPoint) => this._renderTripPoint(tripPoint));
+  _renderTripPointsList(activeSort) {
+    this._getTripPoints(activeSort).forEach((tripPoint) => this._renderTripPoint(tripPoint));
   }
 
   _renderTrip() {
