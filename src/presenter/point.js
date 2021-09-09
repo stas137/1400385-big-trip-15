@@ -1,15 +1,15 @@
 import {render, replace, remove} from '../utils/render.js';
 import {isEscEvent} from '../utils/common.js';
-import {Mode} from '../const.js';
+import {Mode, UpdateType, UserAction} from '../const.js';
 import TripPointView from '../view/trip-point.js';
 import TripPointEditView from '../view/trip-point-edit.js';
 
 export default class Point {
-  constructor(tripPointsListContainer, changeMode, changeFavorite, formSubmit) {
+  constructor(tripPointsListContainer, changeMode, changeView) {
     this._tripPointsListContainer = tripPointsListContainer;
     this._changeMode = changeMode;
-    this._changeFavorite = changeFavorite;
-    this._formSubmit = formSubmit;
+    this._changeFavorite = changeView;
+    this._formSubmit = changeView;
 
     this._tripPointComponent = null;
     this._tripPointEditComponent = null;
@@ -89,7 +89,7 @@ export default class Point {
         isFavorite: !this._tripPoint.isFavorite,
       });
 
-    this._changeFavorite(tripPointEdit);
+    this._changeFavorite(UserAction.UPDATE_POINT, UpdateType.PATCH, tripPointEdit);
   }
 
   _handleOpenBtnClick() {
@@ -107,7 +107,7 @@ export default class Point {
       this._tripPoint,
       point,
     );
-    this._formSubmit(tripPointEdit);
+    this._formSubmit(UserAction.UPDATE_POINT, UpdateType.PATCH, tripPointEdit);
   }
 
   _escKeyDownHandler(evt) {

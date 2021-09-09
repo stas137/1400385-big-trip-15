@@ -14,14 +14,13 @@ const tripPointsModel = new TripPointsModel();
 tripPointsModel.setPoints(tripPoints);
 
 const tripFilterModel = new TripFilterModel();
-tripFilterModel.setFilter();
 
 const bodyElement = document.querySelector('body');
 const tripControlsEvents = bodyElement.querySelector('.trip-events');
 const tripControlsNavigation = bodyElement.querySelector('.trip-controls__navigation');
 const tripControlsFilter = bodyElement.querySelector('.trip-controls__filters');
 
-const tripPresenter = new TripPresenter(bodyElement, tripControlsEvents, tripPointsModel);
+const tripPresenter = new TripPresenter(bodyElement, tripControlsEvents, tripPointsModel, tripFilterModel);
 const tripFilter = new TripFilterPresenter(tripControlsFilter, tripFilterModel, tripPointsModel);
 
 render(tripControlsNavigation, new TripMenuView());

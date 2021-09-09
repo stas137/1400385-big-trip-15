@@ -27,7 +27,9 @@ export default class TripSort extends AbstractView {
 
   _sortClickHandler(evt) {
     evt.preventDefault();
-    this._callback.sortClick(evt.target.dataset.activeSort);
+    if (evt.target.dataset.activeSort) {
+      this._callback.sortClick(evt.target.dataset.activeSort);
+    }
   }
 
   setSortClickHandler(callback) {

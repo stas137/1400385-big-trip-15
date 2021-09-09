@@ -4,12 +4,12 @@ import {FilterType} from '../const.js';
 export default class Filter extends AbstractObserver {
   constructor() {
     super();
-    this._activeFilter = null;
+    this._activeFilter = FilterType.EVERYTHING;
   }
 
-  setFilter(updateEvent, activeFilter = FilterType.EVERYTHING) {
+  setFilter(updateType, activeFilter) {
     this._activeFilter = activeFilter;
-    this._notify(updateEvent, this.getFilter());
+    this._notify(updateType, activeFilter);
   }
 
   getFilter() {

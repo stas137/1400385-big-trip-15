@@ -19,11 +19,12 @@ export default class Filter {
   }
 
   init() {
-    this._activeFilter = this._getFilter();
+    const filters = this._getFilters();
+    this._activeFilter = this._tripFilterModel.getFilter();
 
     this._prevFilterComponent = this._tripFilterComponent;
 
-    this._tripFilterComponent = new TripFilterView(this._activeFilter);
+    this._tripFilterComponent = new TripFilterView(filters, this._activeFilter);
     this._tripFilterComponent.setFilterClickHandler(this._handleFilterTypeChange);
 
     if (this._prevFilterComponent === null) {
@@ -40,11 +41,25 @@ export default class Filter {
       return;
     }
 
-    this._tripFilterModel.setFilter(UpdateType.MAJOR, activeFilter);
+    this._tripFilterModel.setFilter(UpdateType.MINOR, activeFilter);
   }
 
-  _getFilter() {
-    return this._tripFilterModel.getFilter();
+  _getFilters() {
+
+    return [
+      {
+        type: FilterType.EVERYTHING,
+        name: 'everything',
+      },
+      {
+        type: FilterType.FUTURE,
+        name: 'future',
+      },
+      {
+        type: FilterType.PAST,
+        name: 'past',
+      },
+    ];
   }
 
   _handleModelEvent() {
