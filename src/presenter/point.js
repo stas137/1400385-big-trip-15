@@ -43,7 +43,6 @@ export default class Point {
     this._tripPointEditComponent.setDeleteBtnClickHandler(this._handleDeleteBtnClick);
     this._tripPointEditComponent.setFormSubmitHandler(this._handleFormSubmitClick);
     this._tripPointEditComponent.setChangeTripPointTypeHandler(this._handleCloseBtnClick);
-    /* this._tripPointEditComponent.setSelectTripPointTypeHandler(this._handleCloseBtnClick); */
 
     if (prevTripPointComponent === null || prevTripPointEditComponent === null) {
       render(this._tripPointsListContainer, this._tripPointComponent);

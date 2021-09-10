@@ -337,7 +337,6 @@ export default class TripPointEdit extends SmartView {
   }
 
   _setHandlers() {
-    /* this.getElement().querySelector('.event__type-btn').addEventListener('click', this._selectTripPointTypeHandler); */
     this.getElement().querySelector('.event__type-group').addEventListener('click', this._changeTripPointTypeHandler);
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._changeTripPointCityHandler);
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeBtnClickHandler);
@@ -348,10 +347,6 @@ export default class TripPointEdit extends SmartView {
     }
 
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
-  }
-
-  setSelectTripPointTypeHandler(callback) {
-    this._callback.selectTripPointClick = callback;
   }
 
   setChangeTripPointTypeHandler(callback) {

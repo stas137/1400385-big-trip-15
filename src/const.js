@@ -38,6 +38,12 @@ const UserAction = {
   DELETE_POINT: 'delete_point',
 };
 
+const MenuItem = {
+  ADD_NEW_POINT: 'new event',
+  POINTS: 'table',
+  STATISTICS: 'stats',
+};
+
 const POINT_BLANK = {
   id: '',
   typePoint: '',
@@ -123,4 +129,4 @@ const OFFER_TITLES_TYPES = [
   },
 ];
 
-export {Mode, SortType, FilterType, UpdateType, UserAction, TRIP_POINTS_COUNT, POINT_BLANK, POINT_TYPES, MAX_DAYS_GAP, MAX_MINUTES_GAP, POINT_CITIES, OFFER_TITLES_TYPES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS, MAX_PRICE_OFFER};
+export {Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, TRIP_POINTS_COUNT, POINT_BLANK, POINT_TYPES, MAX_DAYS_GAP, MAX_MINUTES_GAP, POINT_CITIES, OFFER_TITLES_TYPES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS, MAX_PRICE_OFFER};

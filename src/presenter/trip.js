@@ -39,6 +39,18 @@ export default class Trip {
     this._renderTrip();
   }
 
+  destroy() {
+    this._clearTripPoints();
+    this._clearTripPointsContainer();
+
+    this._tripPointsModel.removeObserver(this._handleModelEvent);
+    this._tripFilterModel.removeObserver(this._handleModelEvent);
+  }
+
+  setSort(activeSort) {
+    this._handleSortTypeChange(activeSort);
+  }
+
   _handleViewAction(actionType, updateType, data) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
@@ -162,7 +174,7 @@ export default class Trip {
 
     this._renderSort(this._activeSort);
     this._renderTripPointsContainer();
-    this._renderTripPointsList();
+    this._renderTripPointsList(this._activeSort);
   }
 
   _clearTripPointsContainer() {
