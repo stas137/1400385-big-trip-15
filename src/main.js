@@ -27,11 +27,16 @@ const tripFilter = new TripFilterPresenter(tripControlsFilter, tripFilterModel, 
 
 const tripPointBtnAdd = new TripPointBtnAdd();
 
+const handleTripPointClose = () => {
+  console.log('close');
+};
+
 const handleTripPointBtnAddClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.ADD_NEW_POINT:
       tripFilterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
       tripPointBtnAdd.getElement().parentElement.querySelector('.trip-main__event-add-btn').disabled = true;
+      tripPresenter.createTripPoint(handleTripPointClose);
       break;
   }
 };

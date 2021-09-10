@@ -8,6 +8,7 @@ import TripSortView from '../view/trip-sort.js';
 import TripPointsContainerView from '../view/trip-points-container.js';
 import TripPointEmptyView from '../view/trip-point-empty.js';
 import TripPointPresenter from './point.js';
+import TripPointNewPresenter from './point-new.js';
 
 export default class Trip {
   constructor(tripContainer, tripControlsEvents, tripPointsModel, tripFilterModel) {
@@ -27,6 +28,9 @@ export default class Trip {
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
     this._pointEmptyComponent = null;
+
+    this._tripPointsContainerComponent = new TripPointsContainerView();
+    this._tripPointNewPresenter = new TripPointNewPresenter(this._tripPointsContainerComponent, this._handleViewAction);
   }
 
   init() {
@@ -47,8 +51,8 @@ export default class Trip {
     this._tripFilterModel.removeObserver(this._handleModelEvent);
   }
 
-  setSort(activeSort) {
-    this._handleSortTypeChange(activeSort);
+  createTripPoint(callback) {
+    this._tripPointNewPresenter(callback);
   }
 
   _handleViewAction(actionType, updateType, data) {
@@ -63,7 +67,6 @@ export default class Trip {
         this._tripPointsModel.deletePoint(updateType, data);
         break;
     }
-
   }
 
   _handleModelEvent(updateType, data) {
@@ -80,7 +83,6 @@ export default class Trip {
         this._renderTrip();
         break;
     }
-
   }
 
   _getTripPoints(activeSort = SortType.DAY) {
@@ -135,7 +137,6 @@ export default class Trip {
   }
 
   _renderTripPointsContainer() {
-    this._tripPointsContainerComponent = new TripPointsContainerView();
     render(this._tripControlsEvents, this._tripPointsContainerComponent);
   }
 
