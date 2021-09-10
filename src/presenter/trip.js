@@ -30,6 +30,7 @@ export default class Trip {
     this._pointEmptyComponent = null;
 
     this._tripPointsContainerComponent = new TripPointsContainerView();
+
     this._tripPointNewPresenter = new TripPointNewPresenter(this._tripPointsContainerComponent, this._handleViewAction);
   }
 
@@ -52,7 +53,7 @@ export default class Trip {
   }
 
   createTripPoint(callback) {
-    this._tripPointNewPresenter(callback);
+    this._tripPointNewPresenter.init(callback);
   }
 
   _handleViewAction(actionType, updateType, data) {
@@ -145,9 +146,7 @@ export default class Trip {
   }
 
   _renderTripPoint(tripPoint) {
-    this._tripPointsListContainer = this._tripContainer.querySelector('.trip-events__list');
-
-    const tripPointPresenter = new TripPointPresenter(this._tripPointsListContainer, this._handleModeChange, this._handleViewAction);
+    const tripPointPresenter = new TripPointPresenter(this._tripPointsContainerComponent, this._handleModeChange, this._handleViewAction);
 
     tripPointPresenter.init(tripPoint);
     this._tripPointsPresenter.set(tripPoint.id, tripPointPresenter);
