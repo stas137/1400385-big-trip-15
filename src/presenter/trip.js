@@ -128,6 +128,7 @@ export default class Trip {
   }
 
   _handleModeChange() {
+    this._tripPointNewPresenter.destroy();
     this._tripPointsPresenter.forEach((tripPointPresenter) => tripPointPresenter.resetView());
   }
 

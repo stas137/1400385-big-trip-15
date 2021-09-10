@@ -28,7 +28,7 @@ const tripFilter = new TripFilterPresenter(tripControlsFilter, tripFilterModel, 
 const tripPointBtnAdd = new TripPointBtnAdd();
 
 const handleTripPointClose = () => {
-  console.log('close');
+  tripPointBtnAdd.getElement().parentElement.querySelector('.trip-main__event-add-btn').disabled = false;
 };
 
 const handleTripPointBtnAddClick = (menuItem) => {

@@ -1,7 +1,8 @@
 import dayjs from 'dayjs';
+import he from 'he';
 import flatpickr from 'flatpickr';
 import {POINT_TYPES, POINT_BLANK} from '../const';
-import {generateId, generateOffers, generateDestination} from '../utils/common.js';
+import {generateId, generateOffers, generateDestination, generateTypePoint, generateCityPoint, getDuration, getDurationTripPoint} from '../utils/common.js';
 import {replace} from '../utils/render.js';
 import SmartView from './smart.js';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
@@ -25,6 +26,9 @@ const createOffersContainerTemplate = (point) => (point.pointOffers.offers.lengt
 </section>` : '');
 
 const createPicturesTemplate = (pictures) => {
+  if (!pictures) {
+    return;
+  }
   const pointPictures = pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
   return `<div class="event__photos-container">
   <div class="event__photos-tape">
@@ -82,14 +86,15 @@ const createTripPointEditTemplate = (point) => {
         <span class="visually-hidden">Price</span>
         &euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.price}">
+      <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${point.price}">
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-    <button class="event__reset-btn" type="reset">Delete</button>
-    <button class="event__rollup-btn" type="button">
-      <span class="visually-hidden">Open event</span>
-    </button>
+    <button class="event__reset-btn" type="reset">${point.newPoint ? 'Cancel' : 'Delete'}</button>
+
+    ${point.newPoint ? '' : `<button class="event__rollup-btn" type="button">
+    <span class="visually-hidden">Open event</span>
+    </button>`}
   </header>
   <section class="event__details">
     ${createOffersContainerTemplate(point)}
@@ -111,7 +116,18 @@ export default class TripPointEdit extends SmartView {
     this._point = TripPointEdit.tripPointToData(point);
 
     if (point === POINT_BLANK) {
-      this._point.id = generateId();
+
+      this.updateData({
+        id: String(generateId()),
+        typePoint: generateTypePoint(),
+        cityPoint: generateCityPoint(),
+        startDateTime: dayjs().toDate(),
+        endDateTime: dayjs().add(1, 'day').toDate(),
+        duration: getDurationTripPoint(1, 0, 0),
+        pointOffers: generateOffers(this._point.typePoint.toLowerCase()),
+        destination: generateDestination(this._point.cityPoint),
+        newPoint: true,
+      });
     }
 
     this._datepickerStartDateTime = null;
@@ -119,6 +135,7 @@ export default class TripPointEdit extends SmartView {
 
     this._changeTripPointTypeHandler = this._changeTripPointTypeHandler.bind(this);
     this._changeTripPointCityHandler = this._changeTripPointCityHandler.bind(this);
+    this._inputTripPointPriceHandler = this._inputTripPointPriceHandler.bind(this);
     this._offerTripPointClickHandler =  this._offerTripPointClickHandler.bind(this);
 
     this._deleteBtnClickHandler = this._deleteBtnClickHandler.bind(this);
@@ -203,6 +220,7 @@ export default class TripPointEdit extends SmartView {
     delete data.newTripPointType;
     delete data.isChangeTripPointCity;
     delete data.newTripPointCity;
+    delete data.newPoint;
 
     return data;
   }
@@ -229,7 +247,7 @@ export default class TripPointEdit extends SmartView {
     if ((evt.target.value !== '') && (evt.target.value.toLowerCase() !== this._point.cityPoint.toLowerCase())) {
       this.updateData({
         isChangeTripPointCity: true,
-        newTripPointCity: evt.target.value,
+        newTripPointCity: he.encode(evt.target.value),
       });
       this._point = TripPointEdit.dataToTripPoint(this._point);
       this.updateData({}, false);
@@ -240,6 +258,13 @@ export default class TripPointEdit extends SmartView {
         newTripPointCity: '',
       });
     }
+  }
+
+  _inputTripPointPriceHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      price: String(evt.target.value),
+    });
   }
 
   _updateOffers(newChild, oldChild) {
@@ -282,16 +307,36 @@ export default class TripPointEdit extends SmartView {
 
   _startDateTimeChangeHandler([userStartDateTime]) {
     if (userStartDateTime) {
+      const startDateTime = userStartDateTime;
+      const endDateTime = this._point.endDateTime;
+
+      const {
+        durationDays,
+        durationHours,
+        durationMinutes,
+      } = getDuration(startDateTime, endDateTime);
+
       this.updateData({
-        startDateTime: userStartDateTime,
+        startDateTime,
+        duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
       });
     }
   }
 
   _endDateTimeChangeHandler([userEndDateTime]) {
     if (userEndDateTime) {
+      const startDateTime = this._point.startDateTime;
+      const endDateTime = userEndDateTime;
+
+      const {
+        durationDays,
+        durationHours,
+        durationMinutes,
+      } = getDuration(startDateTime, endDateTime);
+
       this.updateData({
-        endDateTime: userEndDateTime,
+        endDateTime,
+        duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
       });
     }
   }
@@ -339,7 +384,12 @@ export default class TripPointEdit extends SmartView {
   _setHandlers() {
     this.getElement().querySelector('.event__type-group').addEventListener('click', this._changeTripPointTypeHandler);
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._changeTripPointCityHandler);
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeBtnClickHandler);
+    this.getElement().querySelector('.event__input--price').addEventListener('input', this._inputTripPointPriceHandler);
+
+    if (!this._point.newPoint) {
+      this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeBtnClickHandler);
+    }
+
     this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._deleteBtnClickHandler);
 
     if (this.getElement().querySelector('.event__available-offers')) {
