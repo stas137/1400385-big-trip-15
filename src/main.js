@@ -1,4 +1,4 @@
-import {TRIP_POINTS_COUNT, MenuItem, UpdateType, FilterType} from './const.js';
+import {END_POINT, AUTHORIZATION, TRIP_POINTS_COUNT, MenuItem, UpdateType, FilterType} from './const.js';
 import {render} from './utils/render.js';
 import {generatePoint} from './mock/point-mock.js';
 import TripMenuView from './view/trip-menu.js';
@@ -9,7 +9,12 @@ import TripPresenter from './presenter/trip.js';
 import TripFilterModel from './model/filter.js';
 import TripPointsModel from './model/points.js';
 
+import Api from './api.js';
+
 const tripPoints = new Array(TRIP_POINTS_COUNT).fill().map(generatePoint);
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.getPoints().then((points) => console.log(points));
 
 const tripPointsModel = new TripPointsModel();
 tripPointsModel.setPoints(tripPoints);

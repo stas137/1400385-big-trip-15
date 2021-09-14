@@ -1,3 +1,5 @@
+import PointsModel from './model/points.js';
+
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
@@ -16,7 +18,8 @@ export default class Api {
 
   getPoints() {
     return this._load({url: 'points'})
-      .then(Api.toJSON);
+      .then(Api.toJSON)
+      .then((points) => points.map((point) => PointsModel.adaptToClient(point)));
   }
 
   updatePoints(point) {
@@ -38,15 +41,10 @@ export default class Api {
     headers.append('Authorization', this._authorization);
 
     return fetch(
-      `${this._endPoint}/${url}`, 
-      {
-        method, 
-        body, 
-        headers,
-      },
+      `${this._endPoint}/${url}`,
+      {method, body, headers},
     )
-      .then(Api.checkStatus)
-      .catch(Api.catchError);
+      .then(Api.checkStatus).catch(Api.catchError);
   }
 
   static checkStatus(responce) {
