@@ -43,6 +43,8 @@ const generateCityPoint = () => {
 
 
 const getDuration = (startDateTime, endDateTime) => {
+  startDateTime = new Date(startDateTime);
+  endDateTime = new Date(endDateTime);
   const timestamp = new Date(0);
   const duration = new Date(endDateTime - startDateTime);
   let durationDays = duration.getDate() - timestamp.getDate();
@@ -73,10 +75,7 @@ const getDurationTripPoint = (durationDays, durationHours, durationMinutes) => {
   return '00M';
 };
 
-const generateOffers = (typePoint) => ({
-  type: typePoint,
-  offers: generateTypePointOffers(typePoint),
-});
+const generateOffers = (typePoint) => (generateTypePointOffers(typePoint));
 
 const generateDescription = (countSentences = MAX_COUNT_SENTENCES) => {
   const sentences = TEXT_DESCRIPTION.split('. ');

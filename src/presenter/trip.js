@@ -9,6 +9,7 @@ import TripPointsContainerView from '../view/trip-points-container.js';
 import TripPointEmptyView from '../view/trip-point-empty.js';
 import TripPointPresenter from './point.js';
 import TripPointNewPresenter from './point-new.js';
+import LoadingView from '../view/loading.js';
 
 export default class Trip {
   constructor(tripContainer, tripControlsEvents, tripPointsModel, tripFilterModel) {
@@ -20,6 +21,7 @@ export default class Trip {
     this._tripControlsEvents = tripControlsEvents;
 
     this._tripPointsPresenter = new Map();
+    this._isLoading = true;
 
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -30,6 +32,7 @@ export default class Trip {
     this._pointEmptyComponent = null;
 
     this._tripPointsContainerComponent = new TripPointsContainerView();
+    this._loadingComponent = new LoadingView();
 
     this._tripPointNewPresenter = new TripPointNewPresenter(this._tripPointsContainerComponent, this._handleViewAction);
   }
@@ -83,6 +86,11 @@ export default class Trip {
         this._clearTrip(true);
         this._renderTrip();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderTrip();
+        break;
     }
   }
 
@@ -92,7 +100,6 @@ export default class Trip {
     this._activeFilter = this._tripFilterModel.getFilter();
     const points = this._tripPointsModel.getPoints();
     const filteredPoints = filter[this._activeFilter](points);
-
 
     switch (this._activeSort) {
       case SortType.DAY:
@@ -157,8 +164,18 @@ export default class Trip {
     this._getTripPoints(activeSort).forEach((tripPoint) => this._renderTripPoint(tripPoint));
   }
 
+  _renderLoading() {
+    render(this._tripControlsEvents, this._loadingComponent);
+  }
+
   _renderTrip() {
-    if (!this._getTripPoints().length) {
+
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
+    if (!this._getTripPoints()) {
       this._pointEmptyComponent = new TripPointEmptyView();
       this._renderPointEmpty();
       return;
@@ -203,8 +220,15 @@ export default class Trip {
     remove(this._pointEmptyComponent);
   }
 
+  _clearLoading() {
+    remove(this._loadingComponent);
+  }
+
   _clearTrip(resetSortType = false) {
 
+    this._tripPointNewPresenter.destroy();
+
+    this._clearLoading();
     this._clearTripPoints();
     this._clearTripPointsContainer();
     this._clearSort();

@@ -26,7 +26,7 @@ export default class Api {
     return this._load({
       url: `points/${point.id}`,
       method: Method.PUT,
-      body: JSON.stringify(point),
+      body: JSON.stringify(PointsModel.adaptToServer(point)),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
       .then(Api.toJSON);
@@ -44,7 +44,8 @@ export default class Api {
       `${this._endPoint}/${url}`,
       {method, body, headers},
     )
-      .then(Api.checkStatus).catch(Api.catchError);
+      .then(Api.checkStatus)
+      .catch(Api.catchError);
   }
 
   static checkStatus(responce) {

@@ -4,7 +4,7 @@ const createTripFilterTemplate = (filters, activeFilter) => {
   const getItemTemplate = (filter, isChecked) => (
     `<div class="trip-filters__filter">
   <input 
-    id="filter-everything" 
+    id="filter-${filter.name}" 
     class="trip-filters__filter-input 
     visually-hidden" 
     type="radio" 
@@ -13,7 +13,7 @@ const createTripFilterTemplate = (filters, activeFilter) => {
   />
   <label 
     class="trip-filters__filter-label" 
-    for="filter-everything" 
+    for="filter-${filter.name}" 
     data-active-filter="${filter.name}">${filter.name}
   </label>
 </div>`);

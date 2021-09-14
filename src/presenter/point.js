@@ -34,11 +34,12 @@ export default class Point {
     const prevTripPointEditComponent = this._tripPointEditComponent;
 
     this._tripPointComponent = new TripPointView(tripPoint);
-    this._tripPointEditComponent = new TripPointEditView(tripPoint);
 
     this._tripPointComponent.setOpenBtnClickHandler(this._handleOpenBtnClick);
     this._tripPointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
+    this._tripPointEditComponent = new TripPointEditView(tripPoint);
+    
     this._tripPointEditComponent.setCloseBtnClickHandler(this._handleCloseBtnClick);
     this._tripPointEditComponent.setDeleteBtnClickHandler(this._handleDeleteBtnClick);
     this._tripPointEditComponent.setFormSubmitHandler(this._handleFormSubmitClick);
