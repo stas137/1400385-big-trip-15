@@ -7,7 +7,7 @@ import SmartView from './smart.js';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createOffersTemplate = ({id, pointOffers}) => {
-  
+
   const strToCamelCase = (str) => {
     const tempStr = str.toLowerCase().split(' ');
     return tempStr.map((item, index) => index === 0 ? item : `${item.slice(0, 1).toUpperCase()}${item.slice(1)}`).join('');
@@ -20,8 +20,8 @@ const createOffersTemplate = ({id, pointOffers}) => {
     &plus;&euro;&nbsp;
     <span class="event__offer-price">${offer.price}</span>
   </label>
-</div>`)
-  .join('');
+  </div>`)
+    .join('');
 };
 
 const createOffersContainerTemplate = (point) => (point.pointOffers.length ? `<section class="event__section  event__section--offers">

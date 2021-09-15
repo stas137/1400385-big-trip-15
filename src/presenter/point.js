@@ -39,7 +39,7 @@ export default class Point {
     this._tripPointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
     this._tripPointEditComponent = new TripPointEditView(tripPoint);
-    
+
     this._tripPointEditComponent.setCloseBtnClickHandler(this._handleCloseBtnClick);
     this._tripPointEditComponent.setDeleteBtnClickHandler(this._handleDeleteBtnClick);
     this._tripPointEditComponent.setFormSubmitHandler(this._handleFormSubmitClick);
