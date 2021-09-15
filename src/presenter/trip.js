@@ -231,14 +231,12 @@ export default class Trip {
 
     this._clearLoading();
 
-    /*
     if (this._pointEmptyComponent) {
       this._clearTripPointEmpty();
       this._clearTripPointsContainer();
       this._pointEmptyComponent = null;
       return;
     }
-    */
 
     this._clearTripPoints();
     this._clearTripPointsContainer();

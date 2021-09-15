@@ -1,25 +1,25 @@
 import AbstractView from './abstract.js';
 
-const createTripPointBtnAddTemplate = () => '<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">New event</button>';
+const createTripPointNewTemplate = () => '<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">New event</button>';
 
 export default class TripPointNew extends AbstractView {
   constructor() {
     super();
 
-    this._clickTripPointBtnAddHandler = this._clickTripPointBtnAddHandler.bind(this);
+    this._clickTripPointNewHandler = this._clickTripPointNewHandler.bind(this);
   }
 
   getTemplate() {
-    return createTripPointBtnAddTemplate();
+    return createTripPointNewTemplate();
   }
 
-  _clickTripPointBtnAddHandler(evt) {
+  _clickTripPointNewHandler(evt) {
     evt.preventDefault();
-    this._callback.tripPointBtnAddClick(evt.target.textContent.toLowerCase());
+    this._callback.tripPointNewClick(evt.target.textContent.toLowerCase());
   }
 
-  setClickTripPointBtnAddHandler(callback) {
-    this._callback.tripPointBtnAddClick = callback;
-    this.getElement().parentElement.querySelector('.trip-main__event-add-btn').addEventListener('click', this._clickTripPointBtnAddHandler);
+  setClickTripPointNewHandler(callback) {
+    this._callback.tripPointNewClick = callback;
+    this.getElement().parentElement.querySelector('.trip-main__event-add-btn').addEventListener('click', this._clickTripPointNewHandler);
   }
 }

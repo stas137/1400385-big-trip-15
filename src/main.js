@@ -24,25 +24,25 @@ const tripControlsFilter = bodyElement.querySelector('.trip-controls__filters');
 const tripPresenter = new TripPresenter(bodyElement, tripControlsEvents, tripPointsModel, tripFilterModel);
 const tripFilter = new TripFilterPresenter(tripControlsFilter, tripFilterModel, tripPointsModel);
 
-const tripPointNewView = new TripPointNewView();
+const tripPointNewComponent = new TripPointNewView();
 
 const handleTripPointClose = () => {
-  tripPointNewView.getElement().parentElement.querySelector('.trip-main__event-add-btn').disabled = false;
+  tripPointNewComponent.getElement().parentElement.querySelector('.trip-main__event-add-btn').disabled = false;
 };
 
-const handleTripPointBtnAddClick = (menuItem) => {
+const handleTripPointNewClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.ADD_NEW_POINT:
       tripFilterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-      tripPointNewView.getElement().parentElement.querySelector('.trip-main__event-add-btn').disabled = true;
+      tripPointNewComponent.getElement().parentElement.querySelector('.trip-main__event-add-btn').disabled = true;
       tripPresenter.createTripPoint(handleTripPointClose);
       break;
   }
 };
 
-tripPointNewView.setClickTripPointBtnAddHandler(handleTripPointBtnAddClick);
+tripPointNewComponent.setClickTripPointNewHandler(handleTripPointNewClick);
 
-render(tripMain, tripPointNewView);
+render(tripMain, tripPointNewComponent);
 render(tripControlsNavigation, new TripMenuView());
 
 tripFilter.init();
@@ -53,7 +53,6 @@ api.getPoints()
     console.log(points);
     tripPointsModel.setPoints(UpdateType.INIT, points);
   })
-  .catch((err) => {
+  .catch(() => {
     tripPointsModel.setPoints(UpdateType.INIT, []);
-    throw new Error(err);
   });
