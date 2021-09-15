@@ -1,7 +1,7 @@
 import {END_POINT, AUTHORIZATION, MenuItem, UpdateType, FilterType} from './const.js';
 import {render} from './utils/render.js';
 import TripMenuView from './view/trip-menu.js';
-import TripPointBtnAdd from './view/trip-point-btn-add.js';
+import TripPointNewView from './view/trip-point-new.js';
 
 import TripFilterPresenter from './presenter/filter.js';
 import TripPresenter from './presenter/trip.js';
@@ -24,25 +24,25 @@ const tripControlsFilter = bodyElement.querySelector('.trip-controls__filters');
 const tripPresenter = new TripPresenter(bodyElement, tripControlsEvents, tripPointsModel, tripFilterModel);
 const tripFilter = new TripFilterPresenter(tripControlsFilter, tripFilterModel, tripPointsModel);
 
-const tripPointBtnAdd = new TripPointBtnAdd();
+const tripPointNewView = new TripPointNewView();
 
 const handleTripPointClose = () => {
-  tripPointBtnAdd.getElement().parentElement.querySelector('.trip-main__event-add-btn').disabled = false;
+  tripPointNewView.getElement().parentElement.querySelector('.trip-main__event-add-btn').disabled = false;
 };
 
 const handleTripPointBtnAddClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.ADD_NEW_POINT:
       tripFilterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-      tripPointBtnAdd.getElement().parentElement.querySelector('.trip-main__event-add-btn').disabled = true;
+      tripPointNewView.getElement().parentElement.querySelector('.trip-main__event-add-btn').disabled = true;
       tripPresenter.createTripPoint(handleTripPointClose);
       break;
   }
 };
 
-tripPointBtnAdd.setClickTripPointBtnAddHandler(handleTripPointBtnAddClick);
+tripPointNewView.setClickTripPointBtnAddHandler(handleTripPointBtnAddClick);
 
-render(tripMain, tripPointBtnAdd);
+render(tripMain, tripPointNewView);
 render(tripControlsNavigation, new TripMenuView());
 
 tripFilter.init();

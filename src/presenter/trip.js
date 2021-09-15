@@ -174,9 +174,9 @@ export default class Trip {
       this._renderLoading();
       return;
     }
-
     if (!this._getTripPoints()) {
-      this._pointEmptyComponent = new TripPointEmptyView();
+      this._pointEmptyComponent = new TripPointEmptyView(this._activeFilter);
+      this._renderTripPointsContainer();
       this._renderPointEmpty();
       return;
     }
@@ -229,14 +229,20 @@ export default class Trip {
     this._tripPointNewPresenter.destroy();
 
     this._clearLoading();
+
+    /*
+    if (this._pointEmptyComponent) {
+      this._clearTripPointEmpty();
+      this._clearTripPointsContainer();
+      this._pointEmptyComponent = null;
+      return;
+    }
+    */
+
     this._clearTripPoints();
     this._clearTripPointsContainer();
     this._clearSort();
     this._clearRoute();
-
-    if (this._pointEmptyComponent) {
-      this._clearTripPointEmpty();
-    }
 
     if (resetSortType) {
       this._activeSort = SortType.DAY;
