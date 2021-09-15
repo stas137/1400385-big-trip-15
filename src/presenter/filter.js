@@ -41,7 +41,7 @@ export default class Filter {
       return;
     }
 
-    this._tripFilterModel.setFilter(UpdateType.MINOR, activeFilter);
+    this._tripFilterModel.setFilter(UpdateType.MAJOR, activeFilter);
   }
 
   _getFilters() {

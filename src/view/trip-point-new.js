@@ -2,7 +2,7 @@ import AbstractView from './abstract.js';
 
 const createTripPointBtnAddTemplate = () => '<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">New event</button>';
 
-export default class TripPointBtnAdd extends AbstractView {
+export default class TripPointNew extends AbstractView {
   constructor() {
     super();
 

@@ -27,9 +27,9 @@ export default class PointNew {
     this._tripPointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._tripPointEditComponent.setDeleteBtnClickHandler(this._handleDeleteBtnClick);
 
-    render(this._tripPointsContainer, this._tripPointEditComponent, RenderPosition.AFTERBEGIN);
-
     document.addEventListener('keydown', this._escKeyDownHandler);
+
+    render(this._tripPointsContainer, this._tripPointEditComponent, RenderPosition.AFTERBEGIN);
   }
 
   destroy() {
@@ -50,7 +50,7 @@ export default class PointNew {
   _handleFormSubmit(point) {
     this._changeData(
       UserAction.ADD_POINT,
-      UpdateType.MINOR,
+      UpdateType.MAJOR,
       Object.assign({}, point),
     );
 
