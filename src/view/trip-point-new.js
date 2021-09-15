@@ -15,7 +15,7 @@ export default class TripPointNew extends AbstractView {
 
   _clickTripPointNewHandler(evt) {
     evt.preventDefault();
-    this._callback.tripPointNewClick(evt.target.textContent.toLowerCase());
+    this._callback.tripPointNewClick(evt.target.textContent);
   }
 
   setClickTripPointNewHandler(callback) {

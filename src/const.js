@@ -44,9 +44,9 @@ const UserAction = {
 };
 
 const MenuItem = {
-  ADD_NEW_POINT: 'new event',
-  POINTS: 'table',
-  STATISTICS: 'stats',
+  ADD_NEW_POINT: 'New event',
+  TABLE: 'Table',
+  STATS: 'Stats',
 };
 
 const POINT_BLANK = {
