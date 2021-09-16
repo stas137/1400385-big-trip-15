@@ -1,9 +1,11 @@
 import he from 'he';
 import flatpickr from 'flatpickr';
-import {POINT_TYPES, POINT_BLANK} from '../const';
+import {POINT_BLANK} from '../const.js';
 import {generateId, generateOffers, generateDestination, generateTypePoint, generateCityPoint, getDuration, getDurationTripPoint} from '../utils/common.js';
 import {replace} from '../utils/render.js';
 import SmartView from './smart.js';
+import TripDestinationsModel from '../model/destinations.js';
+import TripOffersModel from '../model/offers.js';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createOffersTemplate = ({id, pointOffers}) => {
@@ -14,22 +16,22 @@ const createOffersTemplate = ({id, pointOffers}) => {
   };
 
   return pointOffers.map((offer) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${strToCamelCase(offer.title)}-${id}" type="checkbox" name="event-offer-${strToCamelCase(offer.title)}" ${offer.checked ? 'checked' : ''}>
-  <label class="event__offer-label" for="event-offer-${strToCamelCase(offer.title)}">
-    <span class="event__offer-title">${offer.title}</span>
-    &plus;&euro;&nbsp;
-    <span class="event__offer-price">${offer.price}</span>
-  </label>
-  </div>`)
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${strToCamelCase(offer.title)}-${id}" type="checkbox" name="event-offer-${strToCamelCase(offer.title)}" ${offer.checked ? 'checked' : ''}>
+    <label class="event__offer-label" for="event-offer-${strToCamelCase(offer.title)}">
+      <span class="event__offer-title">${offer.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offer.price}</span>
+    </label>
+    </div>`)
     .join('');
 };
 
 const createOffersContainerTemplate = (point) => (point.pointOffers.length ? `<section class="event__section  event__section--offers">
-<h3 class="event__section-title  event__section-title--offers">Offers</h3>
-<div class="event__available-offers">
-  ${createOffersTemplate(point)}
-</div>
-</section>` : '');
+  <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+  <div class="event__available-offers">
+    ${createOffersTemplate(point)}
+  </div>
+  </section>` : '');
 
 const createPicturesTemplate = (pictures) => {
   if (!pictures) {
@@ -44,10 +46,13 @@ const createPicturesTemplate = (pictures) => {
 };
 
 const createTripPointEditTemplate = (point) => {
-  const getItemTemplate = (value, isChecked) => (`<div class="event__type-item">
-    <input id="event-type-${value.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${value.toLowerCase()}" ${isChecked ? 'checked' : ''}>
-    <label class="event__type-label  event__type-label--${value.toLowerCase()}" for="event-type-${value.toLowerCase()}-1">${value}</label>
+
+  const getOfferItemTemplate = (item, isChecked) => (`<div class="event__type-item">
+    <input id="event-type-${item.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item.toLowerCase()}" ${isChecked ? 'checked' : ''}>
+    <label class="event__type-label  event__type-label--${item.toLowerCase()}" for="event-type-${item.toLowerCase()}-1">${item}</label>
   </div>`);
+
+  const getCityItemTemplate = (cityPoint) => `<option value="${cityPoint}">${cityPoint}</option>`;
 
   return `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
@@ -62,7 +67,7 @@ const createTripPointEditTemplate = (point) => {
       <div class="event__type-list">
         <fieldset class="event__type-group">
           <legend class="visually-hidden">Event type</legend>
-          ${POINT_TYPES.map((value) => getItemTemplate(value, point.typePoint === value)).join('')}
+          ${TripOffersModel.getOffers().map((item) => getOfferItemTemplate(item.type, point.typePoint === item.type)).join('')}
         </fieldset>
       </div>
     </div>
@@ -73,9 +78,7 @@ const createTripPointEditTemplate = (point) => {
       </label>
       <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.cityPoint}" list="destination-list-1">
       <datalist id="destination-list-1">
-        <option value="Amsterdam">Amsterdam</option>
-        <option value="Geneva">Geneva</option>
-        <option value="Chamonix">Chamonix</option>
+        ${TripDestinationsModel.getDestinations().map((item) => getCityItemTemplate(item.name))}
       </datalist>
     </div>
 
@@ -123,15 +126,18 @@ export default class TripPointEdit extends SmartView {
 
     if (point === POINT_BLANK) {
 
+      const typePoint = generateTypePoint();
+      const cityPoint = generateCityPoint();
+
       this.updateData({
         id: String(generateId()),
-        typePoint: generateTypePoint(),
-        cityPoint: generateCityPoint(),
+        typePoint,
+        cityPoint,
         startDateTime: new Date(),
         endDateTime: new Date(),
         duration: getDurationTripPoint(1, 0, 0),
-        pointOffers: generateOffers(this._point.typePoint.toLowerCase()),
-        destination: generateDestination(this._point.cityPoint),
+        pointOffers: generateOffers(typePoint),
+        destination: generateDestination(cityPoint),
         newPoint: true,
       });
     }
@@ -186,7 +192,7 @@ export default class TripPointEdit extends SmartView {
     );
   }
 
-  static dataToTripPoint(data) {
+  static dataToTripPoint(data, submit = false) {
 
     if (data.isChangeTripPointType && data.isChangeTripPointCity) {
       data.typePoint = data.newTripPointType;
@@ -226,7 +232,10 @@ export default class TripPointEdit extends SmartView {
     delete data.newTripPointType;
     delete data.isChangeTripPointCity;
     delete data.newTripPointCity;
-    delete data.newPoint;
+
+    if (submit) {
+      delete data.newPoint;
+    }
 
     return data;
   }
@@ -237,7 +246,7 @@ export default class TripPointEdit extends SmartView {
         this.updateData({
           isChangeTripPointType: true,
           newTripPointType: evt.target.textContent,
-        });
+        }, false);
         this._point = TripPointEdit.dataToTripPoint(this._point);
         this.updateData({}, false);
       } else {
@@ -254,7 +263,7 @@ export default class TripPointEdit extends SmartView {
       this.updateData({
         isChangeTripPointCity: true,
         newTripPointCity: he.encode(evt.target.value),
-      });
+      }, false);
       this._point = TripPointEdit.dataToTripPoint(this._point);
       this.updateData({}, false);
     }
@@ -305,7 +314,7 @@ export default class TripPointEdit extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._point = TripPointEdit.dataToTripPoint(this._point);
+    this._point = TripPointEdit.dataToTripPoint(this._point, true);
     this._callback.formSubmit(this._point);
   }
 

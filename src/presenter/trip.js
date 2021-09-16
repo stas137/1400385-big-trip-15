@@ -176,7 +176,7 @@ export default class Trip {
       return;
     }
 
-    if (!this._getTripPoints()) {
+    if (!this._getTripPoints().length) {
       this._pointEmptyComponent = new TripPointEmptyView(this._activeFilter);
       this._renderTripPointsContainer();
       this._renderPointEmpty();

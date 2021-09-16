@@ -7,6 +7,8 @@ import TripFilterPresenter from './presenter/filter.js';
 import TripPresenter from './presenter/trip.js';
 import TripFilterModel from './model/filter.js';
 import TripPointsModel from './model/points.js';
+import TripDestinationsModel from './model/destinations.js';
+import TripOffersModel from './model/offers.js';
 
 import Api from './api.js';
 
@@ -58,6 +60,22 @@ tripFilter.init(isLoading);
 tripPresenter.init(isLoading);
 
 checkLoading();
+
+api.getDestinations()
+  .then((destinations) => {
+    TripDestinationsModel.setDestinations(destinations);
+  })
+  .catch(() => {
+    TripDestinationsModel.setDestinations([]);
+  });
+
+api.getOffers()
+  .then((offers) => {
+    TripOffersModel.setOffers(offers);
+  })
+  .catch(() => {
+    TripOffersModel.setOffers([]);
+  });
 
 api.getPoints()
   .then((points) => {

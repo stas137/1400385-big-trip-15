@@ -62,25 +62,6 @@ const POINT_BLANK = {
   isFavorite: '',
 };
 
-const POINT_TYPES = [
-  'Taxi',
-  'Bus',
-  'Train',
-  'Ship',
-  'Transport',
-  'Drive',
-  'Flight',
-  'Check-in',
-  'Sightseeing',
-  'Restaurant',
-];
-
-const POINT_CITIES = [
-  'Amsterdam',
-  'Chamonix',
-  'Geneva',
-];
-
 const OFFER_TITLES_TYPES = [
   {
     title: 'Add luggage',
@@ -134,5 +115,5 @@ const OFFER_TITLES_TYPES = [
   },
 ];
 
-export {END_POINT, AUTHORIZATION, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, TRIP_POINTS_COUNT, POINT_BLANK, POINT_TYPES, MAX_DAYS_GAP, MAX_MINUTES_GAP, POINT_CITIES, OFFER_TITLES_TYPES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS, MAX_PRICE_OFFER, COUNT_CITIES_ROUTE};
+export {END_POINT, AUTHORIZATION, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, TRIP_POINTS_COUNT, POINT_BLANK, MAX_DAYS_GAP, MAX_MINUTES_GAP, OFFER_TITLES_TYPES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS, MAX_PRICE_OFFER, COUNT_CITIES_ROUTE};
 

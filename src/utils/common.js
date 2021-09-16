@@ -1,4 +1,5 @@
-import {POINT_TYPES, POINT_CITIES, OFFER_TITLES_TYPES, MAX_PRICE_OFFER, MAX_COUNT_SENTENCES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_PHOTOS} from '../const.js';
+import TripDestinationsModel from '../model/destinations.js';
+import TripOffersModel from '../model/offers.js';
 
 const ESC_CODE = 'Escape';
 
@@ -19,26 +20,16 @@ const comparePrice = (a, b) => (Number(a.price) > Number(b.price)) ? 1 : -1;
 const compareFuture = (a, b = new Date()) => (a.startDateTime > b) ? 1 : -1;
 const comparePast = (a, b = new Date()) => (a.startDateTime < b) ? 1 : -1;
 
-const generateTypePointOffers = (typePoint) => {
-  const offersTitlesTypes = OFFER_TITLES_TYPES.filter((item) => item.point === typePoint);
-  const offers = offersTitlesTypes.map((item) => ({
-    title: item.title,
-    type: item.type,
-    price: String(getRandomInteger(1, MAX_PRICE_OFFER)),
-    checked: Boolean(getRandomInteger(0, 1)),
-  }));
-
-  return offers;
-};
-
 const generateTypePoint = () => {
-  const randomIndex = getRandomInteger(0, POINT_TYPES.length - 1);
-  return POINT_TYPES[randomIndex];
+  const offers = TripOffersModel.getOffers();
+  const randomIndex = getRandomInteger(0, offers.length - 1);
+  return offers[randomIndex].type;
 };
 
 const generateCityPoint = () => {
-  const randomIndex = getRandomInteger(0, POINT_CITIES.length - 1);
-  return POINT_CITIES[randomIndex];
+  const destinations = TripDestinationsModel.getDestinations();
+  const randomIndex = getRandomInteger(0, destinations.length - 1);
+  return destinations[randomIndex].name;
 };
 
 
@@ -75,58 +66,14 @@ const getDurationTripPoint = (durationDays, durationHours, durationMinutes) => {
   return '00M';
 };
 
-const generateOffers = (typePoint) => (generateTypePointOffers(typePoint));
-
-const generateDescription = (countSentences = MAX_COUNT_SENTENCES) => {
-  const sentences = TEXT_DESCRIPTION.split('. ');
-
-  const randomCount = getRandomInteger(1, countSentences);
-  const sentencesSet = new Set();
-
-  while (sentencesSet.size < randomCount){
-    const randomIndex = getRandomInteger(0, sentences.length - 1);
-    if (!sentencesSet.has(sentences[randomIndex])) {
-      sentencesSet.add(sentences[randomIndex]);
-    }
-  }
-
-  let description = '';
-  for (const value of sentencesSet) {
-    description += `${value}. `;
-  }
-
-  return description;
+const generateOffers = (typePoint) => {
+  const offersForType = TripOffersModel.getOffers().find((item) => item.type === typePoint);
+  return offersForType.offers;
 };
 
-const checkPicture = (picture, pictures) => pictures.find((item) => item.src === picture.src);
-
-const generatePictures = () => {
-
-  const randomCount = getRandomInteger(0, MAX_COUNT_PHOTOS - 1);
-  const pictures = [];
-
-  while (pictures.length < randomCount) {
-    const randomIndex = getRandomInteger(0, MAX_COUNT_PHOTOS - 1);
-    const picture = {
-      src: `${URL_PHOTO}${randomIndex}`,
-      description: generateDescription(1),
-    };
-    if (!checkPicture(picture, pictures)) {
-      pictures.push(picture);
-    }
-  }
-
-  return pictures;
-};
-
-const generateDestination = (city) => {
-  const description = generateDescription();
-  const pictures = generatePictures();
-  return {
-    description,
-    city,
-    pictures,
-  };
+const generateDestination = (cityPoint) => {
+  const destination = TripDestinationsModel.getDestinations().find((item) => item.name === cityPoint);
+  return destination;
 };
 
 export {isEscEvent, getRandomInteger, generateId, generateTypePoint, generateCityPoint, getDuration, getDurationTripPoint, compareDate, compareTime, comparePrice, compareFuture, comparePast, generateOffers, generateDestination};
