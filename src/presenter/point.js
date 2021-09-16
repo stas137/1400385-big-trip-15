@@ -1,23 +1,28 @@
 import {render, replace, remove} from '../utils/render.js';
 import {isEscEvent} from '../utils/common.js';
-import {Mode} from '../const.js';
+import {Mode, UpdateType, UserAction} from '../const.js';
 import TripPointView from '../view/trip-point.js';
 import TripPointEditView from '../view/trip-point-edit.js';
 
 export default class Point {
-  constructor(tripPointsListContainer, changeMode, changeFavorite, formSubmit) {
+  constructor(tripPointsListContainer, changeMode, changeView) {
     this._tripPointsListContainer = tripPointsListContainer;
+
     this._changeMode = changeMode;
-    this._changeFavorite = changeFavorite;
-    this._formSubmit = formSubmit;
+
+    this._changeFavorite = changeView;
+    this._deletePoint = changeView;
+    this._formSubmit = changeView;
 
     this._tripPointComponent = null;
     this._tripPointEditComponent = null;
+
     this._mode = Mode.DEFAULT;
 
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleOpenBtnClick = this._handleOpenBtnClick.bind(this);
     this._handleCloseBtnClick = this._handleCloseBtnClick.bind(this);
+    this._handleDeleteBtnClick = this._handleDeleteBtnClick.bind(this);
     this._handleFormSubmitClick = this._handleFormSubmitClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
@@ -35,9 +40,9 @@ export default class Point {
     this._tripPointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
     this._tripPointEditComponent.setCloseBtnClickHandler(this._handleCloseBtnClick);
+    this._tripPointEditComponent.setDeleteBtnClickHandler(this._handleDeleteBtnClick);
     this._tripPointEditComponent.setFormSubmitHandler(this._handleFormSubmitClick);
     this._tripPointEditComponent.setChangeTripPointTypeHandler(this._handleCloseBtnClick);
-    this._tripPointEditComponent.setSelectTripPointTypeHandler(this._handleCloseBtnClick);
 
     if (prevTripPointComponent === null || prevTripPointEditComponent === null) {
       render(this._tripPointsListContainer, this._tripPointComponent);
@@ -88,7 +93,7 @@ export default class Point {
         isFavorite: !this._tripPoint.isFavorite,
       });
 
-    this._changeFavorite(tripPointEdit);
+    this._changeFavorite(UserAction.UPDATE_POINT, UpdateType.PATCH, tripPointEdit);
   }
 
   _handleOpenBtnClick() {
@@ -99,6 +104,10 @@ export default class Point {
     this._replaceFormToTripPoint();
   }
 
+  _handleDeleteBtnClick(point) {
+    this._deletePoint(UserAction.DELETE_POINT, UpdateType.MAJOR, point);
+  }
+
   _handleFormSubmitClick(point) {
     this._replaceFormToTripPoint();
     const tripPointEdit = Object.assign(
@@ -106,7 +115,7 @@ export default class Point {
       this._tripPoint,
       point,
     );
-    this._formSubmit(tripPointEdit);
+    this._formSubmit(UserAction.UPDATE_POINT, UpdateType.PATCH, tripPointEdit);
   }
 
   _escKeyDownHandler(evt) {

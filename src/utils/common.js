@@ -1,4 +1,4 @@
-import {OFFER_TITLES_TYPES, MAX_PRICE_OFFER, MAX_COUNT_SENTENCES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_PHOTOS} from '../const.js';
+import {POINT_TYPES, POINT_CITIES, OFFER_TITLES_TYPES, MAX_PRICE_OFFER, MAX_COUNT_SENTENCES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_PHOTOS} from '../const.js';
 
 const ESC_CODE = 'Escape';
 
@@ -16,6 +16,8 @@ const generateId = () => getRandomInteger(0, 250);
 const compareDate = (a, b) => (a.startDateTime > b.startDateTime) ? 1 : -1;
 const compareTime = (a, b) => ((a.endDateTime - a.startDateTime) > (b.endDateTime - b.startDateTime)) ? 1 : -1;
 const comparePrice = (a, b) => (Number(a.price) > Number(b.price)) ? 1 : -1;
+const compareFuture = (a, b = new Date()) => (a.startDateTime > b) ? 1 : -1;
+const comparePast = (a, b = new Date()) => (a.startDateTime < b) ? 1 : -1;
 
 const generateTypePointOffers = (typePoint) => {
   const offersTitlesTypes = OFFER_TITLES_TYPES.filter((item) => item.point === typePoint);
@@ -27,6 +29,48 @@ const generateTypePointOffers = (typePoint) => {
   }));
 
   return offers;
+};
+
+const generateTypePoint = () => {
+  const randomIndex = getRandomInteger(0, POINT_TYPES.length - 1);
+  return POINT_TYPES[randomIndex];
+};
+
+const generateCityPoint = () => {
+  const randomIndex = getRandomInteger(0, POINT_CITIES.length - 1);
+  return POINT_CITIES[randomIndex];
+};
+
+
+const getDuration = (startDateTime, endDateTime) => {
+  const timestamp = new Date(0);
+  const duration = new Date(endDateTime - startDateTime);
+  let durationDays = duration.getDate() - timestamp.getDate();
+  let durationHours = duration.getHours() - timestamp.getHours();
+  let durationMinutes = duration.getMinutes();
+
+  if (durationHours < 0) {
+    durationDays -= 1;
+    durationHours = 23;
+    durationMinutes = new Date(endDateTime).getMinutes();
+  }
+
+  return {
+    durationDays,
+    durationHours,
+    durationMinutes,
+  };
+};
+
+const getDurationTripPoint = (durationDays, durationHours, durationMinutes) => {
+  if (durationDays > 0) {
+    return `${durationDays}D ${durationHours}H ${durationMinutes}M`;
+  } else if (durationHours > 0) {
+    return `${durationHours}H ${durationMinutes}M`;
+  } else if (durationMinutes > 0) {
+    return `${durationMinutes}M`;
+  }
+  return '00M';
 };
 
 const generateOffers = (typePoint) => ({
@@ -101,4 +145,4 @@ const updateItem = (items, updatedItem) => {
 
 };
 
-export {isEscEvent, getRandomInteger, generateId, compareDate, compareTime, comparePrice, generateOffers, generateDestination, updateItem};
+export {isEscEvent, getRandomInteger, generateId, generateTypePoint, generateCityPoint, getDuration, getDurationTripPoint, compareDate, compareTime, comparePrice, compareFuture, comparePast, generateOffers, generateDestination, updateItem};

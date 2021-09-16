@@ -6,6 +6,7 @@ const URL_PHOTO = 'http://picsum.photos/248/152?r=';
 const MAX_COUNT_SENTENCES = 5;
 const MAX_COUNT_PHOTOS = 7;
 const MAX_PRICE_OFFER = 50;
+const COUNT_CITIES_ROUTE = 3;
 
 const Mode = {
   DEFAULT: 'default',
@@ -20,6 +21,30 @@ const SortType = {
   OFFER: 'offer',
 };
 
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past',
+};
+
+const UpdateType = {
+  PATCH: 'patch',
+  MINOR: 'minor',
+  MAJOR: 'major',
+};
+
+const UserAction = {
+  UPDATE_POINT: 'update_point',
+  ADD_POINT: 'add_point',
+  DELETE_POINT: 'delete_point',
+};
+
+const MenuItem = {
+  ADD_NEW_POINT: 'new event',
+  POINTS: 'table',
+  STATISTICS: 'stats',
+};
+
 const POINT_BLANK = {
   id: '',
   typePoint: '',
@@ -28,7 +53,7 @@ const POINT_BLANK = {
   endDateTime: '',
   duration: '',
   price: '',
-  offers: '',
+  pointOffers: '',
   destination: '',
   isFavorite: '',
 };
@@ -105,4 +130,4 @@ const OFFER_TITLES_TYPES = [
   },
 ];
 
-export {Mode, SortType, TRIP_POINTS_COUNT, POINT_BLANK, POINT_TYPES, MAX_DAYS_GAP, MAX_MINUTES_GAP, POINT_CITIES, OFFER_TITLES_TYPES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS, MAX_PRICE_OFFER};
+export {Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, TRIP_POINTS_COUNT, POINT_BLANK, POINT_TYPES, MAX_DAYS_GAP, MAX_MINUTES_GAP, POINT_CITIES, OFFER_TITLES_TYPES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS, MAX_PRICE_OFFER, COUNT_CITIES_ROUTE};
