@@ -11,6 +11,7 @@ import TripPointsModel from './model/points.js';
 import Api from './api.js';
 
 const api = new Api(END_POINT, AUTHORIZATION);
+let isLoading = true;
 
 const tripPointsModel = new TripPointsModel();
 const tripFilterModel = new TripFilterModel();
@@ -28,17 +29,19 @@ const tripPointMenuComponent = new TripPointMenuView();
 const tripPointNewComponent = new TripPointNewView();
 
 const handleTripPointClose = () => {
-  tripPointNewComponent.getElement().parentElement.querySelector('.trip-main__event-add-btn').disabled = false;
+  tripPointNewComponent.turnOn();
 };
 
 const handleTripPointMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.ADD_NEW_POINT:
       tripFilterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-      tripPointNewComponent.getElement().parentElement.querySelector('.trip-main__event-add-btn').disabled = true;
+      tripPointNewComponent.turnOff();
       tripPresenter.createTripPoint(handleTripPointClose);
       break;
     case MenuItem.TABLE:
+      break;
+    case MenuItem.STATS:
       break;
   }
 };
@@ -49,13 +52,21 @@ tripPointMenuComponent.setMenuClickHandler(handleTripPointMenuClick);
 render(tripMain, tripPointNewComponent);
 render(tripControlsNavigation, tripPointMenuComponent);
 
-tripFilter.init();
-tripPresenter.init();
+const checkLoading = () => isLoading ? tripPointNewComponent.turnOff() : tripPointNewComponent.turnOn();
+
+tripFilter.init(isLoading);
+tripPresenter.init(isLoading);
+
+checkLoading();
 
 api.getPoints()
   .then((points) => {
     tripPointsModel.setPoints(UpdateType.INIT, points);
+    isLoading = false;
+    checkLoading();
   })
   .catch(() => {
     tripPointsModel.setPoints(UpdateType.INIT, []);
+    isLoading = false;
+    checkLoading();
   });

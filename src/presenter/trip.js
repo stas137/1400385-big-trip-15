@@ -19,9 +19,9 @@ export default class Trip {
 
     this._tripContainer = tripContainer;
     this._tripControlsEvents = tripControlsEvents;
+    this._isLoading = true;
 
     this._tripPointsPresenter = new Map();
-    this._isLoading = true;
 
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -37,7 +37,8 @@ export default class Trip {
     this._tripPointNewPresenter = new TripPointNewPresenter(this._tripPointsContainerComponent, this._handleViewAction);
   }
 
-  init() {
+  init(isLoading = false) {
+    this._isLoading = isLoading;
     this._activeFilter = FilterType.EVERYTHING;
     this._activeSort = SortType.DAY;
 

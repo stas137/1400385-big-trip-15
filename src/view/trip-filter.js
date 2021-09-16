@@ -1,6 +1,6 @@
 import AbstractView from './abstract.js';
 
-const createTripFilterTemplate = (filters, activeFilter) => {
+const createTripFilterTemplate = (filters, activeFilter, isLoading) => {
   const getItemTemplate = (filter, isChecked) => (
     `<div class="trip-filters__filter">
   <input 
@@ -9,7 +9,7 @@ const createTripFilterTemplate = (filters, activeFilter) => {
     visually-hidden" 
     type="radio" 
     name="trip-filter" 
-    value="${filter.name}" ${isChecked ? 'checked' : ''}
+    value="${filter.name}" ${isChecked ? 'checked' : ''} ${isLoading && !isChecked ? 'disabled' : ''}
   />
   <label 
     class="trip-filters__filter-label" 
@@ -25,16 +25,18 @@ const createTripFilterTemplate = (filters, activeFilter) => {
 };
 
 export default class TripFilter extends AbstractView {
-  constructor(filters, activeFilter) {
+  constructor(filters, activeFilter, isLoading){
     super();
+
     this._filters = filters;
     this._activeFilter = activeFilter;
+    this._isLoading = isLoading;
 
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createTripFilterTemplate(this._filters, this._activeFilter);
+    return createTripFilterTemplate(this._filters, this._activeFilter, this._isLoading);
   }
 
 
