@@ -66,9 +66,8 @@ export default class Trip {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this._api.updatePoints(data).then((responce) => {
-          console.log(responce);
           this._tripPointsModel.updatePoint(updateType, responce);
-        });        
+        });
         break;
       case UserAction.ADD_POINT:
         this._tripPointsModel.addPoint(updateType, data);
