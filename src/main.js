@@ -24,7 +24,7 @@ const tripMain = bodyElement.querySelector('.trip-main');
 const tripControlsNavigation = bodyElement.querySelector('.trip-controls__navigation');
 const tripControlsFilter = bodyElement.querySelector('.trip-controls__filters');
 
-const tripPresenter = new TripPresenter(bodyElement, tripControlsEvents, tripPointsModel, tripFilterModel);
+const tripPresenter = new TripPresenter(bodyElement, tripControlsEvents, tripPointsModel, tripFilterModel, api);
 const tripFilter = new TripFilterPresenter(tripControlsFilter, tripFilterModel, tripPointsModel);
 
 const tripPointMenuComponent = new TripPointMenuView();

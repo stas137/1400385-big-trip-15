@@ -23,20 +23,20 @@ export default class Points extends AbstractObserver {
       throw new Error('Can\'t update unexisting point');
     }
 
-    this.setPoints([
+    this._points = [
       ...this.getPoints().slice(0, index),
       update,
       ...this.getPoints().slice(index + 1),
-    ]);
+    ];
 
     this._notify(updateType, update);
   }
 
   addPoint(updateType, update) {
-    this.setPoints([
+    this._points = updateType, [
       update,
       ...this.getPoints().slice(),
-    ]);
+    ];
 
     this._notify(updateType, update);
   }
@@ -120,7 +120,7 @@ export default class Points extends AbstractObserver {
         'date_from': point.startDateTime,
         'date_to': point.endDateTime,
         'base_price': point.price,
-        'offers': point.PointOffers,
+        'offers': point.pointOffers,
         destination,
         'is_favorite': point.isFavorite,
       },
