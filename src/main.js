@@ -14,6 +14,7 @@ import Api from './api.js';
 
 const api = new Api(END_POINT, AUTHORIZATION);
 let isLoading = true;
+let isLoadedAdditionalData = false;
 
 const tripPointsModel = new TripPointsModel();
 const tripFilterModel = new TripFilterModel();
@@ -55,6 +56,7 @@ render(tripMain, tripPointNewComponent);
 render(tripControlsNavigation, tripPointMenuComponent);
 
 const checkLoading = () => isLoading ? tripPointNewComponent.turnOff() : tripPointNewComponent.turnOn();
+const checkLoadedAdditionalData = () => isLoadedAdditionalData ? tripPointNewComponent.turnOn() : tripPointNewComponent.turnOff();
 
 tripFilter.init(isLoading);
 tripPresenter.init(isLoading);
@@ -64,27 +66,35 @@ checkLoading();
 api.getDestinations()
   .then((destinations) => {
     TripDestinationsModel.setDestinations(destinations);
+
+    api.getOffers()
+      .then((offers) => {
+        TripOffersModel.setOffers(offers);
+
+        api.getPoints()
+          .then((points) => {
+            tripPointsModel.setPoints(UpdateType.INIT, points);
+            isLoading = false;
+            isLoadedAdditionalData = true;
+            checkLoading();
+          })
+          .catch(() => {
+            tripPointsModel.setPoints(UpdateType.ADDITIONAL_DATA, []);
+            isLoading = false;
+            isLoadedAdditionalData = true;
+            checkLoading();
+          });
+      })
+      .catch(() => {
+        tripPointsModel.setPoints(UpdateType.ADDITIONAL_DATA, []);
+        isLoadedAdditionalData = false;
+        checkLoadedAdditionalData();
+      });
   })
   .catch(() => {
-    TripDestinationsModel.setDestinations([]);
+    tripPointsModel.setPoints(UpdateType.ADDITIONAL_DATA, []);
+    isLoadedAdditionalData = false;
+    checkLoadedAdditionalData();
   });
 
-api.getOffers()
-  .then((offers) => {
-    TripOffersModel.setOffers(offers);
-  })
-  .catch(() => {
-    TripOffersModel.setOffers([]);
-  });
 
-api.getPoints()
-  .then((points) => {
-    tripPointsModel.setPoints(UpdateType.INIT, points);
-    isLoading = false;
-    checkLoading();
-  })
-  .catch(() => {
-    tripPointsModel.setPoints(UpdateType.INIT, []);
-    isLoading = false;
-    checkLoading();
-  });

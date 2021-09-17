@@ -9,6 +9,7 @@ export default class Filter {
     this._tripPointsModel = tripPointsModel;
 
     this._isLoading = true;
+    this._isLoadedAdditionalData = false;
 
     this._tripFilterComponent = null;
     this._tripFilterContainer = tripFilterContainer;
@@ -20,14 +21,17 @@ export default class Filter {
     this._tripPointsModel.addObserver(this._handleModelEvent);
   }
 
-  init(isLoading = false) {
+  init(isLoading = false, isLoadedAdditionalData = true) {
+
     this._isLoading = isLoading;
+    this._isLoadedAdditionalData = isLoadedAdditionalData;
+
     const filters = this._getFilters();
     this._activeFilter = this._tripFilterModel.getFilter();
 
     this._prevFilterComponent = this._tripFilterComponent;
 
-    this._tripFilterComponent = new TripFilterView(filters, this._activeFilter, this._isLoading);
+    this._tripFilterComponent = new TripFilterView(filters, this._activeFilter, this._isLoading, this._isLoadedAdditionalData);
     this._tripFilterComponent.setFilterClickHandler(this._handleFilterTypeChange);
 
     if (this._prevFilterComponent === null) {
@@ -69,12 +73,17 @@ export default class Filter {
     switch(updateType) {
       case UpdateType.INIT:
         this._isLoading = false;
+        this._isLoadedAdditionalData = true;
         this.init();
+        break;
+      case UpdateType.ADDITIONAL_DATA:
+        this._isLoading = false;
+        this._isLoadedAdditionalData = false;
+        this.init(this._isLoading, this._isLoadedAdditionalData);
         break;
       default:
         this.init();
         break;
     }
-
   }
 }

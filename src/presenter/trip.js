@@ -10,6 +10,7 @@ import TripPointEmptyView from '../view/trip-point-empty.js';
 import TripPointPresenter from './point.js';
 import TripPointNewPresenter from './point-new.js';
 import LoadingView from '../view/loading.js';
+import LoadedAdditionalDataView from '../view/loaded-additional-data.js';
 
 export default class Trip {
   constructor(tripContainer, tripControlsEvents, tripPointsModel, tripFilterModel, api) {
@@ -21,7 +22,9 @@ export default class Trip {
 
     this._tripContainer = tripContainer;
     this._tripControlsEvents = tripControlsEvents;
+
     this._isLoading = true;
+    this._isLoadedAdditionalData = false;
 
     this._tripPointsPresenter = new Map();
 
@@ -34,13 +37,17 @@ export default class Trip {
     this._pointEmptyComponent = null;
 
     this._tripPointsContainerComponent = new TripPointsContainerView();
+
     this._loadingComponent = new LoadingView();
+    this._loadedAdditionalDataComponent = new LoadedAdditionalDataView();
 
     this._tripPointNewPresenter = new TripPointNewPresenter(this._tripPointsContainerComponent, this._handleViewAction);
   }
 
   init(isLoading = false) {
     this._isLoading = isLoading;
+    this._isLoadedAdditionalData = isLoading;
+
     this._activeFilter = FilterType.EVERYTHING;
     this._activeSort = SortType.DAY;
 
@@ -93,8 +100,15 @@ export default class Trip {
         break;
       case UpdateType.INIT:
         this._isLoading = false;
+        this._isLoadedAdditionalData = true;
         remove(this._loadingComponent);
         this._renderTrip();
+        break;
+      case UpdateType.ADDITIONAL_DATA:
+        this._isLoading = false;
+        this._isLoadedAdditionalData = false;
+        remove(this._loadingComponent);
+        this._renderLoadedAdditionalData();
         break;
     }
   }
@@ -171,6 +185,10 @@ export default class Trip {
 
   _renderLoading() {
     render(this._tripControlsEvents, this._loadingComponent);
+  }
+
+  _renderLoadedAdditionalData() {
+    render(this._tripControlsEvents, this._loadedAdditionalDataComponent);
   }
 
   _renderTrip() {

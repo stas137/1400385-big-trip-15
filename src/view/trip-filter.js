@@ -1,6 +1,6 @@
 import AbstractView from './abstract.js';
 
-const createTripFilterTemplate = (filters, activeFilter, isLoading) => {
+const createTripFilterTemplate = (filters, activeFilter, isLoading, isLoadedAdditionalData) => {
   const getItemTemplate = (filter, isChecked) => (
     `<div class="trip-filters__filter">
   <input 
@@ -9,7 +9,7 @@ const createTripFilterTemplate = (filters, activeFilter, isLoading) => {
     visually-hidden" 
     type="radio" 
     name="trip-filter" 
-    value="${filter.name}" ${isChecked ? 'checked' : ''} ${isLoading && !isChecked ? 'disabled' : ''}
+    value="${filter.name}" ${isChecked ? 'checked' : ''} ${(isLoading && !isChecked) || (!isLoadedAdditionalData && !isChecked) ? 'disabled' : ''}
   />
   <label 
     class="trip-filters__filter-label" 
