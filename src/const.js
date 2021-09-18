@@ -1,14 +1,6 @@
 const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
 const AUTHORIZATION = 'Basic er1w590ik29889b';
 
-const MAX_DAYS_GAP = 5;
-const MAX_MINUTES_GAP = 15;
-const TEXT_DESCRIPTION = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus';
-const URL_PHOTO = 'http://picsum.photos/248/152?r=';
-const MAX_COUNT_SENTENCES = 5;
-const MAX_COUNT_PHOTOS = 7;
-const MAX_PRICE_OFFER = 50;
-
 const COUNT_CITIES_ROUTE = 3;
 
 const Mode = {
@@ -116,5 +108,5 @@ const OFFER_TITLES_TYPES = [
   },
 ];
 
-export {END_POINT, AUTHORIZATION, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, MAX_DAYS_GAP, MAX_MINUTES_GAP, OFFER_TITLES_TYPES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS, MAX_PRICE_OFFER, COUNT_CITIES_ROUTE};
+export {END_POINT, AUTHORIZATION, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, OFFER_TITLES_TYPES, COUNT_CITIES_ROUTE};
 
