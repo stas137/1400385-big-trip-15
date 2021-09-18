@@ -66,23 +66,24 @@ checkLoading();
 api.getDestinations()
   .then((destinations) => {
     TripDestinationsModel.setDestinations(destinations);
-
+    console.log(destinations);
     api.getOffers()
       .then((offers) => {
         TripOffersModel.setOffers(offers);
-
+        console.log(offers);
         api.getPoints()
           .then((points) => {
             tripPointsModel.setPoints(UpdateType.INIT, points);
             isLoading = false;
             isLoadedAdditionalData = true;
             checkLoading();
+            console.log(points);
           })
           .catch(() => {
             tripPointsModel.setPoints(UpdateType.ADDITIONAL_DATA, []);
             isLoading = false;
             isLoadedAdditionalData = true;
-            checkLoading();
+            checkLoadedAdditionalData();
           });
       })
       .catch(() => {
