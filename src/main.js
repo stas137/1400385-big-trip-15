@@ -1,7 +1,7 @@
 import {END_POINT, AUTHORIZATION, MenuItem, UpdateType, FilterType} from './const.js';
 import {render} from './utils/render.js';
 import TripPointMenuView from './view/trip-menu.js';
-import TripPointNewView from './view/trip-point-new.js';
+import TripPointNewBtnView from './view/trip-point-new-btn.js';
 
 import TripFilterPresenter from './presenter/filter.js';
 import TripPresenter from './presenter/trip.js';
@@ -29,17 +29,17 @@ const tripPresenter = new TripPresenter(bodyElement, tripControlsEvents, tripPoi
 const tripFilter = new TripFilterPresenter(tripControlsFilter, tripFilterModel, tripPointsModel);
 
 const tripPointMenuComponent = new TripPointMenuView();
-const tripPointNewComponent = new TripPointNewView();
+const tripPointNewBtnComponent = new TripPointNewBtnView();
 
 const handleTripPointClose = () => {
-  tripPointNewComponent.turnOn();
+  tripPointNewBtnComponent.turnOn();
 };
 
 const handleTripPointMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.ADD_NEW_POINT:
       tripFilterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-      tripPointNewComponent.turnOff();
+      tripPointNewBtnComponent.turnOff();
       tripPresenter.createTripPoint(handleTripPointClose);
       break;
     case MenuItem.TABLE:
@@ -49,14 +49,14 @@ const handleTripPointMenuClick = (menuItem) => {
   }
 };
 
-tripPointNewComponent.setClickTripPointNewHandler(handleTripPointMenuClick);
+tripPointNewBtnComponent.setClickTripPointNewHandler(handleTripPointMenuClick);
 tripPointMenuComponent.setMenuClickHandler(handleTripPointMenuClick);
 
-render(tripMain, tripPointNewComponent);
+render(tripMain, tripPointNewBtnComponent);
 render(tripControlsNavigation, tripPointMenuComponent);
 
-const checkLoading = () => isLoading ? tripPointNewComponent.turnOff() : tripPointNewComponent.turnOn();
-const checkLoadedAdditionalData = () => isLoadedAdditionalData ? tripPointNewComponent.turnOn() : tripPointNewComponent.turnOff();
+const checkLoading = () => isLoading ? tripPointNewBtnComponent.turnOff() : tripPointNewBtnComponent.turnOn();
+const checkLoadedAdditionalData = () => isLoadedAdditionalData ? tripPointNewBtnComponent.turnOn() : tripPointNewBtnComponent.turnOff();
 
 tripFilter.init(isLoading);
 tripPresenter.init(isLoading);

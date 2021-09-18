@@ -2,7 +2,7 @@ import AbstractView from './abstract.js';
 
 const createTripPointNewTemplate = (isLoading) => `<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button" ${isLoading ? 'disabled' : ''}>New event</button>`;
 
-export default class TripPointNew extends AbstractView {
+export default class TripPointNewBtn extends AbstractView {
   constructor(isLoading = false) {
     super();
 

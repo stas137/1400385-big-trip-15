@@ -130,7 +130,7 @@ export default class TripPointEdit extends SmartView {
       const cityPoint = generateCityPoint();
 
       this.updateData({
-        id: String(generateId()),
+        /* id: String(generateId()), */
         typePoint,
         cityPoint,
         startDateTime: new Date(),
@@ -188,6 +188,7 @@ export default class TripPointEdit extends SmartView {
         isChangeTripPointCity: false,
         newTripPointType: '',
         newTripPointCity: '',
+        isDisabled: false,
       },
     );
   }
@@ -235,6 +236,7 @@ export default class TripPointEdit extends SmartView {
 
     if (submit) {
       delete data.newPoint;
+      delete data.isDisabled;
     }
 
     return data;

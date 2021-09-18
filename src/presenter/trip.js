@@ -72,15 +72,19 @@ export default class Trip {
   _handleViewAction(actionType, updateType, data) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._api.updatePoints(data).then((responce) => {
+        this._api.updatePoint(data).then((responce) => {
           this._tripPointsModel.updatePoint(updateType, responce);
         });
         break;
       case UserAction.ADD_POINT:
-        this._tripPointsModel.addPoint(updateType, data);
+        this._api.addPoint(data).then((responce) => {
+          this._tripPointsModel.addPoint(updateType, responce);
+        });
         break;
       case UserAction.DELETE_POINT:
-        this._tripPointsModel.deletePoint(updateType, data);
+        this._api.deletePoint(data).then(() => {
+          this._tripPointsModel.deletePoint(updateType, data);
+        });
         break;
     }
   }

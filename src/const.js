@@ -1,6 +1,18 @@
 const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
 const AUTHORIZATION = 'Basic er1w590ik29889b';
 
+const Method = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+};
+
+const SuccessStatusHTTPRange = {
+  MIN: 200,
+  MAX: 299,
+};
+
 const COUNT_CITIES_ROUTE = 3;
 
 const Mode = {
@@ -108,5 +120,5 @@ const OFFER_TITLES_TYPES = [
   },
 ];
 
-export {END_POINT, AUTHORIZATION, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, OFFER_TITLES_TYPES, COUNT_CITIES_ROUTE};
+export {END_POINT, AUTHORIZATION, Method, SuccessStatusHTTPRange, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, OFFER_TITLES_TYPES, COUNT_CITIES_ROUTE};
 
