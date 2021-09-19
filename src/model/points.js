@@ -79,7 +79,7 @@ export default class Points extends AbstractObserver {
       point,
       {
         typePoint: point['type'],
-        cityPoint: point['destination']['name'],
+        cityPoint: point['destination']['city'],
         startDateTime: point['date_from'],
         endDateTime: point['date_to'],
         duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
@@ -119,10 +119,10 @@ export default class Points extends AbstractObserver {
         'type': point.typePoint,
         'date_from': point.startDateTime,
         'date_to': point.endDateTime,
-        'base_price': point.price,
+        'base_price': Number(point.price),
         'offers': point.pointOffers,
-        destination,
-        'is_favorite': point.isFavorite,
+        'destination': destination,
+        'is_favorite': point.isFavorite ? true : false,
       },
     );
 

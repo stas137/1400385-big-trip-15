@@ -1,3 +1,4 @@
+const COUNT_CITIES_ROUTE = 3;
 const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
 const AUTHORIZATION = 'Basic er1w590ik29889b';
 
@@ -12,8 +13,6 @@ const SuccessStatusHTTPRange = {
   MIN: 200,
   MAX: 299,
 };
-
-const COUNT_CITIES_ROUTE = 3;
 
 const Mode = {
   DEFAULT: 'default',
@@ -55,7 +54,6 @@ const MenuItem = {
 };
 
 const POINT_BLANK = {
-  id: '',
   typePoint: '',
   cityPoint: '',
   startDateTime: '',

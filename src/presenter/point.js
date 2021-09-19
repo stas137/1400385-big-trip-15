@@ -4,6 +4,11 @@ import {Mode, UpdateType, UserAction} from '../const.js';
 import TripPointView from '../view/trip-point.js';
 import TripPointEditView from '../view/trip-point-edit.js';
 
+export const State = {
+  SAVING: 'saving',
+  DELETING: 'deleting',
+};
+
 export default class Point {
   constructor(tripPointsListContainer, changeMode, changeView) {
     this._tripPointsListContainer = tripPointsListContainer;
@@ -73,6 +78,27 @@ export default class Point {
     remove(this._tripPointEditComponent);
   }
 
+  setViewState(state) {
+    if (this._mode === Mode.DEFAULT) {
+      return;
+    }
+
+    switch (state) {
+      case State.SAVING:
+        this._tripPointEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        }, false);
+        break;
+      case State.DELETING:
+        this._tripPointEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        }, false);
+        break;
+    }
+  }
+
   _replaceTripPointToForm() {
     this._changeMode();
     this._mode = Mode.EDITING;
@@ -110,7 +136,7 @@ export default class Point {
   }
 
   _handleFormSubmitClick(point) {
-    this._replaceFormToTripPoint();
+    /* this._replaceFormToTripPoint(); */
     const tripPointEdit = Object.assign(
       {},
       this._tripPoint,

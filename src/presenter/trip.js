@@ -7,7 +7,7 @@ import TripCostView from '../view/trip-cost.js';
 import TripSortView from '../view/trip-sort.js';
 import TripPointsContainerView from '../view/trip-points-container.js';
 import TripPointEmptyView from '../view/trip-point-empty.js';
-import TripPointPresenter from './point.js';
+import TripPointPresenter, {State as TripPointPresenterStateView} from './point.js';
 import TripPointNewPresenter from './point-new.js';
 import LoadingView from '../view/loading.js';
 import LoadedAdditionalDataView from '../view/loaded-additional-data.js';
@@ -72,16 +72,19 @@ export default class Trip {
   _handleViewAction(actionType, updateType, data) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
+        this._tripPointsPresenter.get(data.id).setViewState(TripPointPresenterStateView.SAVING);
         this._api.updatePoint(data).then((responce) => {
           this._tripPointsModel.updatePoint(updateType, responce);
         });
         break;
       case UserAction.ADD_POINT:
+        this._tripPointNewPresenter.setSaving();
         this._api.addPoint(data).then((responce) => {
           this._tripPointsModel.addPoint(updateType, responce);
         });
         break;
       case UserAction.DELETE_POINT:
+        this._tripPointsPresenter.get(data.id).setViewState(TripPointPresentStateView.DELETING);
         this._api.deletePoint(data).then(() => {
           this._tripPointsModel.deletePoint(updateType, data);
         });

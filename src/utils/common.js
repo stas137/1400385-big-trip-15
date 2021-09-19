@@ -12,8 +12,6 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-const generateId = () => getRandomInteger(0, 250);
-
 const compareDate = (a, b) => (new Date(a.startDateTime) > new Date(b.startDateTime)) ? 1 : -1;
 const compareTime = (a, b) => ((new Date(a.endDateTime) - new Date(a.startDateTime)) > (new Date(b.endDateTime) - new Date(b.startDateTime))) ? 1 : -1;
 const comparePrice = (a, b) => (Number(a.price) > Number(b.price)) ? 1 : -1;
@@ -31,7 +29,6 @@ const generateCityPoint = () => {
   const randomIndex = getRandomInteger(0, destinations.length - 1);
   return destinations[randomIndex].name;
 };
-
 
 const getDuration = (startDateTime, endDateTime) => {
   startDateTime = new Date(startDateTime);
@@ -72,8 +69,20 @@ const generateOffers = (typePoint) => {
 };
 
 const generateDestination = (cityPoint) => {
-  const destination = TripDestinationsModel.getDestinations().find((item) => item.name === cityPoint);
+  
+  let destination = TripDestinationsModel.getDestinations().find((item) => item.name === cityPoint);
+
+  destination = Object.assign(
+    {},
+    destination,
+    {
+      city: destination['name'],
+    },
+  );
+
+  delete destination['name'];
+
   return destination;
 };
 
-export {isEscEvent, getRandomInteger, generateId, generateTypePoint, generateCityPoint, getDuration, getDurationTripPoint, compareDate, compareTime, comparePrice, compareFuture, comparePast, generateOffers, generateDestination};
+export {isEscEvent, getRandomInteger, generateTypePoint, generateCityPoint, getDuration, getDurationTripPoint, compareDate, compareTime, comparePrice, compareFuture, comparePast, generateOffers, generateDestination};

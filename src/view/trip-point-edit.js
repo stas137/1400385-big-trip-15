@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import he from 'he';
 import flatpickr from 'flatpickr';
 import {POINT_BLANK} from '../const.js';
@@ -136,6 +137,27 @@ export default class TripPointEdit extends SmartView {
     super();
 
     this._point = TripPointEdit.tripPointToData(point);
+
+    if (point === POINT_BLANK) {
+      const cityPoint = generateCityPoint();
+      const typePoint = generateTypePoint();
+      const pointOffers = generateOffers(typePoint);
+      const destination = generateDestination(cityPoint);
+      const startDateTime = "2021-09-17T00:44:07.377Z";
+      const endDateTime = "2021-09-17T06:16:46.875Z";
+      const duration = getDurationTripPoint(1, 0, 0);
+
+      this.updateData({
+        cityPoint,
+        typePoint,
+        pointOffers,
+        destination,
+        startDateTime,
+        endDateTime,
+        duration,
+        newPoint: true,
+      });
+    }
 
     this._datepickerStartDateTime = null;
     this._datepickerEndDateTime = null;
