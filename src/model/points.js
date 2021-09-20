@@ -33,7 +33,7 @@ export default class Points extends AbstractObserver {
   }
 
   addPoint(updateType, update) {
-    this._points = updateType, [
+    this._points = [
       update,
       ...this.getPoints().slice(),
     ];
@@ -79,13 +79,13 @@ export default class Points extends AbstractObserver {
       point,
       {
         typePoint: point['type'],
-        cityPoint: point['destination']['city'],
+        cityPoint: destination['city'],
         startDateTime: point['date_from'],
         endDateTime: point['date_to'],
         duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
         price: point['base_price'],
         pointOffers: point['offers'],
-        destination,
+        destination: destination,
         isFavorite: point['is_favorite'],
       },
     );

@@ -60,7 +60,8 @@ export default class Point {
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._tripPointEditComponent, prevTripPointEditComponent);
+      replace(this._tripPointComponent, prevTripPointEditComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevTripPointComponent);
@@ -136,7 +137,6 @@ export default class Point {
   }
 
   _handleFormSubmitClick(point) {
-    /* this._replaceFormToTripPoint(); */
     const tripPointEdit = Object.assign(
       {},
       this._tripPoint,

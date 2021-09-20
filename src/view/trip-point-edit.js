@@ -91,7 +91,7 @@ const createTripPointEditTemplate = (point) => {
       </label>
       <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${cityPoint}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
       <datalist id="destination-list-1">
-        ${TripDestinationsModel.getDestinations().map((destination) => getCityItemTemplate(destination.city))}
+        ${TripDestinationsModel.getDestinations().map((destination) => getCityItemTemplate(destination.name))}
       </datalist>
     </div>
 
