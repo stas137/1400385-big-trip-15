@@ -48,10 +48,10 @@ export default class Points extends AbstractObserver {
       throw new Error('Can\'t delete unexisting point');
     }
 
-    this.setPoints([
+    this._points = [
       ...this.getPoints().slice(0, index),
       ...this.getPoints().slice(index + 1),
-    ]);
+    ];
 
     this._notify(updateType, update);
   }

@@ -3,6 +3,7 @@ const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
 const AUTHORIZATION = 'Basic er1w590ik29889b';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
+const BAR_HEIGHT = 55;
 
 const RenderPosition = {
   AFTERBEGIN: 'afterbegin',
@@ -72,5 +73,5 @@ const POINT_BLANK = {
   isFavorite: false,
 };
 
-export {END_POINT, AUTHORIZATION, SHAKE_ANIMATION_TIMEOUT, RenderPosition, Method, SuccessStatusHTTPRange, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, COUNT_CITIES_ROUTE};
+export {END_POINT, AUTHORIZATION, SHAKE_ANIMATION_TIMEOUT, BAR_HEIGHT, RenderPosition, Method, SuccessStatusHTTPRange, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, COUNT_CITIES_ROUTE};
 

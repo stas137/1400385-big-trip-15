@@ -1,7 +1,8 @@
 import {END_POINT, AUTHORIZATION, MenuItem, UpdateType, FilterType} from './const.js';
-import {render} from './utils/render.js';
+import {render, remove} from './utils/render.js';
 import TripPointMenuView from './view/trip-menu.js';
 import TripPointNewBtnView from './view/trip-point-new-btn.js';
+import TripStatisticsView from './view/statistics.js';
 
 import TripFilterPresenter from './presenter/filter.js';
 import TripPresenter from './presenter/trip.js';
@@ -21,15 +22,17 @@ const tripFilterModel = new TripFilterModel();
 
 const bodyElement = document.querySelector('body');
 const tripControlsEvents = bodyElement.querySelector('.trip-events');
-const tripMain = bodyElement.querySelector('.trip-main');
+const tripControlsMain = bodyElement.querySelector('.trip-main');
 const tripControlsNavigation = bodyElement.querySelector('.trip-controls__navigation');
 const tripControlsFilter = bodyElement.querySelector('.trip-controls__filters');
+const tripStatisticsContainer = tripControlsEvents.parentElement;
 
-const tripPresenter = new TripPresenter(bodyElement, tripControlsEvents, tripPointsModel, tripFilterModel, api);
+const tripPresenter = new TripPresenter(bodyElement, tripControlsEvents, tripControlsMain, tripPointsModel, tripFilterModel, api);
 const tripFilter = new TripFilterPresenter(tripControlsFilter, tripFilterModel, tripPointsModel);
 
 const tripPointMenuComponent = new TripPointMenuView();
 const tripPointNewBtnComponent = new TripPointNewBtnView();
+const tripStatisticsComponent = new TripStatisticsView();
 
 const handleTripPointClose = () => {
   tripPointNewBtnComponent.turnOn();
@@ -43,8 +46,17 @@ const handleTripPointMenuClick = (menuItem) => {
       tripPresenter.createTripPoint(handleTripPointClose);
       break;
     case MenuItem.TABLE:
+      console.log(menuItem);
+      tripPointNewBtnComponent.turnOn();
+      remove(tripStatisticsComponent);
+      tripPresenter.init(isLoading);
       break;
     case MenuItem.STATS:
+      console.log(menuItem);
+      tripPresenter.destroy();
+      tripPointNewBtnComponent.turnOff();
+      render(tripStatisticsContainer, tripStatisticsComponent);
+      tripStatisticsComponent.show(tripPointsModel.getPoints());
       break;
   }
 };
@@ -52,7 +64,7 @@ const handleTripPointMenuClick = (menuItem) => {
 tripPointNewBtnComponent.setClickTripPointNewHandler(handleTripPointMenuClick);
 tripPointMenuComponent.setMenuClickHandler(handleTripPointMenuClick);
 
-render(tripMain, tripPointNewBtnComponent);
+render(tripControlsMain, tripPointNewBtnComponent);
 render(tripControlsNavigation, tripPointMenuComponent);
 
 const checkLoading = () => isLoading ? tripPointNewBtnComponent.turnOff() : tripPointNewBtnComponent.turnOn();
@@ -71,6 +83,7 @@ api.getDestinations()
         TripOffersModel.setOffers(offers);
         api.getPoints()
           .then((points) => {
+            console.log(points);
             tripPointsModel.setPoints(UpdateType.INIT, points);
             isLoading = false;
             isLoadedAdditionalData = true;

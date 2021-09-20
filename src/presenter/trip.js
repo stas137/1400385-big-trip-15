@@ -1,4 +1,4 @@
-import {render, remove} from '../utils/render.js';
+import {render, remove, replace} from '../utils/render.js';
 import {compareDate, compareTime, comparePrice} from '../utils/common.js';
 import {RenderPosition, FilterType, SortType, UpdateType, UserAction} from '../const.js';
 import {filter} from '../utils/filter.js';
@@ -13,7 +13,7 @@ import LoadingView from '../view/loading.js';
 import LoadedAdditionalDataView from '../view/loaded-additional-data.js';
 
 export default class Trip {
-  constructor(tripContainer, tripControlsEvents, tripPointsModel, tripFilterModel, api) {
+  constructor(tripContainer, tripControlsEvents, tripControlsMain, tripPointsModel, tripFilterModel, api) {
 
     this._api = api;
 
@@ -22,6 +22,7 @@ export default class Trip {
 
     this._tripContainer = tripContainer;
     this._tripControlsEvents = tripControlsEvents;
+    this._tripControlsMain = tripControlsMain;
 
     this._isLoading = true;
     this._isLoadedAdditionalData = false;
@@ -35,6 +36,8 @@ export default class Trip {
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
     this._pointEmptyComponent = null;
+    this._routeComponent = null;
+    this._costComponent = null;
 
     this._tripPointsContainerComponent = new TripPointsContainerView();
 
@@ -60,6 +63,7 @@ export default class Trip {
   destroy() {
     this._clearTripPoints();
     this._clearTripPointsContainer();
+    this._clearSort();
 
     this._tripPointsModel.removeObserver(this._handleModelEvent);
     this._tripFilterModel.removeObserver(this._handleModelEvent);
@@ -224,14 +228,24 @@ export default class Trip {
       return;
     }
 
+    this._prevRouteComponent = this._routeComponent;
+    this._prevCostComponent = this._costComponent;
+
     this._routeComponent = new TripRouteView(this._getTripPoints());
     this._costComponent = new TripCostView(this._getTripPoints());
 
-    this._tripControlsMain = this._tripContainer.querySelector('.trip-main');
-    render(this._tripControlsMain, this._routeComponent, RenderPosition.AFTERBEGIN);
-
-    this._tripControlsInfo = this._tripContainer.querySelector('.trip-info');
-    render(this._tripControlsInfo, this._costComponent);
+    if (this._prevRouteComponent === null && this._prevCostComponent === null) {
+      render(this._tripControlsMain, this._routeComponent, RenderPosition.AFTERBEGIN);
+      this._tripControlsInfo = this._tripContainer.querySelector('.trip-info');
+      render(this._tripControlsInfo, this._costComponent);
+    } else {
+      remove(this._prevRouteComponent);
+      remove(this._prevCostComponent);
+      
+      render(this._tripControlsMain, this._routeComponent, RenderPosition.AFTERBEGIN);
+      this._tripControlsInfo = this._tripContainer.querySelector('.trip-info');
+      render(this._tripControlsInfo, this._costComponent);
+    }
 
     this._renderSort(this._activeSort);
     this._renderTripPointsContainer();

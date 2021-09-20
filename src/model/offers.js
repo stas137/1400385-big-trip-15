@@ -15,6 +15,10 @@ export default class Offers extends AbstractObserver {
     return this._offers;
   }
 
+  static getTypesOffers() {
+    return this._offers.map((item) => item.type.toUpperCase());
+  }
+
   static getRandomTypePoint() {
     const offers = Offers.getOffers();
     const randomIndex = getRandomInteger(0, offers.length - 1);
