@@ -1,6 +1,3 @@
-import TripDestinationsModel from '../model/destinations.js';
-import TripOffersModel from '../model/offers.js';
-
 const ESC_CODE = 'Escape';
 
 const isEscEvent = (code) => code === ESC_CODE;
@@ -17,18 +14,6 @@ const compareTime = (a, b) => ((new Date(a.endDateTime) - new Date(a.startDateTi
 const comparePrice = (a, b) => (Number(a.price) > Number(b.price)) ? 1 : -1;
 const compareFuture = (a, b = new Date()) => (a.startDateTime > b) ? 1 : -1;
 const comparePast = (a, b = new Date()) => (a.startDateTime < b) ? 1 : -1;
-
-const generateTypePoint = () => {
-  const offers = TripOffersModel.getOffers();
-  const randomIndex = getRandomInteger(0, offers.length - 1);
-  return offers[randomIndex].type;
-};
-
-const generateCityPoint = () => {
-  const destinations = TripDestinationsModel.getDestinations();
-  const randomIndex = getRandomInteger(0, destinations.length - 1);
-  return destinations[randomIndex].name;
-};
 
 const getDuration = (startDateTime, endDateTime) => {
   startDateTime = new Date(startDateTime);
@@ -63,26 +48,4 @@ const getDurationTripPoint = (durationDays, durationHours, durationMinutes) => {
   return '00M';
 };
 
-const generateOffers = (typePoint) => {
-  const offersForType = TripOffersModel.getOffers().find((item) => item.type === typePoint);
-  return offersForType.offers;
-};
-
-const generateDestination = (cityPoint) => {
-
-  let destination = TripDestinationsModel.getDestinations().find((item) => item.name === cityPoint);
-
-  destination = Object.assign(
-    {},
-    destination,
-    {
-      city: destination['name'],
-    },
-  );
-
-  delete destination['name'];
-
-  return destination;
-};
-
-export {isEscEvent, getRandomInteger, generateTypePoint, generateCityPoint, getDuration, getDurationTripPoint, compareDate, compareTime, comparePrice, compareFuture, comparePast, generateOffers, generateDestination};
+export {isEscEvent, getRandomInteger, getDuration, getDurationTripPoint, compareDate, compareTime, comparePrice, compareFuture, comparePast};

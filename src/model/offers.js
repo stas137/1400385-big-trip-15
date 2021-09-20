@@ -1,4 +1,5 @@
 import AbstractObserver from '../utils/abstract-observer.js';
+import {getRandomInteger} from '../utils/common.js';
 
 export default class Offers extends AbstractObserver {
   constructor() {
@@ -12,5 +13,16 @@ export default class Offers extends AbstractObserver {
 
   static getOffers() {
     return this._offers;
+  }
+
+  static getRandomTypePoint() {
+    const offers = Offers.getOffers();
+    const randomIndex = getRandomInteger(0, offers.length - 1);
+    return offers[randomIndex].type;
+  }
+
+  static getTypeOffers(typePoint) {
+    const offersForType = Offers.getOffers().find((item) => item.type === typePoint);
+    return offersForType.offers;
   }
 }
