@@ -111,7 +111,7 @@ const createTripPointEditTemplate = (point) => {
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
-    <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${newPoint ? 'Cancel' : 'Delete'}${!newPoint && isDeleting ? 'Deleting...' : ''}</button>
+    <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${newPoint ? 'Cancel' : ''}${isDeleting ? 'Deleting...' : 'Delete'}</button>
 
     ${newPoint ? '' :
     `<button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>

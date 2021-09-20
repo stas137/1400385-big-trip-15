@@ -90,7 +90,7 @@ export default class Point {
         isDisabled: false,
         isSaving: false,
         isDeleting: false,
-      });
+      }, false);
     };
 
     switch (state) {
