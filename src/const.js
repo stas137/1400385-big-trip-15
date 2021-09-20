@@ -72,5 +72,5 @@ const POINT_BLANK = {
   isFavorite: false,
 };
 
-export {END_POINT, AUTHORIZATION, SHAKE_ANIMATION_TIMEOUT, RenderPosition, Method, SuccessStatusHTTPRange, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, OFFER_TITLES_TYPES, COUNT_CITIES_ROUTE};
+export {END_POINT, AUTHORIZATION, SHAKE_ANIMATION_TIMEOUT, RenderPosition, Method, SuccessStatusHTTPRange, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, COUNT_CITIES_ROUTE};
 
