@@ -72,58 +72,5 @@ const POINT_BLANK = {
   isFavorite: false,
 };
 
-const OFFER_TITLES_TYPES = [
-  {
-    title: 'Add luggage',
-    type: 'luggage',
-    point: 'flight',
-  },
-  {
-    title: 'Switch to comfort',
-    type: 'comfort',
-    point: 'flight',
-  },
-  {
-    title: 'Choose seats',
-    type: 'seats',
-    point: 'flight',
-  },
-  {
-    title: 'Add meal',
-    type: 'meal',
-    point: 'flight',
-  },
-  {
-    title: 'Travel by train',
-    type: 'train',
-    point: 'flight',
-  },
-  {
-    title: 'Order Uber',
-    type: 'uber',
-    point: 'taxi',
-  },
-  {
-    title: 'Rent a car',
-    type: 'car',
-    point: 'drive',
-  },
-  {
-    title: 'Book tickets',
-    type: 'tickets',
-    point: 'sightseeing',
-  },
-  {
-    title: 'Lunch in city',
-    type: 'lunch',
-    point: 'sightseeing',
-  },
-  {
-    title: 'Add breakfast',
-    type: 'breakfast',
-    point: 'check-in',
-  },
-];
-
 export {END_POINT, AUTHORIZATION, SHAKE_ANIMATION_TIMEOUT, RenderPosition, Method, SuccessStatusHTTPRange, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, OFFER_TITLES_TYPES, COUNT_CITIES_ROUTE};
 
