@@ -2,6 +2,13 @@ const COUNT_CITIES_ROUTE = 3;
 const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
 const AUTHORIZATION = 'Basic er1w590ik29889b';
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
+const RenderPosition = {
+  AFTERBEGIN: 'afterbegin',
+  BEFOREEND: 'beforeend',
+};
+
 const Method = {
   GET: 'GET',
   POST: 'POST',
@@ -62,7 +69,7 @@ const POINT_BLANK = {
   price: '',
   pointOffers: '',
   destination: '',
-  isFavorite: '',
+  isFavorite: false,
 };
 
 const OFFER_TITLES_TYPES = [
@@ -118,5 +125,5 @@ const OFFER_TITLES_TYPES = [
   },
 ];
 
-export {END_POINT, AUTHORIZATION, Method, SuccessStatusHTTPRange, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, OFFER_TITLES_TYPES, COUNT_CITIES_ROUTE};
+export {END_POINT, AUTHORIZATION, SHAKE_ANIMATION_TIMEOUT, RenderPosition, Method, SuccessStatusHTTPRange, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, OFFER_TITLES_TYPES, COUNT_CITIES_ROUTE};
 

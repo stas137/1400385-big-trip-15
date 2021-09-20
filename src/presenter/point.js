@@ -7,6 +7,7 @@ import TripPointEditView from '../view/trip-point-edit.js';
 export const State = {
   SAVING: 'saving',
   DELETING: 'deleting',
+  ABORTING: 'aborting',
 };
 
 export default class Point {
@@ -84,6 +85,14 @@ export default class Point {
       return;
     }
 
+    const resetFormState = () => {
+      this._tripPointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
     switch (state) {
       case State.SAVING:
         this._tripPointEditComponent.updateData({
@@ -96,6 +105,9 @@ export default class Point {
           isDisabled: true,
           isDeleting: true,
         }, false);
+        break;
+      case State.ABORTING:
+        this._tripPointEditComponent.shake(resetFormState);
         break;
     }
   }

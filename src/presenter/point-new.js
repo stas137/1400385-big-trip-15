@@ -55,6 +55,19 @@ export default class PointNew {
     }, false);
   }
 
+  setAborting() {
+    const resetFormState = () => {
+      this._tripPointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+        newPoint: true,
+      }, false);
+    };
+
+    this._tripPointEditComponent.shake(resetFormState);
+  }
+
   _handleFormSubmit(point) {
     this._changeData(
       UserAction.ADD_POINT,

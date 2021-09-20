@@ -1,6 +1,6 @@
-import {RenderPosition, render, remove} from '../utils/render.js';
+import {render, remove} from '../utils/render.js';
 import {compareDate, compareTime, comparePrice} from '../utils/common.js';
-import {FilterType, SortType, UpdateType, UserAction} from '../const.js';
+import {RenderPosition, FilterType, SortType, UpdateType, UserAction} from '../const.js';
 import {filter} from '../utils/filter.js';
 import TripRouteView from '../view/trip-route.js';
 import TripCostView from '../view/trip-cost.js';
@@ -73,21 +73,33 @@ export default class Trip {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this._tripPointsPresenter.get(data.id).setViewState(TripPointPresenterStateView.SAVING);
-        this._api.updatePoint(data).then((responce) => {
-          this._tripPointsModel.updatePoint(updateType, responce);
-        });
+        this._api.updatePoint(data)
+          .then((responce) => {
+            this._tripPointsModel.updatePoint(updateType, responce);
+          })
+          .catch(() => {
+            this._tripPointsPresenter.get(data.id).setViewState(TripPointPresenterStateView.ABORTING);
+          });
         break;
       case UserAction.ADD_POINT:
         this._tripPointNewPresenter.setSaving();
-        this._api.addPoint(data).then((responce) => {
-          this._tripPointsModel.addPoint(updateType, responce);
-        });
+        this._api.addPoint(data)
+          .then((responce) => {
+            this._tripPointsModel.addPoint(updateType, responce);
+          })
+          .catch(() => {
+            this._tripPointNewPresenter.setAborting();
+          });
         break;
       case UserAction.DELETE_POINT:
-        this._tripPointsPresenter.get(data.id).setViewState(TripPointPresentStateView.DELETING);
-        this._api.deletePoint(data).then(() => {
-          this._tripPointsModel.deletePoint(updateType, data);
-        });
+        this._tripPointsPresenter.get(data.id).setViewState(TripPointPresenterStateView.DELETING);
+        this._api.deletePoint(data)
+          .then(() => {
+            this._tripPointsModel.deletePoint(updateType, data);
+          })
+          .catch(() => {
+            this._tripPointsPresenter.get(data.id).setViewState(TripPointPresenterStateView.ABORTING);
+          });
         break;
     }
   }

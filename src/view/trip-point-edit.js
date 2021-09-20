@@ -1,8 +1,7 @@
-import dayjs from 'dayjs';
 import he from 'he';
 import flatpickr from 'flatpickr';
 import {POINT_BLANK} from '../const.js';
-import {generateId, generateOffers, generateDestination, generateTypePoint, generateCityPoint, getDuration, getDurationTripPoint} from '../utils/common.js';
+import {generateOffers, generateDestination, generateTypePoint, generateCityPoint, getDuration, getDurationTripPoint} from '../utils/common.js';
 import {replace} from '../utils/render.js';
 import SmartView from './smart.js';
 import TripDestinationsModel from '../model/destinations.js';
@@ -65,7 +64,7 @@ const createTripPointEditTemplate = (point) => {
     <label class="event__type-label  event__type-label--${offerType.toLowerCase()}" for="event-type-${offerType.toLowerCase()}-1">${offerType}</label>
   </div>`);
 
-  const getCityItemTemplate = (cityPoint) => `<option value="${cityPoint}">${cityPoint}</option>`;
+  const getCityItemTemplate = () => `<option value="${cityPoint}">${cityPoint}</option>`;
 
   return `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
@@ -91,7 +90,7 @@ const createTripPointEditTemplate = (point) => {
       </label>
       <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${cityPoint}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
       <datalist id="destination-list-1">
-        ${TripDestinationsModel.getDestinations().map((destination) => getCityItemTemplate(destination.name))}
+        ${TripDestinationsModel.getDestinations().map((item) => getCityItemTemplate(item.name))}
       </datalist>
     </div>
 
@@ -114,7 +113,7 @@ const createTripPointEditTemplate = (point) => {
     <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
     <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${newPoint ? 'Cancel' : 'Delete'}${!newPoint && isDeleting ? 'Deleting...' : ''}</button>
 
-    ${newPoint ? '' : 
+    ${newPoint ? '' :
     `<button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
       <span class="visually-hidden">Open event</span>
     </button>`}
@@ -143,8 +142,8 @@ export default class TripPointEdit extends SmartView {
       const typePoint = generateTypePoint();
       const pointOffers = generateOffers(typePoint);
       const destination = generateDestination(cityPoint);
-      const startDateTime = "2021-09-17T00:44:07.377Z";
-      const endDateTime = "2021-09-17T06:16:46.875Z";
+      const startDateTime = '2021-09-17T00:44:07.377Z';
+      const endDateTime = '2021-09-17T06:16:46.875Z';
       const duration = getDurationTripPoint(1, 0, 0);
 
       this.updateData({

@@ -69,7 +69,7 @@ const generateOffers = (typePoint) => {
 };
 
 const generateDestination = (cityPoint) => {
-  
+
   let destination = TripDestinationsModel.getDestinations().find((item) => item.name === cityPoint);
 
   destination = Object.assign(
