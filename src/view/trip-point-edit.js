@@ -311,6 +311,11 @@ export default class TripPointEdit extends SmartView {
 
   _offerTripPointClickHandler(evt) {
     evt.preventDefault();
+
+    if (evt.target.classList.contains('event__available-offers')) {
+      return;
+    }
+
     const spanElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.querySelector('.event__offer-title') : evt.target.parentElement.parentElement.querySelector('.event__offer-title');
     const inputElement = evt.target.classList.contains('event__offer-label') ?  evt.target.parentElement.querySelector('.event__offer-checkbox') : evt.target.parentElement.parentElement.querySelector('.event__offer-checkbox') ;
     const offerIndex = this._point.pointOffers.findIndex((item) => item.title === spanElement.textContent);
