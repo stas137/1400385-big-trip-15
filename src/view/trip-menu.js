@@ -1,15 +1,17 @@
 import AbstractView from './abstract.js';
 import {MenuItem} from '../const.js';
 
-const createTripMenuTemplate = () => (
+const createTripMenuTemplate = (isStatistics) => (
   `<nav class="trip-controls__trip-tabs  trip-tabs">
-<a class="trip-tabs__btn  trip-tabs__btn--active" href="#">${MenuItem.TABLE}</a>
-<a class="trip-tabs__btn" href="#">${MenuItem.STATS}</a>
+<a class="trip-tabs__btn  ${!isStatistics ? 'trip-tabs__btn--active' : ''}" href="#">${MenuItem.TABLE}</a>
+<a class="trip-tabs__btn  ${isStatistics ? 'trip-tabs__btn--active' : ''}" href="#">${MenuItem.STATS}</a>
 </nav>`);
 
 export default class TripMenu extends AbstractView {
-  constructor() {
+  constructor(isStatistics) {
     super();
+
+    this._isStatistics = isStatistics;
 
     this._menuClickHandler = this._menuClickHandler.bind(this);
   }
@@ -20,7 +22,7 @@ export default class TripMenu extends AbstractView {
   }
 
   getTemplate() {
-    return createTripMenuTemplate();
+    return createTripMenuTemplate(this._isStatistics);
   }
 
   setMenuClickHandler(callback) {

@@ -16,6 +16,7 @@ import Api from './api.js';
 const api = new Api(END_POINT, AUTHORIZATION);
 let isLoading = true;
 let isLoadedAdditionalData = false;
+let isStatistics = false;
 
 const tripPointsModel = new TripPointsModel();
 const tripFilterModel = new TripFilterModel();
@@ -28,9 +29,9 @@ const tripControlsFilter = bodyElement.querySelector('.trip-controls__filters');
 const tripStatisticsContainer = tripControlsEvents.parentElement;
 
 const tripPresenter = new TripPresenter(bodyElement, tripControlsEvents, tripControlsMain, tripPointsModel, tripFilterModel, api);
-const tripFilter = new TripFilterPresenter(tripControlsFilter, tripFilterModel, tripPointsModel);
+const tripFilterPresenter = new TripFilterPresenter(tripControlsFilter, tripFilterModel, tripPointsModel);
 
-const tripPointMenuComponent = new TripPointMenuView();
+let tripPointMenuComponent = new TripPointMenuView(isStatistics);
 const tripPointNewBtnComponent = new TripPointNewBtnView();
 
 let tripStatisticsComponent = null;
@@ -50,12 +51,27 @@ const handleTripPointMenuClick = (menuItem) => {
       tripFilterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
       tripPointNewBtnComponent.turnOn();
       remove(tripStatisticsComponent);
+      remove(tripPointMenuComponent);
+
+      isStatistics = false;
+      tripPointMenuComponent = new TripPointMenuView(isStatistics);
+      render(tripControlsNavigation, tripPointMenuComponent);
+      tripPointMenuComponent.setMenuClickHandler(handleTripPointMenuClick);
+
       tripPresenter.init(isLoading);
       break;
     case MenuItem.STATS:
       tripPresenter.destroy();
       tripFilterModel.setFilter(UpdateType.STATISTICS, FilterType.EVERYTHING);
       tripPointNewBtnComponent.turnOff();
+
+      remove(tripPointMenuComponent);
+
+      isStatistics = true;
+      tripPointMenuComponent = new TripPointMenuView(isStatistics);
+      render(tripControlsNavigation, tripPointMenuComponent);
+      tripPointMenuComponent.setMenuClickHandler(handleTripPointMenuClick);
+
       tripStatisticsComponent = new TripStatisticsView(tripPointsModel.getPoints());
       render(tripStatisticsContainer, tripStatisticsComponent);
       break;
@@ -71,7 +87,7 @@ render(tripControlsNavigation, tripPointMenuComponent);
 const checkLoading = () => isLoading ? tripPointNewBtnComponent.turnOff() : tripPointNewBtnComponent.turnOn();
 const checkLoadedAdditionalData = () => isLoadedAdditionalData ? tripPointNewBtnComponent.turnOn() : tripPointNewBtnComponent.turnOff();
 
-tripFilter.init(isLoading);
+tripFilterPresenter.init(isLoading);
 tripPresenter.init(isLoading);
 
 checkLoading();
