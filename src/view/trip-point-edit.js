@@ -1,7 +1,7 @@
 import he from 'he';
 import flatpickr from 'flatpickr';
 import {POINT_BLANK} from '../const.js';
-import {getDuration, getDurationTripPoint} from '../utils/common.js';
+import {getDuration, getFormatDuration} from '../utils/common.js';
 import {replace} from '../utils/render.js';
 import SmartView from './smart.js';
 import TripDestinationsModel from '../model/destinations.js';
@@ -111,7 +111,7 @@ const createTripPointEditTemplate = (point) => {
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
-    <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${newPoint ? 'Cancel' : ''}${isDeleting ? 'Deleting...' : 'Delete'}</button>
+    <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${newPoint ? 'Cancel' : ''}${isDeleting ? 'Deleting...' : ''}${!newPoint && !isDeleting ? 'Delete' : ''}</button>
 
     ${newPoint ? '' :
     `<button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
@@ -144,7 +144,7 @@ export default class TripPointEdit extends SmartView {
       const destination = TripDestinationsModel.getCityDestination(cityPoint);
       const startDateTime = '2021-09-17T00:44:07.377Z';
       const endDateTime = '2021-09-18T00:44:07.377Z';
-      const duration = getDurationTripPoint(1, 0, 0);
+      const duration = getFormatDuration(1, 0, 0);
 
       this.updateData({
         cityPoint,
@@ -354,7 +354,7 @@ export default class TripPointEdit extends SmartView {
 
       this.updateData({
         startDateTime,
-        duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
+        duration: getFormatDuration(durationDays, durationHours, durationMinutes),
       });
     }
   }
@@ -372,7 +372,7 @@ export default class TripPointEdit extends SmartView {
 
       this.updateData({
         endDateTime,
-        duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
+        duration: getFormatDuration(durationDays, durationHours, durationMinutes),
       });
     }
   }

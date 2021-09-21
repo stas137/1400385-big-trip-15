@@ -1,4 +1,4 @@
-import {render, remove, replace} from '../utils/render.js';
+import {render, remove} from '../utils/render.js';
 import {compareDate, compareTime, comparePrice} from '../utils/common.js';
 import {RenderPosition, FilterType, SortType, UpdateType, UserAction} from '../const.js';
 import {filter} from '../utils/filter.js';
@@ -241,7 +241,7 @@ export default class Trip {
     } else {
       remove(this._prevRouteComponent);
       remove(this._prevCostComponent);
-      
+
       render(this._tripControlsMain, this._routeComponent, RenderPosition.AFTERBEGIN);
       this._tripControlsInfo = this._tripContainer.querySelector('.trip-info');
       render(this._tripControlsInfo, this._costComponent);

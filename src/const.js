@@ -5,6 +5,11 @@ const AUTHORIZATION = 'Basic er1w590ik29889b';
 const SHAKE_ANIMATION_TIMEOUT = 600;
 const BAR_HEIGHT = 55;
 
+const COUNT_MILISECONDS_SECOND = 1000;
+const COUNT_SECONDS_MINUTE = 60;
+const COUNT_MINUTES_HOUR = 60;
+const COUNT_HOURS_DAY = 24;
+
 const RenderPosition = {
   AFTERBEGIN: 'afterbegin',
   BEFOREEND: 'beforeend',
@@ -46,7 +51,8 @@ const UpdateType = {
   MINOR: 'minor',
   MAJOR: 'major',
   INIT: 'init',
-  ADDITIONAL_DATA: 'add_data',
+  ADDITIONAL_DATA: 'additional_data',
+  STATISTICS: 'statistics',
 };
 
 const UserAction = {
@@ -73,5 +79,5 @@ const POINT_BLANK = {
   isFavorite: false,
 };
 
-export {END_POINT, AUTHORIZATION, SHAKE_ANIMATION_TIMEOUT, BAR_HEIGHT, RenderPosition, Method, SuccessStatusHTTPRange, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, COUNT_CITIES_ROUTE};
+export {END_POINT, AUTHORIZATION, SHAKE_ANIMATION_TIMEOUT, BAR_HEIGHT, COUNT_HOURS_DAY, COUNT_MINUTES_HOUR, COUNT_SECONDS_MINUTE, COUNT_MILISECONDS_SECOND, RenderPosition, Method, SuccessStatusHTTPRange, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, COUNT_CITIES_ROUTE};
 

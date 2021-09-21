@@ -1,12 +1,12 @@
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import dayjs from 'dayjs';
-import {BAR_HEIGHT} from '../const.js';
+import {BAR_HEIGHT, COUNT_MILISECONDS_SECOND, COUNT_SECONDS_MINUTE, COUNT_MINUTES_HOUR, COUNT_HOURS_DAY} from '../const.js';
+import {getFormatDuration} from '../utils/common.js';
 import SmartView from './smart.js';
 import TripOffersModel from '../model/offers.js';
 
-const createStatisticsTemplate = () => {
-  return `<section class="statistics">
+const createStatisticsTemplate = () => `<section class="statistics">
   <h2 class="visually-hidden">Trip statistics</h2>
 
   <div class="statistics__item">
@@ -21,13 +21,12 @@ const createStatisticsTemplate = () => {
     <canvas class="statistics__chart" id="time-spend" width="900"></canvas>
   </div>
 </section>`;
-};
 
 export default class Statistics extends SmartView {
-  constructor() {
+  constructor(points) {
     super();
 
-    this._points = null;
+    this._points = points.slice();
     this._types = null;
     this._costs = null;
 
@@ -39,6 +38,9 @@ export default class Statistics extends SmartView {
 
     this._timeSpendCtx = null;
     this._timeSpendChart = null;
+
+    this._setDataCharts();
+    this._setCharts();
   }
 
   getTemplate() {
@@ -49,49 +51,45 @@ export default class Statistics extends SmartView {
     super.removeElement();
   }
 
-  restoreHandlers() {
+  _setDataCharts() {
 
-  }
-
-  show(points) {
-
-    this._points = points.slice();
     this._types = [...TripOffersModel.getTypesOffers()];
 
     this._cost = this._types.map((type) => {
-      const points = this._points.filter((point) => point.typePoint === type.toLowerCase());
-      return points.reduce((sum, point) => sum + Number(point.price), 0);
+      const filteredPoints = this._points.filter((point) => point.typePoint === type.toLowerCase());
+      return filteredPoints.reduce((sum, point) => sum + Number(point.price), 0);
     });
 
     this._count = this._types.map((type) => {
-      const points = this._points.filter((point) => point.typePoint === type.toLowerCase());
-      return points.length;
+      const filteredPoints = this._points.filter((point) => point.typePoint === type.toLowerCase());
+      return filteredPoints.length;
     });
 
     this._timeSpend = this._types.map((type) => {
-      const points = this._points.filter((point) => point.typePoint === type.toLowerCase());
-      const date_from = dayjs(points[0].startDateTime);
-      const date_to = dayjs(points[0].endDateTime);
+      const filteredPoints = this._points.filter((point) => point.typePoint === type.toLowerCase());
 
-      const diffDays = date_to.diff(date_from, 'day');
-      const diffHours = date_to.diff(date_from, 'hour');
-      const diffMinutes = date_to.diff(date_from, 'minute') - diffHours * 60;
+      let sumMillisecond = 0;
 
-      return [
-        diffDays,
-        diffHours,
-        diffMinutes,
-      ];
-      
+      filteredPoints.forEach((point) => {
+        const dateFrom = dayjs(point.startDateTime);
+        const dateTo = dayjs(point.endDateTime);
+
+        const diffMillisecond = dateTo.diff(dateFrom);
+        sumMillisecond += diffMillisecond;
+      });
+
+      return sumMillisecond;
     });
-
-    this._showMoneyChart();
-    this._showTypeChart();
-    this._showTimeSpendChart();
   }
 
-  _showMoneyChart() {
-    this._moneyCtx = document.querySelector('#money');
+  _setCharts() {
+    this._setMoneyChart();
+    this._setTypeChart();
+    this._setTimeSpendChart();
+  }
+
+  _setMoneyChart() {
+    this._moneyCtx = this.getElement().querySelector('#money');
     this._moneyCtx.height = BAR_HEIGHT * (this._types.length - 1);
 
     this._moneyChart = new Chart(this._moneyCtx, {
@@ -160,8 +158,8 @@ export default class Statistics extends SmartView {
     });
   }
 
-  _showTypeChart() {
-    this._typeCtx = document.querySelector('#type');
+  _setTypeChart() {
+    this._typeCtx = this.getElement().querySelector('#type');
     this._typeCtx.height = BAR_HEIGHT * (this._types.length - 1);
 
     this._typeChart = new Chart(this._typeCtx, {
@@ -230,8 +228,8 @@ export default class Statistics extends SmartView {
     });
   }
 
-  _showTimeSpendChart() {
-    this._timeSpendCtx = document.querySelector('#time-spend');
+  _setTimeSpendChart() {
+    this._timeSpendCtx = this.getElement().querySelector('#time-spend');
     this._timeSpendCtx.height = BAR_HEIGHT * (this._types.length - 1);
 
     this._typeChart = new Chart(this._timeSpendCtx, {
@@ -255,9 +253,10 @@ export default class Statistics extends SmartView {
             color: '#000000',
             anchor: 'end',
             align: 'start',
-            formatter: ([diffDays, diffHours, diffMinutes]) => {
-              console.log('12' + diffDays);
-              return `${diffDays}D ${diffHours}H ${diffMinutes}M`;
+            formatter: (sumMillisecond) => {
+              const [days, hours, minutes] = this._normalizeMilisecond(sumMillisecond);
+              const formatDuration = getFormatDuration(days, hours, minutes);
+              return  formatDuration;
             },
           },
         },
@@ -301,5 +300,18 @@ export default class Statistics extends SmartView {
         },
       },
     });
+  }
+
+  _normalizeMilisecond(milisecond) {
+
+    const days = Math.floor(milisecond / (COUNT_HOURS_DAY * COUNT_MINUTES_HOUR * COUNT_SECONDS_MINUTE * COUNT_MILISECONDS_SECOND));
+    const hours = Math.floor(milisecond / (COUNT_MINUTES_HOUR * COUNT_SECONDS_MINUTE * COUNT_MILISECONDS_SECOND)) - days * COUNT_HOURS_DAY;
+    const minutes = Math.floor(milisecond / (COUNT_SECONDS_MINUTE * COUNT_MILISECONDS_SECOND)) - hours * COUNT_MINUTES_HOUR - days * COUNT_HOURS_DAY * COUNT_MINUTES_HOUR;
+
+    return [
+      days,
+      hours,
+      minutes,
+    ];
   }
 }

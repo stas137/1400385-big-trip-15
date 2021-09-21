@@ -21,17 +21,18 @@ export default class Filter {
     this._tripPointsModel.addObserver(this._handleModelEvent);
   }
 
-  init(isLoading = false, isLoadedAdditionalData = true) {
+  init(isLoading = false, isLoadedAdditionalData = true, isStatistics = false) {
 
     this._isLoading = isLoading;
     this._isLoadedAdditionalData = isLoadedAdditionalData;
+    this._isStatistics = isStatistics;
 
     const filters = this._getFilters();
     this._activeFilter = this._tripFilterModel.getFilter();
 
     this._prevFilterComponent = this._tripFilterComponent;
 
-    this._tripFilterComponent = new TripFilterView(filters, this._activeFilter, this._isLoading, this._isLoadedAdditionalData);
+    this._tripFilterComponent = new TripFilterView(filters, this._activeFilter, this._isLoading, this._isLoadedAdditionalData, this._isStatistics);
     this._tripFilterComponent.setFilterClickHandler(this._handleFilterTypeChange);
 
     if (this._prevFilterComponent === null) {
@@ -74,12 +75,20 @@ export default class Filter {
       case UpdateType.INIT:
         this._isLoading = false;
         this._isLoadedAdditionalData = true;
+        this._isStatistics = false;
         this.init();
         break;
       case UpdateType.ADDITIONAL_DATA:
         this._isLoading = false;
         this._isLoadedAdditionalData = false;
+        this._isStatistics = false;
         this.init(this._isLoading, this._isLoadedAdditionalData);
+        break;
+      case UpdateType.STATISTICS:
+        this._isLoading = false;
+        this._isLoadedAdditionalData = true;
+        this._isStatistics = true;
+        this.init(this._isLoading, this._isLoadedAdditionalData, this._isStatistics);
         break;
       default:
         this.init();

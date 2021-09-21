@@ -1,6 +1,6 @@
 import AbstractView from './abstract.js';
 
-const createTripFilterTemplate = (filters, activeFilter, isLoading, isLoadedAdditionalData) => {
+const createTripFilterTemplate = (filters, activeFilter, isLoading, isLoadedAdditionalData, isStatistics) => {
   const getItemTemplate = (filter, isChecked) => (
     `<div class="trip-filters__filter">
   <input 
@@ -9,7 +9,7 @@ const createTripFilterTemplate = (filters, activeFilter, isLoading, isLoadedAddi
     visually-hidden" 
     type="radio" 
     name="trip-filter" 
-    value="${filter.name}" ${isChecked ? 'checked' : ''} ${(isLoading && !isChecked) || (!isLoadedAdditionalData && !isChecked) ? 'disabled' : ''}
+    value="${filter.name}" ${isChecked ? 'checked' : ''} ${(isLoading && !isChecked) || (!isLoadedAdditionalData && !isChecked) ? 'disabled' : ''} ${isStatistics ? 'disabled' : ''}
   />
   <label 
     class="trip-filters__filter-label" 
@@ -25,23 +25,30 @@ const createTripFilterTemplate = (filters, activeFilter, isLoading, isLoadedAddi
 };
 
 export default class TripFilter extends AbstractView {
-  constructor(filters, activeFilter, isLoading){
+  constructor(filters, activeFilter, isLoading, isLoadedAdditionalData, isStatistics){
     super();
 
     this._filters = filters;
     this._activeFilter = activeFilter;
+
     this._isLoading = isLoading;
+    this._isLoadedAdditionalData = isLoadedAdditionalData;
+    this._isStatistics = isStatistics;
 
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createTripFilterTemplate(this._filters, this._activeFilter, this._isLoading);
+    return createTripFilterTemplate(this._filters, this._activeFilter, this._isLoading, this._isLoadedAdditionalData, this._isStatistics);
   }
 
 
   _filterTypeChangeHandler(evt) {
     evt.preventDefault();
+
+    if (evt.target.parentElement.querySelector('.trip-filters__filter-input').disabled) {
+      return;
+    }
 
     if (evt.target.dataset.activeFilter) {
       this._callback.filterClick(evt.target.dataset.activeFilter);

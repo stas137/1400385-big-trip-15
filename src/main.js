@@ -32,7 +32,8 @@ const tripFilter = new TripFilterPresenter(tripControlsFilter, tripFilterModel, 
 
 const tripPointMenuComponent = new TripPointMenuView();
 const tripPointNewBtnComponent = new TripPointNewBtnView();
-const tripStatisticsComponent = new TripStatisticsView();
+
+let tripStatisticsComponent = null;
 
 const handleTripPointClose = () => {
   tripPointNewBtnComponent.turnOn();
@@ -46,17 +47,17 @@ const handleTripPointMenuClick = (menuItem) => {
       tripPresenter.createTripPoint(handleTripPointClose);
       break;
     case MenuItem.TABLE:
-      console.log(menuItem);
+      tripFilterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
       tripPointNewBtnComponent.turnOn();
       remove(tripStatisticsComponent);
       tripPresenter.init(isLoading);
       break;
     case MenuItem.STATS:
-      console.log(menuItem);
       tripPresenter.destroy();
+      tripFilterModel.setFilter(UpdateType.STATISTICS, FilterType.EVERYTHING);
       tripPointNewBtnComponent.turnOff();
+      tripStatisticsComponent = new TripStatisticsView(tripPointsModel.getPoints());
       render(tripStatisticsContainer, tripStatisticsComponent);
-      tripStatisticsComponent.show(tripPointsModel.getPoints());
       break;
   }
 };
@@ -83,7 +84,6 @@ api.getDestinations()
         TripOffersModel.setOffers(offers);
         api.getPoints()
           .then((points) => {
-            console.log(points);
             tripPointsModel.setPoints(UpdateType.INIT, points);
             isLoading = false;
             isLoadedAdditionalData = true;

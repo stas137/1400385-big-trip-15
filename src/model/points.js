@@ -1,5 +1,5 @@
 import AbstractObserver from '../utils/abstract-observer.js';
-import {getDuration, getDurationTripPoint} from '../utils/common.js';
+import {getDuration, getFormatDuration} from '../utils/common.js';
 
 export default class Points extends AbstractObserver {
   constructor() {
@@ -82,7 +82,7 @@ export default class Points extends AbstractObserver {
         cityPoint: destination['city'],
         startDateTime: point['date_from'],
         endDateTime: point['date_to'],
-        duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
+        duration: getFormatDuration(durationDays, durationHours, durationMinutes),
         price: point['base_price'],
         pointOffers: point['offers'],
         destination: destination,

@@ -37,7 +37,7 @@ const getDuration = (startDateTime, endDateTime) => {
   };
 };
 
-const getDurationTripPoint = (durationDays, durationHours, durationMinutes) => {
+const getFormatDuration = (durationDays, durationHours, durationMinutes) => {
   if (durationDays > 0) {
     return `${durationDays}D ${durationHours}H ${durationMinutes}M`;
   } else if (durationHours > 0) {
@@ -48,4 +48,4 @@ const getDurationTripPoint = (durationDays, durationHours, durationMinutes) => {
   return '00M';
 };
 
-export {isEscEvent, getRandomInteger, getDuration, getDurationTripPoint, compareDate, compareTime, comparePrice, compareFuture, comparePast};
+export {isEscEvent, getRandomInteger, getDuration, getFormatDuration, compareDate, compareTime, comparePrice, compareFuture, comparePast};
