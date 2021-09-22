@@ -38,6 +38,7 @@ export default class Trip {
     this._pointEmptyComponent = null;
     this._routeComponent = null;
     this._costComponent = null;
+    this._sortComponent = null;
 
     this._tripPointsContainerComponent = new TripPointsContainerView();
 
@@ -49,7 +50,6 @@ export default class Trip {
 
   init(isLoading = false) {
     this._isLoading = isLoading;
-    this._isLoadedAdditionalData = isLoading;
 
     this._activeFilter = FilterType.EVERYTHING;
     this._activeSort = SortType.DAY;
@@ -111,6 +111,10 @@ export default class Trip {
   _handleModelEvent(updateType, data) {
     switch(updateType) {
       case UpdateType.PATCH:
+        remove(this._costComponent);
+        this._costComponent = new TripCostView(this._getTripPoints());
+        render(this._tripControlsInfo, this._costComponent);
+
         this._tripPointsPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
@@ -182,8 +186,11 @@ export default class Trip {
   }
 
   _renderSort(activeSort) {
+    this._prevSortComponent = this._sortComponent;
+    remove(this._prevSortComponent);
     this._sortComponent = new TripSortView(activeSort);
     this._sortComponent.setSortClickHandler(this._handleSortTypeChange);
+
     render(this._tripControlsEvents, this._sortComponent);
   }
 

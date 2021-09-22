@@ -100,9 +100,9 @@ api.getDestinations()
         TripOffersModel.setOffers(offers);
         api.getPoints()
           .then((points) => {
-            tripPointsModel.setPoints(UpdateType.INIT, points);
             isLoading = false;
             isLoadedAdditionalData = true;
+            tripPointsModel.setPoints(UpdateType.INIT, points);
             checkLoading();
           })
           .catch(() => {

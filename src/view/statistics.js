@@ -1,26 +1,29 @@
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import dayjs from 'dayjs';
-import {BAR_HEIGHT, COUNT_MILISECONDS_SECOND, COUNT_SECONDS_MINUTE, COUNT_MINUTES_HOUR, COUNT_HOURS_DAY} from '../const.js';
+import {COUNT_MILISECONDS_SECOND, COUNT_SECONDS_MINUTE, COUNT_MINUTES_HOUR, COUNT_HOURS_DAY} from '../const.js';
 import {getFormatDuration} from '../utils/common.js';
 import SmartView from './smart.js';
 import TripOffersModel from '../model/offers.js';
 
-const createStatisticsTemplate = () => `<section class="statistics">
+const BAR_HEIGHT = 55;
+
+const StatisticsType = {
+  MONEY: 'money',
+  TYPE: 'type',
+  TIMESPEND: 'time-spend',
+};
+
+const createStatisticsTemplate = () => {
+
+  const getItemTemplate = (id) => `<div class="statistics__item">
+    <canvas class="statistics__chart" id="${id}" width="900"></canvas></div>`;
+
+  return `<section class="statistics">
   <h2 class="visually-hidden">Trip statistics</h2>
-
-  <div class="statistics__item">
-    <canvas class="statistics__chart" id="money" width="900"></canvas>
-  </div>
-
-  <div class="statistics__item">
-    <canvas class="statistics__chart" id="type" width="900"></canvas>
-  </div>
-
-  <div class="statistics__item">
-    <canvas class="statistics__chart" id="time-spend" width="900"></canvas>
-  </div>
-</section>`;
+  ${Object.values(StatisticsType).map((item) => getItemTemplate(item)).join('')}
+  </section>`;
+};
 
 export default class Statistics extends SmartView {
   constructor(points) {
