@@ -3,7 +3,6 @@ const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
 const AUTHORIZATION = 'Basic er1w590ik29889b';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
-const BAR_HEIGHT = 55;
 
 const COUNT_MILISECONDS_SECOND = 1000;
 const COUNT_SECONDS_MINUTE = 60;
@@ -53,12 +52,14 @@ const UpdateType = {
   INIT: 'init',
   ADDITIONAL_DATA: 'additional_data',
   STATISTICS: 'statistics',
+  TRIP_COST: 'trip_cost',
 };
 
 const UserAction = {
   UPDATE_POINT: 'update_point',
   ADD_POINT: 'add_point',
   DELETE_POINT: 'delete_point',
+  CHANGE_OFFER: 'change_offer',
 };
 
 const MenuItem = {
@@ -79,5 +80,5 @@ const POINT_BLANK = {
   isFavorite: false,
 };
 
-export {END_POINT, AUTHORIZATION, SHAKE_ANIMATION_TIMEOUT, BAR_HEIGHT, COUNT_HOURS_DAY, COUNT_MINUTES_HOUR, COUNT_SECONDS_MINUTE, COUNT_MILISECONDS_SECOND, RenderPosition, Method, SuccessStatusHTTPRange, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, COUNT_CITIES_ROUTE};
+export {END_POINT, AUTHORIZATION, SHAKE_ANIMATION_TIMEOUT, COUNT_HOURS_DAY, COUNT_MINUTES_HOUR, COUNT_SECONDS_MINUTE, COUNT_MILISECONDS_SECOND, RenderPosition, Method, SuccessStatusHTTPRange, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, COUNT_CITIES_ROUTE};
 

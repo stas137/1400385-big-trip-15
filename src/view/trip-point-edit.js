@@ -189,26 +189,44 @@ export default class TripPointEdit extends SmartView {
     this._setDatepickerEnd();
   }
 
-  resetTripPoint(point) {
+  _resetTripPoint(point) {
     this.updateData(
-      TripPointEdit.tripPointToData(point),
+      TripPointEdit.tripPointToData(point, true),
     );
   }
 
-  static tripPointToData(data) {
+  static tripPointToData(data, close = false) {
+
+    if (!close) {
+      return Object.assign(
+        {},
+        data,
+        {
+          isChangeTripPointType: false,
+          isChangeTripPointCity: false,
+          newTripPointType: '',
+          newTripPointCity: '',
+          newPoint: false,
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false,
+        },
+      );
+    }
+
+    delete data.isChangeTripPointType;
+    delete data.newTripPointType;
+    delete data.isChangeTripPointCity;
+    delete data.newTripPointCity;
+
+    delete data.newPoint;
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
+
     return Object.assign(
       {},
       data,
-      {
-        isChangeTripPointType: false,
-        isChangeTripPointCity: false,
-        newTripPointType: '',
-        newTripPointCity: '',
-        newPoint: false,
-        isDisabled: false,
-        isSaving: false,
-        isDeleting: false,
-      },
     );
   }
 
@@ -328,6 +346,10 @@ export default class TripPointEdit extends SmartView {
     this.updateData({
       pointOffers,
     });
+
+    this._resetTripPoint(this._point, true);
+    this._callback.offerChangeClick(this._point);
+    this._point = TripPointEdit.tripPointToData(this._point);
   }
 
   _closeBtnClickHandler(evt) {
@@ -342,7 +364,7 @@ export default class TripPointEdit extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._point = TripPointEdit.dataToTripPoint(this._point, true);
+    this._point = TripPointEdit.dataToTripPoint(this._point);
     this._callback.formSubmit(this._point);
   }
 
@@ -454,6 +476,10 @@ export default class TripPointEdit extends SmartView {
 
   setDeleteBtnClickHandler(callback) {
     this._callback.deleteBtnClick = callback;
+  }
+
+  setChangeTripPointOfferHandler(callback) {
+    this._callback.offerChangeClick = callback;
   }
 
   setFormSubmitHandler(callback) {

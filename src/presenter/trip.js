@@ -75,6 +75,9 @@ export default class Trip {
 
   _handleViewAction(actionType, updateType, data) {
     switch (actionType) {
+      case UserAction.CHANGE_OFFER:
+        this._tripPointsModel.updatePoint(updateType, data);
+        break;
       case UserAction.UPDATE_POINT:
         this._tripPointsPresenter.get(data.id).setViewState(TripPointPresenterStateView.SAVING);
         this._api.updatePoint(data)
@@ -110,11 +113,15 @@ export default class Trip {
 
   _handleModelEvent(updateType, data) {
     switch(updateType) {
+      case UpdateType.COST:
+        remove(this._costComponent);
+        this._costComponent = new TripCostView(this._getCostTrip(this._getTripPoints()));
+        render(this._tripControlsInfo, this._costComponent);
+        break;
       case UpdateType.PATCH:
         remove(this._costComponent);
-        this._costComponent = new TripCostView(this._getTripPoints());
+        this._costComponent = new TripCostView(this._getCostTrip(this._getTripPoints()));
         render(this._tripControlsInfo, this._costComponent);
-
         this._tripPointsPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
@@ -138,6 +145,15 @@ export default class Trip {
         this._renderLoadedAdditionalData();
         break;
     }
+  }
+
+  _getCostTrip(points) {
+    const costTripPoints = points.reduce((sum, point) => sum + point.price, 0);
+    const tripPointsOffers = points.map((point) => point.pointOffers);
+    const costsTripPointsOffers = tripPointsOffers.map((offer) => offer.reduce((sum, item) => (item && item.checked) ? sum += Number(item.price) : sum += 0, 0));
+    const costTripPointsOffers = costsTripPointsOffers.reduce((sum, item) => sum + item, 0);
+
+    return (costTripPoints + costTripPointsOffers);
   }
 
   _getTripPoints(activeSort = SortType.DAY) {
@@ -239,7 +255,7 @@ export default class Trip {
     this._prevCostComponent = this._costComponent;
 
     this._routeComponent = new TripRouteView(this._getTripPoints());
-    this._costComponent = new TripCostView(this._getTripPoints());
+    this._costComponent = new TripCostView(this._getCostTrip(this._getTripPoints()));
 
     if (this._prevRouteComponent === null && this._prevCostComponent === null) {
       render(this._tripControlsMain, this._routeComponent, RenderPosition.AFTERBEGIN);
