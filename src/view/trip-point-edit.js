@@ -1,29 +1,37 @@
-import dayjs from 'dayjs';
 import he from 'he';
 import flatpickr from 'flatpickr';
-import {POINT_TYPES, POINT_BLANK} from '../const';
-import {generateId, generateOffers, generateDestination, generateTypePoint, generateCityPoint, getDuration, getDurationTripPoint} from '../utils/common.js';
+import {POINT_BLANK} from '../const.js';
+import {getDuration, getFormatDuration} from '../utils/common.js';
 import {replace} from '../utils/render.js';
 import SmartView from './smart.js';
+import TripDestinationsModel from '../model/destinations.js';
+import TripOffersModel from '../model/offers.js';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-const createOffersTemplate = ({id, pointOffers}) => (pointOffers.offers
-  .map((offer) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.type}-${id}" type="checkbox" name="event-offer-${offer.type}" ${offer.checked ? 'checked' : ''}>
-  <label class="event__offer-label" for="event-offer-${offer.type}">
-    <span class="event__offer-title">${offer.title}</span>
-    &plus;&euro;&nbsp;
-    <span class="event__offer-price">${offer.price}</span>
-  </label>
-</div>`)
-  .join(''));
+const createOffersTemplate = (pointOffers) => {
 
-const createOffersContainerTemplate = (point) => (point.pointOffers.offers.length ? `<section class="event__section  event__section--offers">
-<h3 class="event__section-title  event__section-title--offers">Offers</h3>
-<div class="event__available-offers">
-  ${createOffersTemplate(point)}
-</div>
-</section>` : '');
+  const strToCamelCase = (str) => {
+    const tempStr = str.toLowerCase().split(' ');
+    return tempStr.map((item, index) => index === 0 ? item : `${item.slice(0, 1).toUpperCase()}${item.slice(1)}`).join('');
+  };
+
+  return pointOffers.map((offer) => `<div class="event__offer-selector">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${strToCamelCase(offer.title)}" type="checkbox" name="event-offer-${strToCamelCase(offer.title)}" ${offer.checked ? 'checked' : ''}>
+    <label class="event__offer-label" for="event-offer-${strToCamelCase(offer.title)}">
+      <span class="event__offer-title">${offer.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offer.price}</span>
+    </label>
+    </div>`)
+    .join('');
+};
+
+const createOffersContainerTemplate = (pointOffers) => (pointOffers.length ? `<section class="event__section  event__section--offers">
+  <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+  <div class="event__available-offers">
+    ${createOffersTemplate(pointOffers)}
+  </div>
+  </section>` : '');
 
 const createPicturesTemplate = (pictures) => {
   if (!pictures) {
@@ -38,10 +46,25 @@ const createPicturesTemplate = (pictures) => {
 };
 
 const createTripPointEditTemplate = (point) => {
-  const getItemTemplate = (value, isChecked) => (`<div class="event__type-item">
-    <input id="event-type-${value.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${value.toLowerCase()}" ${isChecked ? 'checked' : ''}>
-    <label class="event__type-label  event__type-label--${value.toLowerCase()}" for="event-type-${value.toLowerCase()}-1">${value}</label>
+
+  const {
+    cityPoint,
+    typePoint,
+    price,
+    destination,
+    pointOffers,
+    newPoint,
+    isDisabled,
+    isSaving,
+    isDeleting,
+  } = point;
+
+  const getOfferItemTemplate = (offerType, isChecked) => (`<div class="event__type-item">
+    <input id="event-type-${offerType.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offerType.toLowerCase()}" ${isChecked ? 'checked' : ''}>
+    <label class="event__type-label  event__type-label--${offerType.toLowerCase()}" for="event-type-${offerType.toLowerCase()}-1">${offerType}</label>
   </div>`);
+
+  const getCityItemTemplate = (city) => `<option value="${city}">${city}</option>`;
 
   return `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
@@ -49,36 +72,34 @@ const createTripPointEditTemplate = (point) => {
     <div class="event__type-wrapper">
       <label class="event__type  event__type-btn" for="event-type-toggle-1">
         <span class="visually-hidden">Choose event type</span>
-        <img class="event__type-icon" width="17" height="17" src="img/icons/${point.typePoint.toLowerCase()}.png" alt="Event type icon">
+        <img class="event__type-icon" width="17" height="17" src="img/icons/${typePoint.toLowerCase()}.png" alt="Event type icon">
       </label>
       <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
       <div class="event__type-list">
-        <fieldset class="event__type-group">
+        <fieldset class="event__type-group" ${isDisabled ? 'disabled' : ''}>
           <legend class="visually-hidden">Event type</legend>
-          ${POINT_TYPES.map((value) => getItemTemplate(value, point.typePoint === value)).join('')}
+          ${TripOffersModel.getOffers().map((offer) => getOfferItemTemplate(offer.type, typePoint === offer.type)).join('')}
         </fieldset>
       </div>
     </div>
 
     <div class="event__field-group  event__field-group--destination">
       <label class="event__label  event__type-output" for="event-destination-1">
-        ${point.typePoint}
+        ${typePoint}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.cityPoint}" list="destination-list-1">
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${cityPoint}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
       <datalist id="destination-list-1">
-        <option value="Amsterdam">Amsterdam</option>
-        <option value="Geneva">Geneva</option>
-        <option value="Chamonix">Chamonix</option>
+        ${TripDestinationsModel.getDestinations().map((item) => getCityItemTemplate(item.name))}
       </datalist>
     </div>
 
-    <div class="event__field-group  event__field-group--time">
+    <div class="event__field-group  event__field-group--time" ${isDisabled ? 'disabled' : ''}>
       <label class="visually-hidden" for="event-start-time-1">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(point.startDateTime).format('DD[/]MM[/]YY HH[:]mm')}">
+      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="{dayjs(point.startDateTime).format('DD[/]MM[/]YY HH[:]mm')}">
       &mdash;
       <label class="visually-hidden" for="event-end-time-1">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(point.endDateTime).format('DD[/]MM[/]YY HH[:]mm')}">
+      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="{dayjs(point.endDateTime).format('DD[/]MM[/]YY HH[:]mm')}">
     </div>
 
     <div class="event__field-group  event__field-group--price">
@@ -86,23 +107,24 @@ const createTripPointEditTemplate = (point) => {
         <span class="visually-hidden">Price</span>
         &euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${point.price}">
+      <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${price}" ${isDisabled ? 'disabled' : ''}>
     </div>
 
-    <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-    <button class="event__reset-btn" type="reset">${point.newPoint ? 'Cancel' : 'Delete'}</button>
+    <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+    <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${newPoint ? 'Cancel' : ''}${isDeleting ? 'Deleting...' : ''}${!newPoint && !isDeleting ? 'Delete' : ''}</button>
 
-    ${point.newPoint ? '' : `<button class="event__rollup-btn" type="button">
-    <span class="visually-hidden">Open event</span>
+    ${newPoint ? '' :
+    `<button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
+      <span class="visually-hidden">Open event</span>
     </button>`}
   </header>
   <section class="event__details">
-    ${createOffersContainerTemplate(point)}
+    ${createOffersContainerTemplate(pointOffers)}
 
     <section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${point.destination.description}</p>
-      ${createPicturesTemplate(point.destination.pictures)}
+      <p class="event__destination-description">${destination.description}</p>
+      ${createPicturesTemplate(destination.pictures)}
     </section>
   </section>
 </form>
@@ -116,16 +138,22 @@ export default class TripPointEdit extends SmartView {
     this._point = TripPointEdit.tripPointToData(point);
 
     if (point === POINT_BLANK) {
+      const cityPoint = TripDestinationsModel.getRandomCityPoint();
+      const typePoint = TripOffersModel.getRandomTypePoint();
+      const pointOffers = TripOffersModel.getTypeOffers(typePoint);
+      const destination = TripDestinationsModel.getCityDestination(cityPoint);
+      const startDateTime = '2021-09-17T00:44:07.377Z';
+      const endDateTime = '2021-09-18T00:44:07.377Z';
+      const duration = getFormatDuration(1, 0, 0);
 
       this.updateData({
-        id: String(generateId()),
-        typePoint: generateTypePoint(),
-        cityPoint: generateCityPoint(),
-        startDateTime: dayjs().toDate(),
-        endDateTime: dayjs().add(1, 'day').toDate(),
-        duration: getDurationTripPoint(1, 0, 0),
-        pointOffers: generateOffers(this._point.typePoint.toLowerCase()),
-        destination: generateDestination(this._point.cityPoint),
+        cityPoint,
+        typePoint,
+        pointOffers,
+        destination,
+        startDateTime,
+        endDateTime,
+        duration,
         newPoint: true,
       });
     }
@@ -161,26 +189,48 @@ export default class TripPointEdit extends SmartView {
     this._setDatepickerEnd();
   }
 
-  resetTripPoint(point) {
+  _resetTripPoint(point) {
     this.updateData(
-      TripPointEdit.tripPointToData(point),
+      TripPointEdit.tripPointToData(point, true),
     );
   }
 
-  static tripPointToData(data) {
+  static tripPointToData(data, close = false) {
+
+    if (!close) {
+      return Object.assign(
+        {},
+        data,
+        {
+          isChangeTripPointType: false,
+          isChangeTripPointCity: false,
+          newTripPointType: '',
+          newTripPointCity: '',
+          newPoint: false,
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false,
+        },
+      );
+    }
+
+    delete data.isChangeTripPointType;
+    delete data.newTripPointType;
+    delete data.isChangeTripPointCity;
+    delete data.newTripPointCity;
+
+    delete data.newPoint;
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
+
     return Object.assign(
       {},
       data,
-      {
-        isChangeTripPointType: false,
-        isChangeTripPointCity: false,
-        newTripPointType: '',
-        newTripPointCity: '',
-      },
     );
   }
 
-  static dataToTripPoint(data) {
+  static dataToTripPoint(data, submit = false) {
 
     if (data.isChangeTripPointType && data.isChangeTripPointCity) {
       data.typePoint = data.newTripPointType;
@@ -190,8 +240,8 @@ export default class TripPointEdit extends SmartView {
         {},
         data,
         {
-          pointOffers: generateOffers(data.typePoint.toLowerCase()),
-          destination: generateDestination(data.cityPoint),
+          pointOffers: TripOffersModel.getTypeOffers(data.typePoint.toLowerCase()),
+          destination: TripDestinationsModel.getCityDestination(data.cityPoint),
         },
       );
     } else if (data.isChangeTripPointType) {
@@ -201,7 +251,7 @@ export default class TripPointEdit extends SmartView {
         {},
         data,
         {
-          pointOffers: generateOffers(data.typePoint.toLowerCase()),
+          pointOffers: TripOffersModel.getTypeOffers(data.typePoint.toLowerCase()),
         },
       );
     } else if (data.isChangeTripPointCity) {
@@ -211,7 +261,7 @@ export default class TripPointEdit extends SmartView {
         {},
         data,
         {
-          destination: generateDestination(data.cityPoint),
+          destination: TripDestinationsModel.getCityDestination(data.cityPoint),
         },
       );
     }
@@ -220,7 +270,13 @@ export default class TripPointEdit extends SmartView {
     delete data.newTripPointType;
     delete data.isChangeTripPointCity;
     delete data.newTripPointCity;
-    delete data.newPoint;
+
+    if (submit) {
+      delete data.newPoint;
+      delete data.isDisabled;
+      delete data.isSaving;
+      delete data.isDeleting;
+    }
 
     return data;
   }
@@ -231,7 +287,7 @@ export default class TripPointEdit extends SmartView {
         this.updateData({
           isChangeTripPointType: true,
           newTripPointType: evt.target.textContent,
-        });
+        }, false);
         this._point = TripPointEdit.dataToTripPoint(this._point);
         this.updateData({}, false);
       } else {
@@ -248,7 +304,7 @@ export default class TripPointEdit extends SmartView {
       this.updateData({
         isChangeTripPointCity: true,
         newTripPointCity: he.encode(evt.target.value),
-      });
+      }, false);
       this._point = TripPointEdit.dataToTripPoint(this._point);
       this.updateData({}, false);
     }
@@ -273,20 +329,27 @@ export default class TripPointEdit extends SmartView {
 
   _offerTripPointClickHandler(evt) {
     evt.preventDefault();
+
+    if (evt.target.classList.contains('event__available-offers')) {
+      return;
+    }
+
     const spanElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.querySelector('.event__offer-title') : evt.target.parentElement.parentElement.querySelector('.event__offer-title');
     const inputElement = evt.target.classList.contains('event__offer-label') ?  evt.target.parentElement.querySelector('.event__offer-checkbox') : evt.target.parentElement.parentElement.querySelector('.event__offer-checkbox') ;
-    const offerIndex = this._point.pointOffers.offers.findIndex((item) => item.title === spanElement.textContent);
-    const offers = this._point.pointOffers.offers.map((item) => Object.assign({}, item));
+    const offerIndex = this._point.pointOffers.findIndex((item) => item.title === spanElement.textContent);
+    const pointOffers = this._point.pointOffers.map((item) => Object.assign({}, item));
 
     inputElement.checked = !inputElement.checked;
 
-    offers[offerIndex].checked = inputElement.checked;
+    pointOffers[offerIndex].checked = inputElement.checked;
 
     this.updateData({
-      pointOffers: {
-        offers,
-      },
+      pointOffers,
     });
+
+    this._resetTripPoint(this._point, true);
+    this._callback.offerChangeClick(this._point);
+    this._point = TripPointEdit.tripPointToData(this._point);
   }
 
   _closeBtnClickHandler(evt) {
@@ -318,7 +381,7 @@ export default class TripPointEdit extends SmartView {
 
       this.updateData({
         startDateTime,
-        duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
+        duration: getFormatDuration(durationDays, durationHours, durationMinutes),
       });
     }
   }
@@ -336,7 +399,7 @@ export default class TripPointEdit extends SmartView {
 
       this.updateData({
         endDateTime,
-        duration: getDurationTripPoint(durationDays, durationHours, durationMinutes),
+        duration: getFormatDuration(durationDays, durationHours, durationMinutes),
       });
     }
   }
@@ -413,6 +476,10 @@ export default class TripPointEdit extends SmartView {
 
   setDeleteBtnClickHandler(callback) {
     this._callback.deleteBtnClick = callback;
+  }
+
+  setChangeTripPointOfferHandler(callback) {
+    this._callback.offerChangeClick = callback;
   }
 
   setFormSubmitHandler(callback) {

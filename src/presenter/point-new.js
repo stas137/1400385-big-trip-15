@@ -47,14 +47,33 @@ export default class PointNew {
     document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._tripPointEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+      newPoint: true,
+    }, false);
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._tripPointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+        newPoint: true,
+      }, false);
+    };
+
+    this._tripPointEditComponent.shake(resetFormState);
+  }
+
   _handleFormSubmit(point) {
     this._changeData(
       UserAction.ADD_POINT,
       UpdateType.MAJOR,
-      Object.assign({}, point),
+      point,
     );
-
-    this.destroy();
   }
 
   _handleDeleteBtnClick() {

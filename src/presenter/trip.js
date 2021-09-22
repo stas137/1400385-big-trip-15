@@ -1,23 +1,31 @@
-import {RenderPosition, render, remove} from '../utils/render.js';
+import {render, remove} from '../utils/render.js';
 import {compareDate, compareTime, comparePrice} from '../utils/common.js';
-import {FilterType, SortType, UpdateType, UserAction} from '../const.js';
+import {RenderPosition, FilterType, SortType, UpdateType, UserAction} from '../const.js';
 import {filter} from '../utils/filter.js';
 import TripRouteView from '../view/trip-route.js';
 import TripCostView from '../view/trip-cost.js';
 import TripSortView from '../view/trip-sort.js';
 import TripPointsContainerView from '../view/trip-points-container.js';
 import TripPointEmptyView from '../view/trip-point-empty.js';
-import TripPointPresenter from './point.js';
+import TripPointPresenter, {State as TripPointPresenterStateView} from './point.js';
 import TripPointNewPresenter from './point-new.js';
+import LoadingView from '../view/loading.js';
+import LoadedAdditionalDataView from '../view/loaded-additional-data.js';
 
 export default class Trip {
-  constructor(tripContainer, tripControlsEvents, tripPointsModel, tripFilterModel) {
+  constructor(tripContainer, tripControlsEvents, tripControlsMain, tripPointsModel, tripFilterModel, api) {
+
+    this._api = api;
 
     this._tripPointsModel = tripPointsModel;
     this._tripFilterModel = tripFilterModel;
 
     this._tripContainer = tripContainer;
     this._tripControlsEvents = tripControlsEvents;
+    this._tripControlsMain = tripControlsMain;
+
+    this._isLoading = true;
+    this._isLoadedAdditionalData = false;
 
     this._tripPointsPresenter = new Map();
 
@@ -28,13 +36,21 @@ export default class Trip {
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
     this._pointEmptyComponent = null;
+    this._routeComponent = null;
+    this._costComponent = null;
+    this._sortComponent = null;
 
     this._tripPointsContainerComponent = new TripPointsContainerView();
+
+    this._loadingComponent = new LoadingView();
+    this._loadedAdditionalDataComponent = new LoadedAdditionalDataView();
 
     this._tripPointNewPresenter = new TripPointNewPresenter(this._tripPointsContainerComponent, this._handleViewAction);
   }
 
-  init() {
+  init(isLoading = false) {
+    this._isLoading = isLoading;
+
     this._activeFilter = FilterType.EVERYTHING;
     this._activeSort = SortType.DAY;
 
@@ -47,6 +63,7 @@ export default class Trip {
   destroy() {
     this._clearTripPoints();
     this._clearTripPointsContainer();
+    this._clearSort();
 
     this._tripPointsModel.removeObserver(this._handleModelEvent);
     this._tripFilterModel.removeObserver(this._handleModelEvent);
@@ -58,21 +75,53 @@ export default class Trip {
 
   _handleViewAction(actionType, updateType, data) {
     switch (actionType) {
-      case UserAction.UPDATE_POINT:
+      case UserAction.CHANGE_OFFER:
         this._tripPointsModel.updatePoint(updateType, data);
         break;
+      case UserAction.UPDATE_POINT:
+        this._tripPointsPresenter.get(data.id).setViewState(TripPointPresenterStateView.SAVING);
+        this._api.updatePoint(data)
+          .then((responce) => {
+            this._tripPointsModel.updatePoint(updateType, responce);
+          })
+          .catch(() => {
+            this._tripPointsPresenter.get(data.id).setViewState(TripPointPresenterStateView.ABORTING);
+          });
+        break;
       case UserAction.ADD_POINT:
-        this._tripPointsModel.addPoint(updateType, data);
+        this._tripPointNewPresenter.setSaving();
+        this._api.addPoint(data)
+          .then((responce) => {
+            this._tripPointsModel.addPoint(updateType, responce);
+          })
+          .catch(() => {
+            this._tripPointNewPresenter.setAborting();
+          });
         break;
       case UserAction.DELETE_POINT:
-        this._tripPointsModel.deletePoint(updateType, data);
+        this._tripPointsPresenter.get(data.id).setViewState(TripPointPresenterStateView.DELETING);
+        this._api.deletePoint(data)
+          .then(() => {
+            this._tripPointsModel.deletePoint(updateType, data);
+          })
+          .catch(() => {
+            this._tripPointsPresenter.get(data.id).setViewState(TripPointPresenterStateView.ABORTING);
+          });
         break;
     }
   }
 
   _handleModelEvent(updateType, data) {
     switch(updateType) {
+      case UpdateType.COST:
+        remove(this._costComponent);
+        this._costComponent = new TripCostView(this._getCostTrip(this._getTripPoints()));
+        render(this._tripControlsInfo, this._costComponent);
+        break;
       case UpdateType.PATCH:
+        remove(this._costComponent);
+        this._costComponent = new TripCostView(this._getCostTrip(this._getTripPoints()));
+        render(this._tripControlsInfo, this._costComponent);
         this._tripPointsPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
@@ -83,7 +132,28 @@ export default class Trip {
         this._clearTrip(true);
         this._renderTrip();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        this._isLoadedAdditionalData = true;
+        remove(this._loadingComponent);
+        this._renderTrip();
+        break;
+      case UpdateType.ADDITIONAL_DATA:
+        this._isLoading = false;
+        this._isLoadedAdditionalData = false;
+        remove(this._loadingComponent);
+        this._renderLoadedAdditionalData();
+        break;
     }
+  }
+
+  _getCostTrip(points) {
+    const costTripPoints = points.reduce((sum, point) => sum + point.price, 0);
+    const tripPointsOffers = points.map((point) => point.pointOffers);
+    const costsTripPointsOffers = tripPointsOffers.map((offer) => offer.reduce((sum, item) => (item && item.checked) ? sum += Number(item.price) : sum += 0, 0));
+    const costTripPointsOffers = costsTripPointsOffers.reduce((sum, item) => sum + item, 0);
+
+    return (costTripPoints + costTripPointsOffers);
   }
 
   _getTripPoints(activeSort = SortType.DAY) {
@@ -92,7 +162,6 @@ export default class Trip {
     this._activeFilter = this._tripFilterModel.getFilter();
     const points = this._tripPointsModel.getPoints();
     const filteredPoints = filter[this._activeFilter](points);
-
 
     switch (this._activeSort) {
       case SortType.DAY:
@@ -133,8 +202,11 @@ export default class Trip {
   }
 
   _renderSort(activeSort) {
+    this._prevSortComponent = this._sortComponent;
+    remove(this._prevSortComponent);
     this._sortComponent = new TripSortView(activeSort);
     this._sortComponent.setSortClickHandler(this._handleSortTypeChange);
+
     render(this._tripControlsEvents, this._sortComponent);
   }
 
@@ -157,7 +229,20 @@ export default class Trip {
     this._getTripPoints(activeSort).forEach((tripPoint) => this._renderTripPoint(tripPoint));
   }
 
+  _renderLoading() {
+    render(this._tripControlsEvents, this._loadingComponent);
+  }
+
+  _renderLoadedAdditionalData() {
+    render(this._tripControlsEvents, this._loadedAdditionalDataComponent);
+  }
+
   _renderTrip() {
+
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
 
     if (!this._getTripPoints().length) {
       this._pointEmptyComponent = new TripPointEmptyView(this._activeFilter);
@@ -166,14 +251,24 @@ export default class Trip {
       return;
     }
 
+    this._prevRouteComponent = this._routeComponent;
+    this._prevCostComponent = this._costComponent;
+
     this._routeComponent = new TripRouteView(this._getTripPoints());
-    this._costComponent = new TripCostView(this._getTripPoints());
+    this._costComponent = new TripCostView(this._getCostTrip(this._getTripPoints()));
 
-    this._tripControlsMain = this._tripContainer.querySelector('.trip-main');
-    render(this._tripControlsMain, this._routeComponent, RenderPosition.AFTERBEGIN);
+    if (this._prevRouteComponent === null && this._prevCostComponent === null) {
+      render(this._tripControlsMain, this._routeComponent, RenderPosition.AFTERBEGIN);
+      this._tripControlsInfo = this._tripContainer.querySelector('.trip-info');
+      render(this._tripControlsInfo, this._costComponent);
+    } else {
+      remove(this._prevRouteComponent);
+      remove(this._prevCostComponent);
 
-    this._tripControlsInfo = this._tripContainer.querySelector('.trip-info');
-    render(this._tripControlsInfo, this._costComponent);
+      render(this._tripControlsMain, this._routeComponent, RenderPosition.AFTERBEGIN);
+      this._tripControlsInfo = this._tripContainer.querySelector('.trip-info');
+      render(this._tripControlsInfo, this._costComponent);
+    }
 
     this._renderSort(this._activeSort);
     this._renderTripPointsContainer();
@@ -205,7 +300,15 @@ export default class Trip {
     remove(this._pointEmptyComponent);
   }
 
+  _clearLoading() {
+    remove(this._loadingComponent);
+  }
+
   _clearTrip(resetSortType = false) {
+
+    this._tripPointNewPresenter.destroy();
+
+    this._clearLoading();
 
     if (this._pointEmptyComponent) {
       this._clearTripPointEmpty();

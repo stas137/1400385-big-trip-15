@@ -1,9 +1,5 @@
 import Abstract from '../view/abstract.js';
-
-const RenderPosition = {
-  AFTERBEGIN: 'afterbegin',
-  BEFOREEND: 'beforeend',
-};
+import {RenderPosition} from '../const.js';
 
 const render = (container, child, place = RenderPosition.BEFOREEND) => {
   if (container instanceof Abstract) {
@@ -50,6 +46,10 @@ const replace = (newChild, oldChild) => {
 };
 
 const remove = (component) => {
+  if (component === null) {
+    return;
+  }
+
   if (!(component instanceof Abstract)) {
     throw Error('Can remove only components');
   }

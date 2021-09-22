@@ -4,12 +4,19 @@ import {Mode, UpdateType, UserAction} from '../const.js';
 import TripPointView from '../view/trip-point.js';
 import TripPointEditView from '../view/trip-point-edit.js';
 
+export const State = {
+  SAVING: 'saving',
+  DELETING: 'deleting',
+  ABORTING: 'aborting',
+};
+
 export default class Point {
   constructor(tripPointsListContainer, changeMode, changeView) {
     this._tripPointsListContainer = tripPointsListContainer;
 
     this._changeMode = changeMode;
 
+    this._changeOffer = changeView;
     this._changeFavorite = changeView;
     this._deletePoint = changeView;
     this._formSubmit = changeView;
@@ -24,6 +31,7 @@ export default class Point {
     this._handleCloseBtnClick = this._handleCloseBtnClick.bind(this);
     this._handleDeleteBtnClick = this._handleDeleteBtnClick.bind(this);
     this._handleFormSubmitClick = this._handleFormSubmitClick.bind(this);
+    this._handleOfferClick = this._handleOfferClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
@@ -34,15 +42,17 @@ export default class Point {
     const prevTripPointEditComponent = this._tripPointEditComponent;
 
     this._tripPointComponent = new TripPointView(tripPoint);
-    this._tripPointEditComponent = new TripPointEditView(tripPoint);
 
     this._tripPointComponent.setOpenBtnClickHandler(this._handleOpenBtnClick);
     this._tripPointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+
+    this._tripPointEditComponent = new TripPointEditView(tripPoint);
 
     this._tripPointEditComponent.setCloseBtnClickHandler(this._handleCloseBtnClick);
     this._tripPointEditComponent.setDeleteBtnClickHandler(this._handleDeleteBtnClick);
     this._tripPointEditComponent.setFormSubmitHandler(this._handleFormSubmitClick);
     this._tripPointEditComponent.setChangeTripPointTypeHandler(this._handleCloseBtnClick);
+    this._tripPointEditComponent.setChangeTripPointOfferHandler(this._handleOfferClick);
 
     if (prevTripPointComponent === null || prevTripPointEditComponent === null) {
       render(this._tripPointsListContainer, this._tripPointComponent);
@@ -54,7 +64,8 @@ export default class Point {
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._tripPointEditComponent, prevTripPointEditComponent);
+      replace(this._tripPointComponent, prevTripPointEditComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevTripPointComponent);
@@ -72,10 +83,55 @@ export default class Point {
     remove(this._tripPointEditComponent);
   }
 
+  setViewState(state) {
+    if (this._mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const resetFormState = () => {
+      this._tripPointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      }, false);
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._tripPointEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        }, false);
+        break;
+      case State.DELETING:
+        this._tripPointEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        }, false);
+        break;
+      case State.ABORTING:
+        this._tripPointEditComponent.shake(resetFormState);
+        break;
+    }
+  }
+
   _replaceTripPointToForm() {
     this._changeMode();
     this._mode = Mode.EDITING;
+
+    const prevTripPointEditComponent = this._tripPointEditComponent;
+    remove(prevTripPointEditComponent);
+
+    this._tripPointEditComponent = new TripPointEditView(this._tripPoint);
+
+    this._tripPointEditComponent.setCloseBtnClickHandler(this._handleCloseBtnClick);
+    this._tripPointEditComponent.setDeleteBtnClickHandler(this._handleDeleteBtnClick);
+    this._tripPointEditComponent.setFormSubmitHandler(this._handleFormSubmitClick);
+    this._tripPointEditComponent.setChangeTripPointTypeHandler(this._handleCloseBtnClick);
+    this._tripPointEditComponent.setChangeTripPointOfferHandler(this._handleOfferClick);
+
     replace(this._tripPointEditComponent, this._tripPointComponent);
+
     document.addEventListener('keydown', this._escKeyDownHandler);
   }
 
@@ -101,6 +157,11 @@ export default class Point {
   }
 
   _handleCloseBtnClick() {
+    const tripPointEdit = Object.assign(
+      {},
+      this._tripPoint,
+    );
+    this._changeOffer(UserAction.CHANGE_OFFER, UpdateType.COST, tripPointEdit);
     this._replaceFormToTripPoint();
   }
 
@@ -109,7 +170,6 @@ export default class Point {
   }
 
   _handleFormSubmitClick(point) {
-    this._replaceFormToTripPoint();
     const tripPointEdit = Object.assign(
       {},
       this._tripPoint,
@@ -118,9 +178,25 @@ export default class Point {
     this._formSubmit(UserAction.UPDATE_POINT, UpdateType.PATCH, tripPointEdit);
   }
 
+  _handleOfferClick(point) {
+    const tripPointEdit = Object.assign(
+      {},
+      this._tripPoint,
+      point,
+    );
+    this._changeOffer(UserAction.CHANGE_OFFER, UpdateType.COST, tripPointEdit);
+  }
+
   _escKeyDownHandler(evt) {
     if (isEscEvent(evt.code)) {
       evt.preventDefault();
+
+      const tripPointEdit = Object.assign(
+        {},
+        this._tripPoint,
+      );
+      this._changeOffer(UserAction.CHANGE_OFFER, UpdateType.COST, tripPointEdit);
+
       this._replaceFormToTripPoint();
       document.removeEventListener('keydown', this._escKeyDownHandler);
     }

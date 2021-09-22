@@ -1,12 +1,30 @@
-const TRIP_POINTS_COUNT = 15;
-const MAX_DAYS_GAP = 5;
-const MAX_MINUTES_GAP = 15;
-const TEXT_DESCRIPTION = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus';
-const URL_PHOTO = 'http://picsum.photos/248/152?r=';
-const MAX_COUNT_SENTENCES = 5;
-const MAX_COUNT_PHOTOS = 7;
-const MAX_PRICE_OFFER = 50;
 const COUNT_CITIES_ROUTE = 3;
+const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
+const AUTHORIZATION = 'Basic er1w590ik29889b';
+
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
+const COUNT_MILISECONDS_SECOND = 1000;
+const COUNT_SECONDS_MINUTE = 60;
+const COUNT_MINUTES_HOUR = 60;
+const COUNT_HOURS_DAY = 24;
+
+const RenderPosition = {
+  AFTERBEGIN: 'afterbegin',
+  BEFOREEND: 'beforeend',
+};
+
+const Method = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+};
+
+const SuccessStatusHTTPRange = {
+  MIN: 200,
+  MAX: 299,
+};
 
 const Mode = {
   DEFAULT: 'default',
@@ -31,22 +49,26 @@ const UpdateType = {
   PATCH: 'patch',
   MINOR: 'minor',
   MAJOR: 'major',
+  INIT: 'init',
+  ADDITIONAL_DATA: 'additional_data',
+  STATISTICS: 'statistics',
+  TRIP_COST: 'trip_cost',
 };
 
 const UserAction = {
   UPDATE_POINT: 'update_point',
   ADD_POINT: 'add_point',
   DELETE_POINT: 'delete_point',
+  CHANGE_OFFER: 'change_offer',
 };
 
 const MenuItem = {
-  ADD_NEW_POINT: 'new event',
-  POINTS: 'table',
-  STATISTICS: 'stats',
+  ADD_NEW_POINT: 'New event',
+  TABLE: 'Table',
+  STATS: 'Stats',
 };
 
 const POINT_BLANK = {
-  id: '',
   typePoint: '',
   cityPoint: '',
   startDateTime: '',
@@ -55,79 +77,8 @@ const POINT_BLANK = {
   price: '',
   pointOffers: '',
   destination: '',
-  isFavorite: '',
+  isFavorite: false,
 };
 
-const POINT_TYPES = [
-  'Taxi',
-  'Bus',
-  'Train',
-  'Ship',
-  'Transport',
-  'Drive',
-  'Flight',
-  'Check-in',
-  'Sightseeing',
-  'Restaurant',
-];
+export {END_POINT, AUTHORIZATION, SHAKE_ANIMATION_TIMEOUT, COUNT_HOURS_DAY, COUNT_MINUTES_HOUR, COUNT_SECONDS_MINUTE, COUNT_MILISECONDS_SECOND, RenderPosition, Method, SuccessStatusHTTPRange, Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, POINT_BLANK, COUNT_CITIES_ROUTE};
 
-const POINT_CITIES = [
-  'Amsterdam',
-  'Chamonix',
-  'Geneva',
-];
-
-const OFFER_TITLES_TYPES = [
-  {
-    title: 'Add luggage',
-    type: 'luggage',
-    point: 'flight',
-  },
-  {
-    title: 'Switch to comfort',
-    type: 'comfort',
-    point: 'flight',
-  },
-  {
-    title: 'Choose seats',
-    type: 'seats',
-    point: 'flight',
-  },
-  {
-    title: 'Add meal',
-    type: 'meal',
-    point: 'flight',
-  },
-  {
-    title: 'Travel by train',
-    type: 'train',
-    point: 'flight',
-  },
-  {
-    title: 'Order Uber',
-    type: 'uber',
-    point: 'taxi',
-  },
-  {
-    title: 'Rent a car',
-    type: 'car',
-    point: 'drive',
-  },
-  {
-    title: 'Book tickets',
-    type: 'tickets',
-    point: 'sightseeing',
-  },
-  {
-    title: 'Lunch in city',
-    type: 'lunch',
-    point: 'sightseeing',
-  },
-  {
-    title: 'Add breakfast',
-    type: 'breakfast',
-    point: 'check-in',
-  },
-];
-
-export {Mode, SortType, FilterType, UpdateType, UserAction, MenuItem, TRIP_POINTS_COUNT, POINT_BLANK, POINT_TYPES, MAX_DAYS_GAP, MAX_MINUTES_GAP, POINT_CITIES, OFFER_TITLES_TYPES, TEXT_DESCRIPTION, URL_PHOTO, MAX_COUNT_SENTENCES, MAX_COUNT_PHOTOS, MAX_PRICE_OFFER, COUNT_CITIES_ROUTE};
