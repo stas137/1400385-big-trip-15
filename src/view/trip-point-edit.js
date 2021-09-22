@@ -64,7 +64,7 @@ const createTripPointEditTemplate = (point) => {
     <label class="event__type-label  event__type-label--${offerType.toLowerCase()}" for="event-type-${offerType.toLowerCase()}-1">${offerType}</label>
   </div>`);
 
-  const getCityItemTemplate = () => `<option value="${cityPoint}">${cityPoint}</option>`;
+  const getCityItemTemplate = (city) => `<option value="${city}">${city}</option>`;
 
   return `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
