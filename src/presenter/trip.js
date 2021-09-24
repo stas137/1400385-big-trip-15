@@ -25,7 +25,6 @@ export default class Trip {
     this._tripControlsMain = tripControlsMain;
 
     this._isLoading = true;
-    this._isLoadedAdditionalData = false;
 
     this._tripPointsPresenter = new Map();
 
@@ -113,7 +112,7 @@ export default class Trip {
 
   _handleModelEvent(updateType, data) {
     switch(updateType) {
-      case UpdateType.COST:
+      case UpdateType.TRIP_COST:
         remove(this._costComponent);
         this._costComponent = new TripCostView(this._getCostTrip(this._getTripPoints()));
         render(this._tripControlsInfo, this._costComponent);
@@ -134,13 +133,11 @@ export default class Trip {
         break;
       case UpdateType.INIT:
         this._isLoading = false;
-        this._isLoadedAdditionalData = true;
         remove(this._loadingComponent);
         this._renderTrip();
         break;
       case UpdateType.ADDITIONAL_DATA:
         this._isLoading = false;
-        this._isLoadedAdditionalData = false;
         remove(this._loadingComponent);
         this._renderLoadedAdditionalData();
         break;
@@ -150,7 +147,7 @@ export default class Trip {
   _getCostTrip(points) {
     const costTripPoints = points.reduce((sum, point) => sum + point.price, 0);
     const tripPointsOffers = points.map((point) => point.pointOffers);
-    const costsTripPointsOffers = tripPointsOffers.map((offer) => offer.reduce((sum, item) => (item && item.checked) ? sum += Number(item.price) : sum += 0, 0));
+    const costsTripPointsOffers = tripPointsOffers.map((offer) => offer.reduce((sum, item) => (item && item.checked) ? sum + Number(item.price) : sum + 0, 0));
     const costTripPointsOffers = costsTripPointsOffers.reduce((sum, item) => sum + item, 0);
 
     return (costTripPoints + costTripPointsOffers);
@@ -173,10 +170,6 @@ export default class Trip {
     }
 
     return filteredPoints;
-  }
-
-  _setTripPoint(updatedItem) {
-    this._tripPointsModel.updatePoint('update', updatedItem);
   }
 
   _handleSortTypeChange(activeSort) {
@@ -286,10 +279,6 @@ export default class Trip {
 
   _clearSort() {
     remove(this._sortComponent);
-  }
-
-  _clearCost() {
-    remove(this._costComponent);
   }
 
   _clearRoute() {

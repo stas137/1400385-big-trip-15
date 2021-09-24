@@ -51,7 +51,6 @@ export default class Point {
     this._tripPointEditComponent.setCloseBtnClickHandler(this._handleCloseBtnClick);
     this._tripPointEditComponent.setDeleteBtnClickHandler(this._handleDeleteBtnClick);
     this._tripPointEditComponent.setFormSubmitHandler(this._handleFormSubmitClick);
-    this._tripPointEditComponent.setChangeTripPointTypeHandler(this._handleCloseBtnClick);
     this._tripPointEditComponent.setChangeTripPointOfferHandler(this._handleOfferClick);
 
     if (prevTripPointComponent === null || prevTripPointEditComponent === null) {
@@ -127,7 +126,6 @@ export default class Point {
     this._tripPointEditComponent.setCloseBtnClickHandler(this._handleCloseBtnClick);
     this._tripPointEditComponent.setDeleteBtnClickHandler(this._handleDeleteBtnClick);
     this._tripPointEditComponent.setFormSubmitHandler(this._handleFormSubmitClick);
-    this._tripPointEditComponent.setChangeTripPointTypeHandler(this._handleCloseBtnClick);
     this._tripPointEditComponent.setChangeTripPointOfferHandler(this._handleOfferClick);
 
     replace(this._tripPointEditComponent, this._tripPointComponent);
@@ -161,7 +159,7 @@ export default class Point {
       {},
       this._tripPoint,
     );
-    this._changeOffer(UserAction.CHANGE_OFFER, UpdateType.COST, tripPointEdit);
+    this._changeOffer(UserAction.CHANGE_OFFER, UpdateType.TRIP_COST, tripPointEdit);
     this._replaceFormToTripPoint();
   }
 
@@ -184,7 +182,7 @@ export default class Point {
       this._tripPoint,
       point,
     );
-    this._changeOffer(UserAction.CHANGE_OFFER, UpdateType.COST, tripPointEdit);
+    this._changeOffer(UserAction.CHANGE_OFFER, UpdateType.TRIP_COST, tripPointEdit);
   }
 
   _escKeyDownHandler(evt) {
@@ -195,7 +193,7 @@ export default class Point {
         {},
         this._tripPoint,
       );
-      this._changeOffer(UserAction.CHANGE_OFFER, UpdateType.COST, tripPointEdit);
+      this._changeOffer(UserAction.CHANGE_OFFER, UpdateType.TRIP_COST, tripPointEdit);
 
       this._replaceFormToTripPoint();
       document.removeEventListener('keydown', this._escKeyDownHandler);

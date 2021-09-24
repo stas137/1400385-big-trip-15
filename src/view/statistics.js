@@ -33,13 +33,8 @@ export default class Statistics extends SmartView {
     this._costs = null;
 
     this._moneyCtx = null;
-    this._moneyChart = null;
-
     this._typeCtx = null;
-    this._typeChart = null;
-
     this._timeSpendCtx = null;
-    this._timeSpendChart = null;
 
     this._setDataCharts();
     this._setCharts();
@@ -57,7 +52,7 @@ export default class Statistics extends SmartView {
 
     this._types = [...TripOffersModel.getTypesOffers()];
 
-    this._cost = this._types.map((type) => {
+    this._costs = this._types.map((type) => {
       const filteredPoints = this._points.filter((point) => point.typePoint === type.toLowerCase());
       return filteredPoints.reduce((sum, point) => sum + Number(point.price), 0);
     });
@@ -94,13 +89,13 @@ export default class Statistics extends SmartView {
     this._moneyCtx = this.getElement().querySelector('#money');
     this._moneyCtx.height = BAR_HEIGHT * (this._types.length - 1);
 
-    this._moneyChart = new Chart(this._moneyCtx, {
+    new Chart(this._moneyCtx, {
       plugins: [ChartDataLabels],
       type: 'horizontalBar',
       data: {
         labels: [...this._types],
         datasets: [{
-          data: [...this._cost],
+          data: [...this._costs],
           backgroundColor: '#ffffff',
           hoverBackgroundColor: '#ffffff',
           anchor: 'start',
@@ -164,7 +159,7 @@ export default class Statistics extends SmartView {
     this._typeCtx = this.getElement().querySelector('#type');
     this._typeCtx.height = BAR_HEIGHT * (this._types.length - 1);
 
-    this._typeChart = new Chart(this._typeCtx, {
+    new Chart(this._typeCtx, {
       plugins: [ChartDataLabels],
       type: 'horizontalBar',
       data: {
@@ -234,7 +229,7 @@ export default class Statistics extends SmartView {
     this._timeSpendCtx = this.getElement().querySelector('#time-spend');
     this._timeSpendCtx.height = BAR_HEIGHT * (this._types.length - 1);
 
-    this._typeChart = new Chart(this._timeSpendCtx, {
+    new Chart(this._timeSpendCtx, {
       plugins: [ChartDataLabels],
       type: 'horizontalBar',
       data: {
@@ -257,8 +252,7 @@ export default class Statistics extends SmartView {
             align: 'start',
             formatter: (sumMillisecond) => {
               const [days, hours, minutes] = this._normalizeMilisecond(sumMillisecond);
-              const formatDuration = getFormatDuration(days, hours, minutes);
-              return  formatDuration;
+              return getFormatDuration(days, hours, minutes);
             },
           },
         },

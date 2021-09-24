@@ -466,14 +466,6 @@ export default class TripPointEdit extends SmartView {
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 
-  setChangeTripPointTypeHandler(callback) {
-    this._callback.changeTripPointClick = callback;
-  }
-
-  setChangeTripPointCityHandler(callback) {
-    this._callback.changeTripPointCityClick = callback;
-  }
-
   setCloseBtnClickHandler(callback) {
     this._callback.closeBtnClick = callback;
   }
