@@ -16,12 +16,11 @@ const StatisticsType = {
 
 const createStatisticsTemplate = () => {
 
-  const getItemTemplate = (id) => `<div class="statistics__item">
-    <canvas class="statistics__chart" id="${id}" width="900"></canvas></div>`;
+  const getItemTemplate = (id) => `<div class="statistics__item"><canvas class="statistics__chart" id="${id}" width="900"></canvas></div>`;
 
   return `<section class="statistics">
-  <h2 class="visually-hidden">Trip statistics</h2>
-  ${Object.values(StatisticsType).map((item) => getItemTemplate(item)).join('')}
+    <h2 class="visually-hidden">Trip statistics</h2>
+    ${Object.values(StatisticsType).map((item) => getItemTemplate(item)).join('')}
   </section>`;
 };
 

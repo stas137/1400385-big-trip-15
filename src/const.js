@@ -74,7 +74,7 @@ const POINT_BLANK = {
   startDateTime: '',
   endDateTime: '',
   duration: '',
-  price: '',
+  price: '1',
   pointOffers: '',
   destination: '',
   isFavorite: false,
