@@ -46,4 +46,6 @@ const getFormatDuration = (durationDays, durationHours, durationMinutes) => {
   return '00M';
 };
 
-export {isEscEvent, getRandomInteger, getDuration, getFormatDuration, compareDate, compareTime, comparePrice};
+const isOnline = () => window.navigator.onLine;
+
+export {isEscEvent, getRandomInteger, getDuration, getFormatDuration, compareDate, compareTime, comparePrice, isOnline};

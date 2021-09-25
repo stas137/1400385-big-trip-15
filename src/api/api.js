@@ -1,5 +1,5 @@
-import PointsModel from './model/points.js';
-import {Method, SuccessStatusHTTPRange} from './const.js';
+import PointsModel from '../model/points.js';
+import {Method, SuccessStatusHTTPRange} from '../const.js';
 
 export default class Api {
   constructor(endPoint, authorization) {
@@ -50,6 +50,16 @@ export default class Api {
       url: `points/${point.id}`,
       method: Method.DELETE,
     });
+  }
+
+  sync(data) {
+    return this._load({
+      url: 'points/sync',
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-type': 'application/json'}),
+    })
+      .then(Api.toJSON);
   }
 
   _load({

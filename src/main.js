@@ -1,4 +1,6 @@
 import {END_POINT, AUTHORIZATION, MenuItem, UpdateType, FilterType} from './const.js';
+import {isOnline} from './utils/common.js';
+import {toast} from './utils/toast.js';
 import {render, remove} from './utils/render.js';
 import TripPointMenuView from './view/trip-menu.js';
 import TripPointNewBtnView from './view/trip-point-new-btn.js';
@@ -11,9 +13,18 @@ import TripPointsModel from './model/points.js';
 import TripDestinationsModel from './model/destinations.js';
 import TripOffersModel from './model/offers.js';
 
-import Api from './api.js';
+import Api from './api/api.js';
+import Store from './api/store.js';
+import Provider from './api/provider.js';
+
+const STORE_PREFIX = 'bigtrip-localstorage';
+const STORE_VER = 'v15';
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
+
 let isLoading = true;
 let isLoadedAdditionalData = false;
 let isStatistics = false;
@@ -28,7 +39,7 @@ const tripControlsNavigation = bodyElement.querySelector('.trip-controls__naviga
 const tripControlsFilter = bodyElement.querySelector('.trip-controls__filters');
 const tripStatisticsContainer = tripControlsEvents.parentElement;
 
-const tripPresenter = new TripPresenter(bodyElement, tripControlsEvents, tripControlsMain, tripPointsModel, tripFilterModel, api);
+const tripPresenter = new TripPresenter(bodyElement, tripControlsEvents, tripControlsMain, tripPointsModel, tripFilterModel, apiWithProvider);
 const tripFilterPresenter = new TripFilterPresenter(tripControlsFilter, tripFilterModel, tripPointsModel);
 
 let tripPointMenuComponent = new TripPointMenuView(isStatistics);
