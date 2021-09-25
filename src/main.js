@@ -124,4 +124,10 @@ api.getDestinations()
     checkLoadedAdditionalData();
   });
 
+const onLoadPage = () => {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
+};
 
+window.addEventListener('load', onLoadPage);
