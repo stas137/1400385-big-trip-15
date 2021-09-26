@@ -10,7 +10,7 @@ const getSyncedPoints = (points) => {
 const createStoreStructure = (items) => {
   items
     .reduce((acc, current) => Object.assign({}, acc, {
-    [current.id]: current,
+      [current.id]: current,
     }), {});
 };
 
@@ -35,6 +35,36 @@ export default class Provider {
     return Promise.resolve(pointsStore.map(PointsModel.adaptToClient));
   }
 
+  getDestinations() {
+    if (isOnline()) {
+      return this._api.getDestinations()
+        .then((destinations) => {
+          const items = createStoreStructure(destinations.map((destination) => destination));
+          this._store.setItems(items);
+          return destinations;
+        });
+    }
+
+    const destinationsStore = Object.values(this._store.getItems());
+
+    return Promise.resolve(destinationsStore.map((destination) => destination));
+  }
+
+  getOffers() {
+    if (isOnline()) {
+      return this._api.getOffers()
+        .then((offers) => {
+          const items = createStoreStructure(offers.map((offer) => offer));
+          this._store.setItems(items);
+          return offers;
+        });
+    }
+
+    const offersStore = Object.values(this._store.getItems());
+
+    return Promise.resolve(offersStore.map((offer) => offer));
+  }
+
   updatePoint(point) {
     if (isOnline()) {
       return this._api.updatePoint(point)
@@ -53,7 +83,7 @@ export default class Provider {
     if (isOnline()) {
       return this._api.addPoint(point)
         .then((newPoint) => {
-          this._store.setItem(newPoint.id, PointModel.adaptToServer(newPoint));
+          this._store.setItem(newPoint.id, PointsModel.adaptToServer(newPoint));
         });
     }
 

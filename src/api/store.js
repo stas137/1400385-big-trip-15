@@ -29,7 +29,7 @@ export default class Store {
         store,
         {
           [key]: value,
-        }
+        },
       )),
     );
   }

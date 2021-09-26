@@ -12,6 +12,7 @@ self.addEventListener('install', (evt) => {
         '/',
         '/index.html',
         '/bundle.js',
+        '/sw.js',
         '/css/style.css',
         '/img/icons/bus.png',
         '/img/icons/check-in.png',

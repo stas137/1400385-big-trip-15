@@ -55,10 +55,17 @@ const handleTripPointMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.ADD_NEW_POINT:
       tripFilterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+
+      if (!isOnline()) {
+        toast('You can\'t create new point offline');
+        break;
+      }
+
       tripPointNewBtnComponent.turnOff();
       tripPresenter.createTripPoint(handleTripPointClose);
       break;
     case MenuItem.TABLE:
+      tripPresenter.destroy();
       tripFilterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
       tripPointNewBtnComponent.turnOn();
       remove(tripStatisticsComponent);
@@ -103,13 +110,13 @@ tripPresenter.init(isLoading);
 
 checkLoading();
 
-api.getDestinations()
+apiWithProvider.getDestinations()
   .then((destinations) => {
     TripDestinationsModel.setDestinations(destinations);
-    api.getOffers()
+    apiWithProvider.getOffers()
       .then((offers) => {
         TripOffersModel.setOffers(offers);
-        api.getPoints()
+        apiWithProvider.getPoints()
           .then((points) => {
             isLoading = false;
             isLoadedAdditionalData = true;

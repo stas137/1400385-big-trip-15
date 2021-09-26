@@ -2,7 +2,8 @@ const SHOW_TIME = 5000;
 
 const toastContainer = document.createElement('div');
 toastContainer.classList.add('toast-container');
-document.append(toastContainer);
+const pageHeaderContainer = document.querySelector('.page-header');
+pageHeaderContainer.append(toastContainer);
 
 const toast = (message) => {
   const toastItem = document.createElement('div');
