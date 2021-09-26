@@ -1,5 +1,6 @@
 import {render, replace, remove} from '../utils/render.js';
-import {isEscEvent} from '../utils/common.js';
+import {isEscEvent, isOnline} from '../utils/common.js';
+import {toast} from '../utils/toast.js';
 import {Mode, UpdateType, UserAction} from '../const.js';
 import TripPointView from '../view/trip-point.js';
 import TripPointEditView from '../view/trip-point-edit.js';
@@ -151,6 +152,12 @@ export default class Point {
   }
 
   _handleOpenBtnClick() {
+
+    if (!isOnline()) {
+      toast('You can\'t edit trip point offline');
+      return;
+    }
+
     this._replaceTripPointToForm();
   }
 
@@ -164,10 +171,22 @@ export default class Point {
   }
 
   _handleDeleteBtnClick(point) {
+
+    if (!isOnline()) {
+      toast('You can\'t delete trip point offline');
+      return;
+    }
+
     this._deletePoint(UserAction.DELETE_POINT, UpdateType.MAJOR, point);
   }
 
   _handleFormSubmitClick(point) {
+
+    if (!isOnline()) {
+      toast('You can\'t save point point offline');
+      return;
+    }
+
     const tripPointEdit = Object.assign(
       {},
       this._tripPoint,

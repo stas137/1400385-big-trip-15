@@ -1,6 +1,6 @@
 const COUNT_CITIES_ROUTE = 3;
 const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
-const AUTHORIZATION = 'Basic er1w590ik29889b';
+const AUTHORIZATION = 'Basic er1w590ik29989b';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 

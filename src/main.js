@@ -20,9 +20,11 @@ import Provider from './api/provider.js';
 const STORE_PREFIX = 'bigtrip-localstorage';
 const STORE_VER = 'v15';
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+const STORE_NAME_DESTINATIONS = `${STORE_PREFIX}-destinations-${STORE_VER}`;
+const STORE_NAME_OFFERS = `${STORE_PREFIX}-offers-${STORE_VER}`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
-const store = new Store(STORE_NAME, window.localStorage);
+const store = new Store(STORE_NAME, window.localStorage, STORE_NAME_DESTINATIONS, window.localStorage, STORE_NAME_OFFERS, window.localStorage);
 const apiWithProvider = new Provider(api, store);
 
 let isLoading = true;
@@ -57,7 +59,7 @@ const handleTripPointMenuClick = (menuItem) => {
       tripFilterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
 
       if (!isOnline()) {
-        toast('You can\'t create new point offline');
+        toast('You can\'t create new trip point offline');
         break;
       }
 
@@ -148,4 +150,15 @@ const onLoadPage = () => {
   }
 };
 
+const onlinePage = () => {
+  document.title = document.title.replace(' [offline]', '');
+  apiWithProvider.sync();
+};
+
+const offlinePage = () => {
+  document.title += ' [offline]';
+};
+
 window.addEventListener('load', onLoadPage);
+window.addEventListener('online', onlinePage);
+window.addEventListener('offline', offlinePage);

@@ -66,7 +66,7 @@ const handleFetch = (evt) => {
           .then((responce) => {
             if (!responce || responce.status !== HTTP_STATUS_OK || responce.type !== RESPONCE_SAFE_TYPE) {
               return responce;
-            }
+            } 
 
             const clonedResponce = responce.clone();
 

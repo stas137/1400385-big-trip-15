@@ -7,12 +7,14 @@ const getSyncedPoints = (points) => {
     .map(({payload}) => payload.point);
 };
 
-const createStoreStructure = (items) => {
+const createStoreStructure = (items) => (
   items
-    .reduce((acc, current) => Object.assign({}, acc, {
-      [current.id]: current,
-    }), {});
-};
+    .reduce((acc, current) => Object.assign({}, acc,
+      {
+        [current.id]: current,
+      },
+    ), {})
+);
 
 export default class Provider {
   constructor(api, store) {
@@ -39,13 +41,12 @@ export default class Provider {
     if (isOnline()) {
       return this._api.getDestinations()
         .then((destinations) => {
-          const items = createStoreStructure(destinations.map((destination) => destination));
-          this._store.setItems(items);
+          this._store.setDestinations(destinations);
           return destinations;
         });
     }
 
-    const destinationsStore = Object.values(this._store.getItems());
+    const destinationsStore = Object.values(this._store.getDestinations());
 
     return Promise.resolve(destinationsStore.map((destination) => destination));
   }
@@ -54,13 +55,12 @@ export default class Provider {
     if (isOnline()) {
       return this._api.getOffers()
         .then((offers) => {
-          const items = createStoreStructure(offers.map((offer) => offer));
-          this._store.setItems(items);
+          this._store.setOffers(offers);
           return offers;
         });
     }
 
-    const offersStore = Object.values(this._store.getItems());
+    const offersStore = Object.values(this._store.getOffers());
 
     return Promise.resolve(offersStore.map((offer) => offer));
   }
