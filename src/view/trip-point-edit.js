@@ -183,6 +183,22 @@ export default class TripPointEdit extends SmartView {
     return createTripPointEditTemplate(this._point);
   }
 
+  setCloseBtnClickHandler(callback) {
+    this._callback.closeBtnClick = callback;
+  }
+
+  setDeleteBtnClickHandler(callback) {
+    this._callback.deleteBtnClick = callback;
+  }
+
+  setChangeTripPointOfferHandler(callback) {
+    this._callback.offerChangeClick = callback;
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+  }
+
   restoreHandlers() {
     this._setHandlers();
     this._setDatepickerStart();
@@ -193,6 +209,191 @@ export default class TripPointEdit extends SmartView {
     this.updateData(
       TripPointEdit.tripPointToData(point, true),
     );
+  }
+
+  _updateOffers(newChild, oldChild) {
+    replace(newChild, oldChild);
+  }
+
+  _setDatepickerStart() {
+
+    if (this._datepickerStartDateTime) {
+      this._datepickerStartDateTime.clear();
+      this._datepickerStartDateTime.close();
+      this._datepickerStartDateTime.destroy();
+      this._datepickerStartDateTime = null;
+    }
+
+    this._datepickerStartDateTime = flatpickr(
+      this.getElement().querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._point.startDateTime,
+        enableTime: true,
+        onChange: this._startDateTimeChangeHandler,
+      },
+    );
+  }
+
+  _setDatepickerEnd() {
+
+    if (this._datepickerEndDateTime) {
+      this._datepickerEndDateTime.clear();
+      this._datepickerEndDateTime.close();
+      this._datepickerEndDateTime.destroy();
+      this._datepickerEndDateTime = null;
+    }
+
+    this._datepickerEndDateTime = flatpickr(
+      this.getElement().querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._point.endDateTime,
+        enableTime: true,
+        onChange: this._endDateTimeChangeHandler,
+      },
+    );
+  }
+
+  _setHandlers() {
+    this.getElement().querySelector('.event__type-group').addEventListener('click', this._changeTripPointTypeHandler);
+    this.getElement().querySelector('.event__input--destination').addEventListener('change', this._changeTripPointCityHandler);
+    this.getElement().querySelector('.event__input--price').addEventListener('input', this._inputTripPointPriceHandler);
+
+    if (!this._point.newPoint) {
+      this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeBtnClickHandler);
+    }
+
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._deleteBtnClickHandler);
+
+    if (this.getElement().querySelector('.event__available-offers')) {
+      this.getElement().querySelector('.event__available-offers').addEventListener('click', this._offerTripPointClickHandler);
+    }
+
+    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
+  }
+
+  _offerTripPointClickHandler(evt) {
+    evt.preventDefault();
+
+    if (evt.target.classList.contains('event__available-offers')) {
+      return;
+    }
+
+    const spanElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.querySelector('.event__offer-title') : evt.target.parentElement.parentElement.querySelector('.event__offer-title');
+    const inputElement = evt.target.classList.contains('event__offer-label') ?  evt.target.parentElement.querySelector('.event__offer-checkbox') : evt.target.parentElement.parentElement.querySelector('.event__offer-checkbox') ;
+    const offerIndex = this._point.pointOffers.findIndex((item) => item.title === spanElement.textContent);
+    const pointOffers = this._point.pointOffers.map((item) => Object.assign({}, item));
+
+    inputElement.checked = !inputElement.checked;
+
+    pointOffers[offerIndex].checked = inputElement.checked;
+
+    this.updateData({
+      pointOffers,
+    });
+
+    this._resetTripPoint(this._point, true);
+    this._callback.offerChangeClick(this._point);
+    this._point = TripPointEdit.tripPointToData(this._point);
+  }
+
+  _changeTripPointTypeHandler(evt) {
+    if (evt.target.classList.contains('event__type-label')) {
+      if (evt.target.textContent.toLowerCase() !== this._point.typePoint.toLowerCase()) {
+        this.updateData({
+          isChangeTripPointType: true,
+          newTripPointType: evt.target.textContent,
+        }, false);
+        this._point = TripPointEdit.dataToTripPoint(this._point);
+        this.updateData({}, false);
+      } else {
+        this.updateData({
+          isChangeTripPointType: false,
+          newTripPointType: '',
+        });
+      }
+    }
+  }
+
+  _changeTripPointCityHandler(evt) {
+    if ((evt.target.value !== '') && (evt.target.value.toLowerCase() !== this._point.cityPoint.toLowerCase())) {
+      this.updateData({
+        isChangeTripPointCity: true,
+        newTripPointCity: he.encode(evt.target.value),
+      }, false);
+      this._point = TripPointEdit.dataToTripPoint(this._point);
+      this.updateData({}, false);
+    }
+    else {
+      this.updateData({
+        isChangeTripPointCity: false,
+        newTripPointCity: '',
+      });
+    }
+  }
+
+  _inputTripPointPriceHandler(evt) {
+    evt.preventDefault();
+    if (evt.target.value) {
+      this.updateData({
+        price: String(evt.target.value),
+      });
+    } else {
+      evt.target.value = Number(this._point.price);
+    }
+  }
+
+  _startDateTimeChangeHandler([userStartDateTime]) {
+    if (userStartDateTime) {
+      const startDateTime = userStartDateTime;
+      const endDateTime = this._point.endDateTime;
+
+      const {
+        durationDays,
+        durationHours,
+        durationMinutes,
+      } = getDuration(startDateTime, endDateTime);
+
+      this.updateData({
+        startDateTime,
+        duration: getFormatDuration(durationDays, durationHours, durationMinutes),
+      });
+    }
+  }
+
+  _endDateTimeChangeHandler([userEndDateTime]) {
+    if (userEndDateTime) {
+      const startDateTime = this._point.startDateTime;
+      const endDateTime = userEndDateTime;
+
+      const {
+        durationDays,
+        durationHours,
+        durationMinutes,
+      } = getDuration(startDateTime, endDateTime);
+
+      this.updateData({
+        endDateTime,
+        duration: getFormatDuration(durationDays, durationHours, durationMinutes),
+      });
+    }
+  }
+
+  _closeBtnClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeBtnClick();
+  }
+
+  _deleteBtnClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteBtnClick(this._point);
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._point = TripPointEdit.dataToTripPoint(this._point, true);
+    this._callback.formSubmit(this._point);
   }
 
   static tripPointToData(data, close = false) {
@@ -279,206 +480,5 @@ export default class TripPointEdit extends SmartView {
     }
 
     return data;
-  }
-
-  _changeTripPointTypeHandler(evt) {
-    if (evt.target.classList.contains('event__type-label')) {
-      if (evt.target.textContent.toLowerCase() !== this._point.typePoint.toLowerCase()) {
-        this.updateData({
-          isChangeTripPointType: true,
-          newTripPointType: evt.target.textContent,
-        }, false);
-        this._point = TripPointEdit.dataToTripPoint(this._point);
-        this.updateData({}, false);
-      } else {
-        this.updateData({
-          isChangeTripPointType: false,
-          newTripPointType: '',
-        });
-      }
-    }
-  }
-
-  _changeTripPointCityHandler(evt) {
-    if ((evt.target.value !== '') && (evt.target.value.toLowerCase() !== this._point.cityPoint.toLowerCase())) {
-      this.updateData({
-        isChangeTripPointCity: true,
-        newTripPointCity: he.encode(evt.target.value),
-      }, false);
-      this._point = TripPointEdit.dataToTripPoint(this._point);
-      this.updateData({}, false);
-    }
-    else {
-      this.updateData({
-        isChangeTripPointCity: false,
-        newTripPointCity: '',
-      });
-    }
-  }
-
-  _inputTripPointPriceHandler(evt) {
-    evt.preventDefault();
-    if (evt.target.value) {
-      this.updateData({
-        price: String(evt.target.value),
-      });
-    } else {
-      evt.target.value = Number(this._point.price);
-    }
-  }
-
-  _updateOffers(newChild, oldChild) {
-    replace(newChild, oldChild);
-  }
-
-  _offerTripPointClickHandler(evt) {
-    evt.preventDefault();
-
-    if (evt.target.classList.contains('event__available-offers')) {
-      return;
-    }
-
-    const spanElement = evt.target.classList.contains('event__offer-label') ? evt.target.parentElement.querySelector('.event__offer-title') : evt.target.parentElement.parentElement.querySelector('.event__offer-title');
-    const inputElement = evt.target.classList.contains('event__offer-label') ?  evt.target.parentElement.querySelector('.event__offer-checkbox') : evt.target.parentElement.parentElement.querySelector('.event__offer-checkbox') ;
-    const offerIndex = this._point.pointOffers.findIndex((item) => item.title === spanElement.textContent);
-    const pointOffers = this._point.pointOffers.map((item) => Object.assign({}, item));
-
-    inputElement.checked = !inputElement.checked;
-
-    pointOffers[offerIndex].checked = inputElement.checked;
-
-    this.updateData({
-      pointOffers,
-    });
-
-    this._resetTripPoint(this._point, true);
-    this._callback.offerChangeClick(this._point);
-    this._point = TripPointEdit.tripPointToData(this._point);
-  }
-
-  _closeBtnClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.closeBtnClick();
-  }
-
-  _deleteBtnClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.deleteBtnClick(this._point);
-  }
-
-  _formSubmitHandler(evt) {
-    evt.preventDefault();
-    this._point = TripPointEdit.dataToTripPoint(this._point);
-    this._callback.formSubmit(this._point);
-  }
-
-  _startDateTimeChangeHandler([userStartDateTime]) {
-    if (userStartDateTime) {
-      const startDateTime = userStartDateTime;
-      const endDateTime = this._point.endDateTime;
-
-      const {
-        durationDays,
-        durationHours,
-        durationMinutes,
-      } = getDuration(startDateTime, endDateTime);
-
-      this.updateData({
-        startDateTime,
-        duration: getFormatDuration(durationDays, durationHours, durationMinutes),
-      });
-    }
-  }
-
-  _endDateTimeChangeHandler([userEndDateTime]) {
-    if (userEndDateTime) {
-      const startDateTime = this._point.startDateTime;
-      const endDateTime = userEndDateTime;
-
-      const {
-        durationDays,
-        durationHours,
-        durationMinutes,
-      } = getDuration(startDateTime, endDateTime);
-
-      this.updateData({
-        endDateTime,
-        duration: getFormatDuration(durationDays, durationHours, durationMinutes),
-      });
-    }
-  }
-
-  _setDatepickerStart() {
-
-    if (this._datepickerStartDateTime) {
-      this._datepickerStartDateTime.clear();
-      this._datepickerStartDateTime.close();
-      this._datepickerStartDateTime.destroy();
-      this._datepickerStartDateTime = null;
-    }
-
-    this._datepickerStartDateTime = flatpickr(
-      this.getElement().querySelector('#event-start-time-1'),
-      {
-        dateFormat: 'd/m/y H:i',
-        defaultDate: this._point.startDateTime,
-        enableTime: true,
-        onChange: this._startDateTimeChangeHandler,
-      },
-    );
-  }
-
-  _setDatepickerEnd() {
-
-    if (this._datepickerEndDateTime) {
-      this._datepickerEndDateTime.clear();
-      this._datepickerEndDateTime.close();
-      this._datepickerEndDateTime.destroy();
-      this._datepickerEndDateTime = null;
-    }
-
-    this._datepickerEndDateTime = flatpickr(
-      this.getElement().querySelector('#event-end-time-1'),
-      {
-        dateFormat: 'd/m/y H:i',
-        defaultDate: this._point.endDateTime,
-        enableTime: true,
-        onChange: this._endDateTimeChangeHandler,
-      },
-    );
-  }
-
-  _setHandlers() {
-    this.getElement().querySelector('.event__type-group').addEventListener('click', this._changeTripPointTypeHandler);
-    this.getElement().querySelector('.event__input--destination').addEventListener('change', this._changeTripPointCityHandler);
-    this.getElement().querySelector('.event__input--price').addEventListener('input', this._inputTripPointPriceHandler);
-
-    if (!this._point.newPoint) {
-      this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._closeBtnClickHandler);
-    }
-
-    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._deleteBtnClickHandler);
-
-    if (this.getElement().querySelector('.event__available-offers')) {
-      this.getElement().querySelector('.event__available-offers').addEventListener('click', this._offerTripPointClickHandler);
-    }
-
-    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
-  }
-
-  setCloseBtnClickHandler(callback) {
-    this._callback.closeBtnClick = callback;
-  }
-
-  setDeleteBtnClickHandler(callback) {
-    this._callback.deleteBtnClick = callback;
-  }
-
-  setChangeTripPointOfferHandler(callback) {
-    this._callback.offerChangeClick = callback;
-  }
-
-  setFormSubmitHandler(callback) {
-    this._callback.formSubmit = callback;
   }
 }

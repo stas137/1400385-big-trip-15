@@ -16,11 +16,6 @@ export default class TripMenu extends AbstractView {
     this._menuClickHandler = this._menuClickHandler.bind(this);
   }
 
-  _menuClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.menuClick(evt.target.textContent);
-  }
-
   getTemplate() {
     return createTripMenuTemplate(this._isStatistics);
   }
@@ -28,5 +23,10 @@ export default class TripMenu extends AbstractView {
   setMenuClickHandler(callback) {
     this._callback.menuClick = callback;
     this.getElement().addEventListener('click', this._menuClickHandler);
+  }
+
+  _menuClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.menuClick(evt.target.textContent);
   }
 }

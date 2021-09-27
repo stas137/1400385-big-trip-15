@@ -12,7 +12,6 @@ self.addEventListener('install', (evt) => {
         '/',
         '/index.html',
         '/bundle.js',
-        '/sw.js',
         '/css/style.css',
         '/img/icons/bus.png',
         '/img/icons/check-in.png',
@@ -66,13 +65,13 @@ const handleFetch = (evt) => {
           .then((responce) => {
             if (!responce || responce.status !== HTTP_STATUS_OK || responce.type !== RESPONCE_SAFE_TYPE) {
               return responce;
-            } 
+            }
 
             const clonedResponce = responce.clone();
 
             caches.open(CACHE_NAME)
               .then((cache) => cache.put(request, clonedResponce));
-            
+
             return responce;
           })
       }),

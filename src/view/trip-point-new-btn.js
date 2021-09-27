@@ -22,13 +22,13 @@ export default class TripPointNewBtn extends AbstractView {
     this.getElement().parentElement.querySelector('.trip-main__event-add-btn').disabled = true;
   }
 
-  _clickTripPointNewHandler(evt) {
-    evt.preventDefault();
-    this._callback.tripPointNewClick(evt.target.textContent);
-  }
-
   setClickTripPointNewHandler(callback) {
     this._callback.tripPointNewClick = callback;
     this.getElement().parentElement.querySelector('.trip-main__event-add-btn').addEventListener('click', this._clickTripPointNewHandler);
+  }
+
+  _clickTripPointNewHandler(evt) {
+    evt.preventDefault();
+    this._callback.tripPointNewClick(evt.target.textContent);
   }
 }

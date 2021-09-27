@@ -44,14 +44,6 @@ export default class Filter {
     remove(this._prevFilterComponent);
   }
 
-  _handleFilterTypeChange(activeFilter = FilterType.EVERYTHING) {
-    if (this._activeFilter === activeFilter) {
-      return;
-    }
-
-    this._tripFilterModel.setFilter(UpdateType.MAJOR, activeFilter);
-  }
-
   _getFilters() {
 
     return [
@@ -68,6 +60,14 @@ export default class Filter {
         name: 'past',
       },
     ];
+  }
+
+  _handleFilterTypeChange(activeFilter = FilterType.EVERYTHING) {
+    if (this._activeFilter === activeFilter) {
+      return;
+    }
+
+    this._tripFilterModel.setFilter(UpdateType.MAJOR, activeFilter);
   }
 
   _handleModelEvent(updateType) {

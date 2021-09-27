@@ -1,11 +1,10 @@
 import PointsModel from '../model/points.js';
 import {isOnline} from '../utils/common.js';
 
-const getSyncedPoints = (points) => {
+const getSyncedPoints = (points) =>
   points
     .filter(({success}) => success)
     .map(({payload}) => payload.point);
-};
 
 const createStoreStructure = (items) => (
   items

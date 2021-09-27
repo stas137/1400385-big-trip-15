@@ -42,6 +42,10 @@ export default class TripFilter extends AbstractView {
     return createTripFilterTemplate(this._filters, this._activeFilter, this._isLoading, this._isLoadedAdditionalData, this._isStatistics);
   }
 
+  setFilterClickHandler(callback) {
+    this._callback.filterClick = callback;
+    this.getElement().addEventListener('click', this._filterTypeChangeHandler);
+  }
 
   _filterTypeChangeHandler(evt) {
     evt.preventDefault();
@@ -53,10 +57,5 @@ export default class TripFilter extends AbstractView {
     if (evt.target.dataset.activeFilter) {
       this._callback.filterClick(evt.target.dataset.activeFilter);
     }
-  }
-
-  setFilterClickHandler(callback) {
-    this._callback.filterClick = callback;
-    this.getElement().addEventListener('click', this._filterTypeChangeHandler);
   }
 }

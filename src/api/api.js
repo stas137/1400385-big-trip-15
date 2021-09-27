@@ -57,7 +57,7 @@ export default class Api {
       url: 'points/sync',
       method: Method.POST,
       body: JSON.stringify(data),
-      headers: new Headers({'Content-type': 'application/json'}),
+      headers: new Headers({'Content-Type': 'application/json'}),
     })
       .then(Api.toJSON);
   }
