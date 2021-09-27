@@ -220,7 +220,6 @@ export default class TripPointEdit extends SmartView {
     if (this._datepickerStartDateTime) {
       this._datepickerStartDateTime.clear();
       this._datepickerStartDateTime.close();
-      this._datepickerStartDateTime.destroy();
       this._datepickerStartDateTime = null;
     }
 
@@ -240,7 +239,6 @@ export default class TripPointEdit extends SmartView {
     if (this._datepickerEndDateTime) {
       this._datepickerEndDateTime.clear();
       this._datepickerEndDateTime.close();
-      this._datepickerEndDateTime.destroy();
       this._datepickerEndDateTime = null;
     }
 

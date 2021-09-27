@@ -83,6 +83,7 @@ export default class Provider {
       return this._api.addPoint(point)
         .then((newPoint) => {
           this._store.setItem(newPoint.id, PointsModel.adaptToServer(newPoint));
+          return newPoint;
         });
     }
 
